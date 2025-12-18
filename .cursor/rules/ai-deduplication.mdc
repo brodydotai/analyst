@@ -1,0 +1,21 @@
+---
+description: Rules for AI processing, vector embeddings, and article deduplication
+globs: backend/python/processing/**/*
+alwaysApply: false
+---
+# AI Processing & Deduplication Rules
+
+## 1. Semantic Deduplication (pgvector)
+- Every ingested article must be converted into a vector embedding before being committed as a "New" article.
+- Use `pgvector` to check for existing articles with a cosine similarity > 0.9.
+- If a duplicate is found: Cluster the new source under the existing "Master" article rather than creating a new entry.
+
+## 2. LLM Summarization
+- Use a tiered approach: 
+  - Local models (Ollama/Llama 3) for initial tagging and importance scoring.
+  - Cloud models (GPT-4o/Claude 3.5) for final user-facing summaries.
+- Caching: Always check Redis for an existing summary of a content hash before calling an LLM API.
+
+## 3. Extraction
+- Use `newspaper3k` or `Readability` for content cleaning. 
+- Avoid saving raw HTML; save cleaned Markdown or structured JSON.
