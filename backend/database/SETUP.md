@@ -230,3 +230,5 @@ After running the SQL:
 - The schema will fall back to a standard index
 - For production, consider using IVFFlat as an alternative (see schema.sql comments)
 
+
+

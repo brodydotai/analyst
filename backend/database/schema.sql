@@ -189,3 +189,5 @@ INSERT INTO categories (name, slug, description) VALUES
     ('World News', 'world-news', 'International news and events')
 ON CONFLICT (slug) DO NOTHING;
 
+
+

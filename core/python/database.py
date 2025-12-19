@@ -67,3 +67,5 @@ def get_db() -> Client:
     """
     return DatabaseClient.get_client()
 
+
+

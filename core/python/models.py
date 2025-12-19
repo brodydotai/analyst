@@ -290,3 +290,5 @@ class ArticleCategory(Base):
         CheckConstraint("confidence >= 0.0 AND confidence <= 1.0", name="check_confidence_range"),
     )
 
+
+

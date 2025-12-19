@@ -81,3 +81,5 @@ If Realtime is not automatically enabled:
 - All foreign keys use `ON DELETE CASCADE` for data integrity
 - The `fingerprint` column in articles is for quick duplicate checks before vector search
 
+
+

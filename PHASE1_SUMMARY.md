@@ -116,3 +116,5 @@ atlas/
 
 All infrastructure files are in place. The database schema is ready to be deployed to Supabase, and the Python code is ready to connect to it.
 
+
+

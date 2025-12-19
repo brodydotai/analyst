@@ -85,3 +85,5 @@ This structure replaces the old `backend/python/` and `backend/node/` structure:
 - `backend/node/` → Removed (Next.js API routes handle API needs)
 - Traditional persistent servers → Serverless functions
 
+
+

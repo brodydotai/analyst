@@ -24,3 +24,5 @@ Next.js 15 application with terminal-style interface.
 - `components/` - React components
 - `lib/` - Utilities, Supabase client setup
 
+
+
