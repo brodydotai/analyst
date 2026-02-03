@@ -1,33 +1,7 @@
-# Atlas News Terminal - Python Dependencies
-# For serverless functions and core processing logic
-
-# Database
-supabase>=2.0.0
-pgvector>=0.2.0
-
-# SQLAlchemy for models (optional, for type checking and local development)
-sqlalchemy>=2.0.0
-psycopg2-binary>=2.9.0
-
-# HTTP Client
-httpx>=0.25.0
-
-# RSS Parsing
+httpx>=0.27.0
 feedparser>=6.0.0
-
-# Content Extraction
-newspaper4k>=0.0.1
-
-# AI/ML
+supabase>=2.0.0
+upstash-qstash>=2.0.0
 openai>=1.0.0
-anthropic>=0.7.0
-
-# Task Queue
-upstash-qstash>=0.0.1
-
-# Utilities
+pydantic>=2.0.0
 python-dotenv>=1.0.0
-
-
-
-

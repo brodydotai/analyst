@@ -1,0 +1,41 @@
+---
+description: Atlas project conventions and architecture
+globs: **/*
+---
+
+# Atlas — Project Rules
+
+## Architecture
+- Serverless Python functions on Vercel (`api/python/`)
+- Shared logic in `core/python/` — never duplicate between API routes
+- Supabase (PostgreSQL + pgvector) for storage and search
+- QStash for async job dispatch (cron → ingest → QStash → process)
+
+## Conventions
+- All database access goes through `core/python/db.py` (Supabase client)
+- All queue operations go through `core/python/queue.py` (QStash client)
+- Config from env vars only, via `core/python/config.py`
+- Pydantic models in `core/python/models/` for all data structures
+- No ORMs — use Supabase client directly
+
+## API Routes
+- `ingest_*` routes are cron-triggered: fetch data, insert rows, dispatch QStash jobs
+- `process_*` routes are QStash-triggered: receive a document ID, do heavy processing
+- Every route must handle errors gracefully and log to `ingestion_log`
+
+## EDGAR
+- Always respect SEC rate limits (10 req/sec max, use 100ms delay)
+- Always send the configured User-Agent header
+- Deduplicate filings by accession_number
+
+## Data Model
+- Entity-centric: everything links back to entities via `document_entities`
+- Filings and articles are separate tables with the same processing pipeline
+- One summary per document (unique constraint)
+
+## Dependencies
+- httpx for HTTP (not requests)
+- feedparser for RSS
+- pydantic for models
+- openai for embeddings and summarization
+- No SQLAlchemy, no anthropic SDK

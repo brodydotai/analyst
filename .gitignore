@@ -1,4 +1,4 @@
-# Environment variables
+# Environment
 .env
 .env.local
 .env.*.local
@@ -6,66 +6,23 @@
 # Python
 __pycache__/
 *.py[cod]
-*$py.class
-*.so
-.Python
-build/
-develop-eggs/
-dist/
-downloads/
-eggs/
-.eggs/
-lib/
-lib64/
-parts/
-sdist/
-var/
-wheels/
 *.egg-info/
-.installed.cfg
-*.egg
-MANIFEST
+.venv/
 venv/
-ENV/
-env/
-.venv
 
-# IDEs
+# Node / Next.js
+node_modules/
+.next/
+out/
+
+# Vercel
+.vercel/
+
+# IDE
 .vscode/
 .idea/
 *.swp
-*.swo
-*~
 
 # OS
 .DS_Store
 Thumbs.db
-
-# Logs
-*.log
-logs/
-
-# Node (for frontend)
-node_modules/
-.next/
-out/
-dist/
-build/
-
-# Vercel
-.vercel
-
-# Testing
-.pytest_cache/
-.coverage
-htmlcov/
-.tox/
-
-# Temporary files
-*.tmp
-*.temp
-.cache/
-
-
-
-

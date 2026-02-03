@@ -1,0 +1,12 @@
+{
+  "crons": [
+    {
+      "path": "/api/python/ingest_filings",
+      "schedule": "*/15 * * * *"
+    },
+    {
+      "path": "/api/python/ingest_feeds",
+      "schedule": "*/10 * * * *"
+    }
+  ]
+}
