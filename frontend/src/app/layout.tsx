@@ -2,7 +2,7 @@ import "./globals.css";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Atlas",
+  title: "Brodus",
   description: "Personal market intelligence dashboard.",
 };
 
