@@ -1,5 +1,13 @@
 # Atlas — Database Schema
 
+## Authority and Scope
+
+This document describes the intended database schema for reference. The actual source of truth is the SQL migrations in `supabase/migrations/`.
+
+- **Schema authority:** migration files
+- **Architecture and constraints:** `CLAUDE.md`
+- **If there is any conflict:** migrations and `CLAUDE.md` take precedence
+
 ## Extensions
 
 - **pgvector** — Vector similarity search for embeddings

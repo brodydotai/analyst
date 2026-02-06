@@ -1,5 +1,13 @@
 # Atlas — Product Requirements Document
 
+## Authority and Scope
+
+This PRD captures product intent and user-facing requirements. It is not an implementation contract.
+
+- **Architecture and constraints:** `CLAUDE.md`
+- **Agent behavior and workflow:** `AGENTS.md`
+- **If there is any conflict:** `CLAUDE.md` and `AGENTS.md` take precedence
+
 ## Problem
 
 I track a portfolio of assets across TradingView, SEC EDGAR, earnings calls, and financial news — but there's no single place that ties them together. I want one dashboard where my watchlist lives alongside the research context I actually need: key metrics, filings, transcripts, and AI-generated reports.

@@ -1,6 +1,8 @@
 # Atlas
 
-Market intelligence platform that aggregates SEC EDGAR filings and financial news, processes them with AI, and serves them through a searchable dashboard.
+Atlas is a single-user market intelligence platform that brings SEC EDGAR filings and financial news into one system, enriches them with AI, and turns them into structured, searchable research. The vision is a unified dashboard where watchlist assets, filings, and articles connect through shared entities and summarized context.
+
+The current codebase focuses on the backend foundation: a Supabase schema, shared Python modules for config, database, queue, and models, plus serverless API route stubs for ingestion and processing. The frontend is planned but not yet initialized.
 
 ## Stack
 
@@ -8,7 +10,7 @@ Market intelligence platform that aggregates SEC EDGAR filings and financial new
 - **Database:** Supabase (PostgreSQL + pgvector)
 - **Async Processing:** Upstash QStash
 - **AI:** OpenAI (embeddings + summarization)
-- **Frontend:** Next.js 15
+- **Frontend:** Next.js 15 (planned)
 
 ## Project Structure
 
@@ -17,7 +19,7 @@ api/python/          — Vercel serverless functions (cron + QStash handlers)
 core/python/         — Shared business logic, clients, models
 supabase/migrations/ — Database schema
 docs/                — PRD, architecture, schema documentation
-frontend/            — Next.js dashboard (future)
+frontend/            — Next.js dashboard (planned)
 ```
 
 ## Setup

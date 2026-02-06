@@ -1,5 +1,13 @@
 # Atlas — Architecture
 
+## Authority and Scope
+
+This document describes the intended system design and data flow. It may lead or lag implementation as the project evolves.
+
+- **Architecture authority:** `CLAUDE.md`
+- **Agent behavior and workflow:** `AGENTS.md`
+- **If there is any conflict:** `CLAUDE.md` and `AGENTS.md` take precedence
+
 ## System Overview
 
 Atlas is a serverless market intelligence platform that ingests SEC filings and financial news, processes them with AI, and serves them through a search-enabled dashboard.
