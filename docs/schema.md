@@ -1,4 +1,4 @@
-# Atlas — Database Schema
+# Brodus — Database Schema
 
 ## Authority and Scope
 
@@ -17,7 +17,7 @@ This document describes the intended database schema for reference. The actual s
 
 ### sources
 
-RSS feeds and EDGAR endpoints that Atlas monitors.
+RSS feeds and EDGAR endpoints that Brodus monitors.
 
 | Column | Type | Notes |
 |--------|------|-------|

@@ -1,6 +1,6 @@
-# Atlas
+# Brodus
 
-Atlas is a single-user market intelligence platform that brings SEC EDGAR filings and financial news into one system, enriches them with AI, and turns them into structured, searchable research. The vision is a unified dashboard where watchlist assets, filings, and articles connect through shared entities and summarized context.
+Brodus is a single-user market intelligence platform that brings SEC EDGAR filings and financial news into one system, enriches them with AI, and turns them into structured, searchable research. The vision is a unified dashboard where watchlist assets, filings, and articles connect through shared entities and summarized context.
 
 The current codebase focuses on the backend foundation (schema, shared Python modules, serverless API route stubs) and a Next.js 15 frontend shell wired to the watchlist/report APIs.
 

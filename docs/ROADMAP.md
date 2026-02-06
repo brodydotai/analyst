@@ -1,8 +1,8 @@
-# Atlas — Development Roadmap
+# Brodus — Development Roadmap
 
 ## Authority and Scope
 
-This document is the phase-by-phase build plan for Atlas. It is guidance for execution and review, but it does not override higher‑priority instructions.
+This document is the phase-by-phase build plan for Brodus. It is guidance for execution and review, but it does not override higher‑priority instructions.
 
 - **Highest authority:** `AGENTS.md` (agent behavior) and `CLAUDE.md` (architecture and constraints)
 - **This roadmap:** task directives, phase sequencing, and audit criteria
@@ -235,7 +235,7 @@ The feed is powered by the sources. This phase wires up the ingestion backend an
 
 ## Phase 7: TradingView Sync
 
-Import/export watchlists to keep Atlas and TradingView in sync.
+Import/export watchlists to keep Brodus and TradingView in sync.
 
 ### Directives for Codex
 

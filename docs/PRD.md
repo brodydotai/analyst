@@ -1,4 +1,4 @@
-# Atlas — Product Requirements Document
+# Brodus — Product Requirements Document
 
 ## Authority and Scope
 
@@ -72,7 +72,7 @@ Items in the feed that mention watchlist assets should be visually linked or fil
 
 ## Success Metric
 
-I open Atlas, see my watchlist with current metrics, click "24h Summary," and get a useful briefing — all without visiting five different sites.
+I open Brodus, see my watchlist with current metrics, click "24h Summary," and get a useful briefing — all without visiting five different sites.
 
 ## Tech Stack
 

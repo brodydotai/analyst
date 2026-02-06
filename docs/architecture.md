@@ -1,4 +1,4 @@
-# Atlas — Architecture
+# Brodus — Architecture
 
 ## Authority and Scope
 
@@ -10,7 +10,7 @@ This document describes the intended system design and data flow. It may lead or
 
 ## System Overview
 
-Atlas is a serverless market intelligence platform that ingests SEC filings and financial news, processes them with AI, and serves them through a search-enabled dashboard.
+Brodus is a serverless market intelligence platform that ingests SEC filings and financial news, processes them with AI, and serves them through a search-enabled dashboard.
 
 ```
 ┌─────────────┐     ┌─────────────┐
@@ -79,12 +79,12 @@ After a document is processed, a summary is generated and stored in the `summari
 
 ## EDGAR API Strategy
 
-Atlas uses two EDGAR APIs:
+Brodus uses two EDGAR APIs:
 
 - **EFTS Full-Text Search** (`efts.sec.gov/LATEST`) — Search for filings by keywords, form type, date range. Used for discovery.
 - **Submissions** (`data.sec.gov/submissions`) — Look up all filings by a specific CIK. Used for entity-specific filing history.
 
-Rate limiting: SEC requires max 10 requests/second and a User-Agent header identifying the caller. Atlas enforces a 100ms minimum delay between requests.
+Rate limiting: SEC requires max 10 requests/second and a User-Agent header identifying the caller. Brodus enforces a 100ms minimum delay between requests.
 
 ## Entity Linking
 
