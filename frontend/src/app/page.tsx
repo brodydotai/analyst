@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import EmptyState from "@/components/EmptyState";
 import ErrorBanner from "@/components/ErrorBanner";
@@ -344,6 +345,12 @@ export default function WatchlistPage() {
           </p>
         </div>
         <div className="flex flex-wrap items-center gap-3">
+          <Link
+            className="rounded-md border border-atlas-border px-3 py-2 text-xs uppercase tracking-wide text-atlas-muted hover:bg-atlas-panel"
+            href="/reports"
+          >
+            Research Reports
+          </Link>
           <button
             className="rounded-md border border-atlas-border px-3 py-2 text-xs uppercase tracking-wide text-atlas-muted hover:bg-atlas-panel"
             onClick={() => setEditMode((current) => !current)}

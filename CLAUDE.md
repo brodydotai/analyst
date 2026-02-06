@@ -26,7 +26,6 @@ Single user. No multi-tenancy. No public-facing auth (admin gate only on config 
 - Watchlist API routes
 - Market data enrichment
 - AI report generation
-- Frontend (Next.js not initialized)
 - Feed ingestion pipeline (stubs only)
 - TradingView sync
 
@@ -64,7 +63,7 @@ core/python/                 → Shared business logic (never duplicate in route
   processing/                → Embeddings, summarization, entity extraction
 
 supabase/migrations/         → Numbered SQL migrations (append-only)
-frontend/                    → Next.js 15 app (not yet initialized)
+frontend/                    → Next.js 15 app (App Router + TS + Tailwind)
 docs/                        → PRD, architecture, schema, roadmap
 ```
 
