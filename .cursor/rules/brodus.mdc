@@ -1,9 +1,9 @@
 ---
-description: Atlas project conventions and architecture
+description: Brodus project conventions and architecture
 globs: **/*
 ---
 
-# Atlas — Project Rules
+# Brodus — Project Rules
 
 ## Architecture
 - Serverless Python functions on Vercel (`api/python/`)
