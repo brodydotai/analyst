@@ -5,7 +5,7 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        atlas: {
+        brodus: {
           background: "#0B0F1A",
           panel: "#121826",
           border: "#1F2A44",

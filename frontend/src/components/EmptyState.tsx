@@ -5,9 +5,9 @@ type EmptyStateProps = {
 
 export default function EmptyState({ title, subtitle }: EmptyStateProps) {
   return (
-    <div className="rounded-lg border border-atlas-border bg-atlas-panel p-6 text-sm">
+    <div className="rounded-lg border border-brodus-border bg-brodus-panel p-6 text-sm">
       <h3 className="text-base font-semibold">{title}</h3>
-      <p className="mt-2 text-atlas-muted">{subtitle}</p>
+      <p className="mt-2 text-brodus-muted">{subtitle}</p>
     </div>
   );
 }

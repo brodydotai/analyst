@@ -37,9 +37,9 @@ const defaultReportState: ReportState = {
 
 const valueColor = (value?: number) => {
   if (value === null || value === undefined) {
-    return "text-atlas-muted";
+    return "text-brodus-muted";
   }
-  return value >= 0 ? "text-atlas-green" : "text-atlas-red";
+  return value >= 0 ? "text-brodus-green" : "text-brodus-red";
 };
 
 const normalizeWatchlist = (
@@ -340,33 +340,33 @@ export default function WatchlistPage() {
       <header className="flex flex-wrap items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl font-semibold">Watchlist</h1>
-          <p className="text-sm text-atlas-muted">
+          <p className="text-sm text-brodus-muted">
             Live overview of your tracked assets.
           </p>
         </div>
         <div className="flex flex-wrap items-center gap-3">
           <Link
-            className="rounded-md border border-atlas-border px-3 py-2 text-xs uppercase tracking-wide text-atlas-muted hover:bg-atlas-panel"
+            className="rounded-md border border-brodus-border px-3 py-2 text-xs uppercase tracking-wide text-brodus-muted hover:bg-brodus-panel"
             href="/reports"
           >
             Research Reports
           </Link>
           <button
-            className="rounded-md border border-atlas-border px-3 py-2 text-xs uppercase tracking-wide text-atlas-muted hover:bg-atlas-panel"
+            className="rounded-md border border-brodus-border px-3 py-2 text-xs uppercase tracking-wide text-brodus-muted hover:bg-brodus-panel"
             onClick={() => setEditMode((current) => !current)}
             type="button"
           >
             {editMode ? "Done" : "Edit"}
           </button>
           <button
-            className="rounded-md border border-atlas-border px-3 py-2 text-xs uppercase tracking-wide text-atlas-muted hover:bg-atlas-panel"
+            className="rounded-md border border-brodus-border px-3 py-2 text-xs uppercase tracking-wide text-brodus-muted hover:bg-brodus-panel"
             onClick={() => void loadWatchlist()}
             type="button"
           >
             Refresh
           </button>
           <button
-            className="rounded-md border border-atlas-border bg-atlas-panel px-4 py-2 text-xs uppercase tracking-wide text-atlas-text hover:bg-atlas-background"
+            className="rounded-md border border-brodus-border bg-brodus-panel px-4 py-2 text-xs uppercase tracking-wide text-brodus-text hover:bg-brodus-background"
             onClick={() => void openDailyBriefing()}
             type="button"
           >
@@ -377,25 +377,25 @@ export default function WatchlistPage() {
 
       {error ? <ErrorBanner message={error} onRetry={loadWatchlist} /> : null}
 
-      <section className="rounded-lg border border-atlas-border bg-atlas-panel p-5">
-        <h2 className="text-sm font-semibold uppercase tracking-wide text-atlas-muted">
+      <section className="rounded-lg border border-brodus-border bg-brodus-panel p-5">
+        <h2 className="text-sm font-semibold uppercase tracking-wide text-brodus-muted">
           Add Asset
         </h2>
         <div className="mt-4 grid gap-3 md:grid-cols-[120px_1fr_200px_120px]">
           <input
-            className="rounded-md border border-atlas-border bg-atlas-background px-3 py-2 text-sm text-atlas-text"
+            className="rounded-md border border-brodus-border bg-brodus-background px-3 py-2 text-sm text-brodus-text"
             placeholder="Ticker"
             value={newTicker}
             onChange={(event) => setNewTicker(event.target.value)}
           />
           <input
-            className="rounded-md border border-atlas-border bg-atlas-background px-3 py-2 text-sm text-atlas-text"
+            className="rounded-md border border-brodus-border bg-brodus-background px-3 py-2 text-sm text-brodus-text"
             placeholder="Company name"
             value={newName}
             onChange={(event) => setNewName(event.target.value)}
           />
           <select
-            className="rounded-md border border-atlas-border bg-atlas-background px-3 py-2 text-sm text-atlas-text"
+            className="rounded-md border border-brodus-border bg-brodus-background px-3 py-2 text-sm text-brodus-text"
             value={newCategoryId ?? ""}
             onChange={(event) =>
               setNewCategoryId(event.target.value || null)
@@ -409,7 +409,7 @@ export default function WatchlistPage() {
             ))}
           </select>
           <button
-            className="rounded-md border border-atlas-border bg-atlas-background px-3 py-2 text-xs uppercase tracking-wide text-atlas-text hover:bg-atlas-border"
+            className="rounded-md border border-brodus-border bg-brodus-background px-3 py-2 text-xs uppercase tracking-wide text-brodus-text hover:bg-brodus-border"
             onClick={() => void handleAddAsset()}
             type="button"
             disabled={saving}
@@ -419,13 +419,13 @@ export default function WatchlistPage() {
         </div>
         <div className="mt-4 flex flex-wrap items-center gap-3">
           <input
-            className="rounded-md border border-atlas-border bg-atlas-background px-3 py-2 text-sm text-atlas-text"
+            className="rounded-md border border-brodus-border bg-brodus-background px-3 py-2 text-sm text-brodus-text"
             placeholder="New category"
             value={newCategoryName}
             onChange={(event) => setNewCategoryName(event.target.value)}
           />
           <button
-            className="rounded-md border border-atlas-border px-3 py-2 text-xs uppercase tracking-wide text-atlas-muted hover:bg-atlas-background"
+            className="rounded-md border border-brodus-border px-3 py-2 text-xs uppercase tracking-wide text-brodus-muted hover:bg-brodus-background"
             onClick={() => void handleAddCategory()}
             type="button"
             disabled={saving}
@@ -440,7 +440,7 @@ export default function WatchlistPage() {
           {Array.from({ length: 6 }).map((_, index) => (
             <div
               key={`skeleton-${index}`}
-              className="h-12 w-full animate-pulse rounded bg-atlas-panel"
+              className="h-12 w-full animate-pulse rounded bg-brodus-panel"
             />
           ))}
         </div>
@@ -461,12 +461,12 @@ export default function WatchlistPage() {
             return (
               <section
                 key={category.id}
-                className="rounded-lg border border-atlas-border bg-atlas-panel"
+                className="rounded-lg border border-brodus-border bg-brodus-panel"
               >
-                <div className="flex items-center justify-between border-b border-atlas-border px-5 py-4">
+                <div className="flex items-center justify-between border-b border-brodus-border px-5 py-4">
                   <div className="flex items-center gap-3">
                     <button
-                      className="rounded-md border border-atlas-border px-2 py-1 text-xs uppercase tracking-wide text-atlas-muted hover:bg-atlas-background"
+                      className="rounded-md border border-brodus-border px-2 py-1 text-xs uppercase tracking-wide text-brodus-muted hover:bg-brodus-background"
                       onClick={() =>
                         setExpanded((current) => ({
                           ...current,
@@ -478,14 +478,14 @@ export default function WatchlistPage() {
                       {isExpanded ? "Hide" : "Show"}
                     </button>
                     <h3 className="text-base font-semibold">{category.name}</h3>
-                    <span className="text-xs text-atlas-muted">
+                    <span className="text-xs text-brodus-muted">
                       {category.items.length} assets
                     </span>
                   </div>
                 </div>
                 {isExpanded ? (
                   <div className="px-5 py-4">
-                    <div className="grid grid-cols-[110px_1.3fr_110px_90px_110px_80px_80px_80px_140px] gap-3 border-b border-atlas-border pb-3 text-xs uppercase tracking-wide text-atlas-muted">
+                    <div className="grid grid-cols-[110px_1.3fr_110px_90px_110px_80px_80px_80px_140px] gap-3 border-b border-brodus-border pb-3 text-xs uppercase tracking-wide text-brodus-muted">
                       <span>Ticker</span>
                       <span>Name</span>
                       <span>Price</span>
@@ -500,10 +500,10 @@ export default function WatchlistPage() {
                       {category.items.map((item) => (
                         <div
                           key={item.id}
-                          className="grid grid-cols-[110px_1.3fr_110px_90px_110px_80px_80px_80px_140px] items-center gap-3 rounded-md border border-transparent px-2 py-2 text-sm hover:border-atlas-border"
+                          className="grid grid-cols-[110px_1.3fr_110px_90px_110px_80px_80px_80px_140px] items-center gap-3 rounded-md border border-transparent px-2 py-2 text-sm hover:border-brodus-border"
                         >
                           <span className="font-semibold">{item.ticker}</span>
-                          <span className="text-atlas-muted">{item.name}</span>
+                          <span className="text-brodus-muted">{item.name}</span>
                           <span>{formatCurrency(item.metrics?.price)}</span>
                           <span>{formatMultiple(item.metrics?.pe_ratio)}</span>
                           <span>{formatMultiple(item.metrics?.ev_ebitda)}</span>
@@ -519,7 +519,7 @@ export default function WatchlistPage() {
                           <div className="flex flex-wrap items-center gap-2 text-xs">
                             {item.links?.tradingview ? (
                               <a
-                                className="rounded-md border border-atlas-border px-2 py-1 text-atlas-muted hover:bg-atlas-background"
+                                className="rounded-md border border-brodus-border px-2 py-1 text-brodus-muted hover:bg-brodus-background"
                                 href={item.links.tradingview}
                                 rel="noreferrer"
                                 target="_blank"
@@ -529,7 +529,7 @@ export default function WatchlistPage() {
                             ) : null}
                             {item.links?.edgar ? (
                               <a
-                                className="rounded-md border border-atlas-border px-2 py-1 text-atlas-muted hover:bg-atlas-background"
+                                className="rounded-md border border-brodus-border px-2 py-1 text-brodus-muted hover:bg-brodus-background"
                                 href={item.links.edgar}
                                 rel="noreferrer"
                                 target="_blank"
@@ -538,7 +538,7 @@ export default function WatchlistPage() {
                               </a>
                             ) : null}
                             <button
-                              className="rounded-md border border-atlas-border px-2 py-1 text-atlas-muted hover:bg-atlas-background"
+                              className="rounded-md border border-brodus-border px-2 py-1 text-brodus-muted hover:bg-brodus-background"
                               onClick={() => void openReport(item.ticker)}
                               type="button"
                             >
@@ -546,9 +546,9 @@ export default function WatchlistPage() {
                             </button>
                           </div>
                           {editMode ? (
-                            <div className="col-span-full mt-2 flex flex-wrap items-center gap-2 text-xs text-atlas-muted">
+                            <div className="col-span-full mt-2 flex flex-wrap items-center gap-2 text-xs text-brodus-muted">
                               <button
-                                className="rounded-md border border-atlas-border px-2 py-1 hover:bg-atlas-background"
+                                className="rounded-md border border-brodus-border px-2 py-1 hover:bg-brodus-background"
                                 onClick={() => void handleMoveItem(item, "up")}
                                 type="button"
                                 disabled={saving}
@@ -556,7 +556,7 @@ export default function WatchlistPage() {
                                 Move Up
                               </button>
                               <button
-                                className="rounded-md border border-atlas-border px-2 py-1 hover:bg-atlas-background"
+                                className="rounded-md border border-brodus-border px-2 py-1 hover:bg-brodus-background"
                                 onClick={() =>
                                   void handleMoveItem(item, "down")
                                 }
@@ -566,7 +566,7 @@ export default function WatchlistPage() {
                                 Move Down
                               </button>
                               <select
-                                className="rounded-md border border-atlas-border bg-atlas-background px-2 py-1 text-xs text-atlas-text"
+                                className="rounded-md border border-brodus-border bg-brodus-background px-2 py-1 text-xs text-brodus-text"
                                 value={item.category_id ?? ""}
                                 onChange={(event) =>
                                   void handleMoveCategory(
@@ -595,7 +595,7 @@ export default function WatchlistPage() {
                         </div>
                       ))}
                       {category.items.length === 0 ? (
-                        <p className="text-sm text-atlas-muted">
+                        <p className="text-sm text-brodus-muted">
                           No assets in this category.
                         </p>
                       ) : null}
@@ -618,7 +618,7 @@ export default function WatchlistPage() {
       />
 
       {!loading && categories.length > 0 ? (
-        <footer className="text-xs text-atlas-muted">
+        <footer className="text-xs text-brodus-muted">
           {allItems.length} assets tracked across {categories.length} categories.
         </footer>
       ) : null}

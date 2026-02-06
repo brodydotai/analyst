@@ -16,11 +16,11 @@ export default function GlobalError({
   return (
     <div className="mx-auto flex min-h-screen max-w-4xl flex-col items-center justify-center gap-4 px-6 text-center">
       <h1 className="text-2xl font-semibold">Something broke.</h1>
-      <p className="text-sm text-atlas-muted">
+      <p className="text-sm text-brodus-muted">
         An unexpected error occurred. You can try again.
       </p>
       <button
-        className="rounded-md border border-atlas-border px-4 py-2 text-sm hover:bg-atlas-panel"
+        className="rounded-md border border-brodus-border px-4 py-2 text-sm hover:bg-brodus-panel"
         onClick={() => reset()}
         type="button"
       >

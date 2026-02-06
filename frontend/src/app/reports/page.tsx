@@ -106,12 +106,12 @@ export default function ReportsPage() {
       <header className="flex flex-wrap items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl font-semibold">Research Reports</h1>
-          <p className="text-sm text-atlas-muted">
+          <p className="text-sm text-brodus-muted">
             Markdown reports from the research workspace.
           </p>
         </div>
         <Link
-          className="rounded-md border border-atlas-border px-3 py-2 text-xs uppercase tracking-wide text-atlas-muted hover:bg-atlas-panel"
+          className="rounded-md border border-brodus-border px-3 py-2 text-xs uppercase tracking-wide text-brodus-muted hover:bg-brodus-panel"
           href="/"
         >
           Back to Watchlist
@@ -120,15 +120,15 @@ export default function ReportsPage() {
 
       <div className="grid gap-6 lg:grid-cols-[260px_1fr]">
         <aside className="space-y-4">
-          <div className="rounded-lg border border-atlas-border bg-atlas-panel p-4">
-            <h2 className="text-xs font-semibold uppercase tracking-wide text-atlas-muted">
+          <div className="rounded-lg border border-brodus-border bg-brodus-panel p-4">
+            <h2 className="text-xs font-semibold uppercase tracking-wide text-brodus-muted">
               Reports
             </h2>
             <div className="mt-3 space-y-2 text-sm">
               {loading ? (
-                <p className="text-atlas-muted">Loading reports...</p>
+                <p className="text-brodus-muted">Loading reports...</p>
               ) : reports.length === 0 ? (
-                <p className="text-atlas-muted">No reports found.</p>
+                <p className="text-brodus-muted">No reports found.</p>
               ) : (
                 reports.map((report) => {
                   const isActive = selected?.fileName === report.fileName;
@@ -136,8 +136,8 @@ export default function ReportsPage() {
                     <Link
                       className={`block rounded-md px-2 py-1 ${
                         isActive
-                          ? "bg-atlas-background text-atlas-text"
-                          : "text-atlas-muted hover:bg-atlas-background"
+                          ? "bg-brodus-background text-brodus-text"
+                          : "text-brodus-muted hover:bg-brodus-background"
                       }`}
                       href={`/reports?report=${encodeURIComponent(
                         report.fileName
@@ -154,14 +154,14 @@ export default function ReportsPage() {
           </div>
 
           {toc.length > 0 ? (
-            <div className="rounded-lg border border-atlas-border bg-atlas-panel p-4">
-              <h2 className="text-xs font-semibold uppercase tracking-wide text-atlas-muted">
+            <div className="rounded-lg border border-brodus-border bg-brodus-panel p-4">
+              <h2 className="text-xs font-semibold uppercase tracking-wide text-brodus-muted">
                 Contents
               </h2>
-              <div className="mt-3 space-y-2 text-xs text-atlas-muted">
+              <div className="mt-3 space-y-2 text-xs text-brodus-muted">
                 {toc.map((entry) => (
                   <a
-                    className={`block hover:text-atlas-text ${
+                    className={`block hover:text-brodus-text ${
                       entry.level === 2 ? "ml-3" : entry.level === 3 ? "ml-6" : ""
                     }`}
                     href={`#${entry.id}`}
@@ -175,14 +175,14 @@ export default function ReportsPage() {
           ) : null}
         </aside>
 
-        <section className="rounded-lg border border-atlas-border bg-atlas-panel p-6">
+        <section className="rounded-lg border border-brodus-border bg-brodus-panel p-6">
           {error ? (
             <p className="text-sm text-red-300">{error}</p>
           ) : loading ? (
-            <p className="text-sm text-atlas-muted">Loading report...</p>
+            <p className="text-sm text-brodus-muted">Loading report...</p>
           ) : selected ? (
             <>
-              <h2 className="text-sm font-semibold uppercase tracking-wide text-atlas-muted">
+              <h2 className="text-sm font-semibold uppercase tracking-wide text-brodus-muted">
                 {selected.label}
               </h2>
               <article className="mt-6 space-y-4 text-sm leading-relaxed">
@@ -220,12 +220,12 @@ export default function ReportsPage() {
                       <ol className="list-decimal pl-6">{children}</ol>
                     ),
                     blockquote: ({ children }) => (
-                      <blockquote className="border-l-2 border-atlas-border pl-4 text-atlas-muted">
+                      <blockquote className="border-l-2 border-brodus-border pl-4 text-brodus-muted">
                         {children}
                       </blockquote>
                     ),
                     code: ({ children }) => (
-                      <code className="rounded bg-atlas-background px-1 py-0.5 text-xs text-atlas-text">
+                      <code className="rounded bg-brodus-background px-1 py-0.5 text-xs text-brodus-text">
                         {children}
                       </code>
                     ),
@@ -236,7 +236,7 @@ export default function ReportsPage() {
               </article>
             </>
           ) : (
-            <p className="text-sm text-atlas-muted">
+            <p className="text-sm text-brodus-muted">
               No markdown reports found in `research/reports`.
             </p>
           )}
