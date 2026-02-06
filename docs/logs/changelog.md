@@ -66,3 +66,9 @@ All code, structural, and configuration changes made by agents. Append-only.
 - **Branch:** `refactor/rename-brodus` (from main)
 - **Commit strategy:** 6 atomic commits (theme tokens, package identity, cursor rules, docs, config, lockfile)
 - **Decision:** CLAUDE.md and AGENTS.md rename is part of this brief (Codex handles it on the branch). GitHub remote URL and disk directory name are out of scope — user handles those separately.
+
+### Completed: Brodus Rename Pass
+- Updated Tailwind theme tokens to `brodus-*` and replaced all frontend class references.
+- Renamed frontend package identity, updated page title, and refreshed cursor rule file.
+- Updated documentation headers/body references to Brodus and adjusted config references.
+- Ran `npm install` and verified `npm run build` succeeds.
