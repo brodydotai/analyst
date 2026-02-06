@@ -1,4 +1,4 @@
--- Atlas: Market Intelligence Platform
+-- Brodus: Personal Operating System
 -- Initial schema migration
 
 -- Extensions
