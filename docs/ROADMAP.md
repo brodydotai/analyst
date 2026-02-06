@@ -1,5 +1,13 @@
 # Atlas — Development Roadmap
 
+## Authority and Scope
+
+This document is the phase-by-phase build plan for Atlas. It is guidance for execution and review, but it does not override higher‑priority instructions.
+
+- **Highest authority:** `AGENTS.md` (agent behavior) and `CLAUDE.md` (architecture and constraints)
+- **This roadmap:** task directives, phase sequencing, and audit criteria
+- **If there is any conflict:** follow `AGENTS.md` and `CLAUDE.md`
+
 ## How to Read This Document
 
 This roadmap is the operating contract between three roles:
@@ -9,6 +17,18 @@ This roadmap is the operating contract between three roles:
 - **Claude agent** (reviewer) — audits code, runs debugging checks, approves merges
 
 Each phase contains **directives** (instructions to Codex), **audit gates** (checks run by Claude), and **analyst recommendations** (where Codex is expected to propose additions from a senior investment analyst perspective).
+
+---
+
+## Next Steps (Current)
+
+- **Frontend alignment completed:** `frontend/` rebuilt as Next.js 15 + TypeScript + Tailwind with watchlist dashboard UI.
+- **Immediate backend dependencies:** finish Phase 1–3 API endpoints so the UI can load data and generate reports.
+- **Suggested execution order:**
+  1. Phase 1 — watchlist schema + CRUD API (unblocks `/api/python/watchlist/*`)
+  2. Phase 2 — enrichment API (fills metrics + links for dashboard rows)
+  3. Phase 3 — report generation API (powers report modal + 24h summary)
+  4. Return to Phase 4 UX polish (sparklines / heat indicators) after backend parity
 
 ---
 
@@ -268,7 +288,7 @@ Semantic search across all documents, and UX polish.
 
 ## Standing Directives (Apply to All Phases)
 
-These rules apply to every phase. Codex must follow them. Claude enforces them at every audit gate.
+These directives restate the core rules from `CLAUDE.md` and `AGENTS.md` for convenience. If anything here conflicts with those files, the higher‑authority files take precedence.
 
 ### Code Quality
 
