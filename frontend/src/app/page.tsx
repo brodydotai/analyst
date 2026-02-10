@@ -1,16 +1,13 @@
 "use client";
 
-import Link from "next/link";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import EmptyState from "@/components/EmptyState";
 import ErrorBanner from "@/components/ErrorBanner";
 import ReportModal from "@/components/ReportModal";
+import WatchlistHeader from "@/components/watchlist/WatchlistHeader";
+import AddAssetForm from "@/components/watchlist/AddAssetForm";
+import CategorySection from "@/components/watchlist/CategorySection";
 import { fetchJson } from "@/lib/api";
-import {
-  formatCurrency,
-  formatMultiple,
-  formatPercent,
-} from "@/lib/format";
 import type {
   WatchlistCategory,
   WatchlistCategoryWithItems,
@@ -35,24 +32,15 @@ const defaultReportState: ReportState = {
   error: null,
 };
 
-const valueColor = (value?: number) => {
-  if (value === null || value === undefined) {
-    return "text-brodus-muted";
-  }
-  return value >= 0 ? "text-brodus-green" : "text-brodus-red";
-};
-
 const normalizeWatchlist = (
   response: WatchlistResponse
 ): WatchlistCategoryWithItems[] => {
   if (response.categories && response.categories.length > 0) {
     return response.categories;
   }
-
   if (!response.items || response.items.length === 0) {
     return [];
   }
-
   return [
     {
       id: "uncategorized",
@@ -64,16 +52,12 @@ const normalizeWatchlist = (
 };
 
 export default function WatchlistPage() {
-  const [categories, setCategories] = useState<WatchlistCategoryWithItems[]>(
-    []
-  );
+  const [categories, setCategories] = useState<WatchlistCategoryWithItems[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [expanded, setExpanded] = useState<Record<string, boolean>>({});
   const [editMode, setEditMode] = useState(false);
-  const [reportState, setReportState] = useState<ReportState>(
-    defaultReportState
-  );
+  const [reportState, setReportState] = useState<ReportState>(defaultReportState);
   const [newTicker, setNewTicker] = useState("");
   const [newName, setNewName] = useState("");
   const [newCategoryId, setNewCategoryId] = useState<string | null>(null);
@@ -90,9 +74,7 @@ export default function WatchlistPage() {
       const normalized = normalizeWatchlist(response);
       setCategories(normalized);
       setExpanded((current) => {
-        if (normalized.length === 0) {
-          return current;
-        }
+        if (normalized.length === 0) return current;
         const next = { ...current };
         normalized.forEach((category) => {
           if (next[category.id] === undefined) {
@@ -103,9 +85,7 @@ export default function WatchlistPage() {
       });
     } catch (loadError) {
       const message =
-        loadError instanceof Error
-          ? loadError.message
-          : "Failed to load watchlist.";
+        loadError instanceof Error ? loadError.message : "Failed to load watchlist.";
       setError(message);
     } finally {
       setLoading(false);
@@ -131,9 +111,7 @@ export default function WatchlistPage() {
   }, [categories]);
 
   const handleAddCategory = async () => {
-    if (!newCategoryName.trim()) {
-      return;
-    }
+    if (!newCategoryName.trim()) return;
     setSaving(true);
     try {
       await fetchJson<WatchlistCategory>("/api/python/watchlist/categories", {
@@ -144,9 +122,7 @@ export default function WatchlistPage() {
       await loadWatchlist();
     } catch (createError) {
       const message =
-        createError instanceof Error
-          ? createError.message
-          : "Failed to create category.";
+        createError instanceof Error ? createError.message : "Failed to create category.";
       setError(message);
     } finally {
       setSaving(false);
@@ -174,9 +150,7 @@ export default function WatchlistPage() {
       await loadWatchlist();
     } catch (createError) {
       const message =
-        createError instanceof Error
-          ? createError.message
-          : "Failed to add asset.";
+        createError instanceof Error ? createError.message : "Failed to add asset.";
       setError(message);
     } finally {
       setSaving(false);
@@ -184,66 +158,49 @@ export default function WatchlistPage() {
   };
 
   const handleDeleteItem = async (itemId: string) => {
-    if (!confirm("Delete this asset from the watchlist?")) {
-      return;
-    }
+    if (!confirm("Delete this asset from the watchlist?")) return;
     setSaving(true);
     try {
-      await fetchJson(`/api/python/watchlist/${itemId}`, {
-        method: "DELETE",
-      });
+      await fetchJson(`/api/python/watchlist/${itemId}`, { method: "DELETE" });
       await loadWatchlist();
     } catch (deleteError) {
       const message =
-        deleteError instanceof Error
-          ? deleteError.message
-          : "Failed to delete asset.";
+        deleteError instanceof Error ? deleteError.message : "Failed to delete asset.";
       setError(message);
     } finally {
       setSaving(false);
     }
   };
 
-  const handleMoveItem = async (
-    item: WatchlistItem,
-    direction: "up" | "down"
-  ) => {
+  const handleMoveItem = async (item: WatchlistItem, direction: "up" | "down") => {
     const category = categories.find((entry) => entry.id === item.category_id);
-    if (!category) {
-      return;
-    }
+    if (!category) return;
     const index = category.items.findIndex((entry) => entry.id === item.id);
     const swapIndex = direction === "up" ? index - 1 : index + 1;
-    if (swapIndex < 0 || swapIndex >= category.items.length) {
-      return;
-    }
+    if (swapIndex < 0 || swapIndex >= category.items.length) return;
     const swapped = category.items[swapIndex];
-    const updated = [
-      { id: item.id, sort_order: swapped.sort_order },
-      { id: swapped.id, sort_order: item.sort_order },
-    ];
     setSaving(true);
     try {
       await fetchJson("/api/python/watchlist/reorder", {
         method: "PUT",
-        body: { items: updated },
+        body: {
+          items: [
+            { id: item.id, sort_order: swapped.sort_order },
+            { id: swapped.id, sort_order: item.sort_order },
+          ],
+        },
       });
       await loadWatchlist();
     } catch (reorderError) {
       const message =
-        reorderError instanceof Error
-          ? reorderError.message
-          : "Failed to reorder assets.";
+        reorderError instanceof Error ? reorderError.message : "Failed to reorder.";
       setError(message);
     } finally {
       setSaving(false);
     }
   };
 
-  const handleMoveCategory = async (
-    item: WatchlistItem,
-    categoryId: string
-  ) => {
+  const handleMoveCategory = async (item: WatchlistItem, categoryId: string) => {
     setSaving(true);
     try {
       await fetchJson(`/api/python/watchlist/${item.id}`, {
@@ -253,9 +210,7 @@ export default function WatchlistPage() {
       await loadWatchlist();
     } catch (moveError) {
       const message =
-        moveError instanceof Error
-          ? moveError.message
-          : "Failed to move asset.";
+        moveError instanceof Error ? moveError.message : "Failed to move asset.";
       setError(message);
     } finally {
       setSaving(false);
@@ -263,184 +218,67 @@ export default function WatchlistPage() {
   };
 
   const openReport = async (ticker: string) => {
-    setReportState({
-      open: true,
-      title: `${ticker} Report`,
-      content: null,
-      loading: true,
-      error: null,
-    });
+    setReportState({ open: true, title: `${ticker} Report`, content: null, loading: true, error: null });
     try {
       const response = await fetchJson<AssetReportResponse>(
         "/api/python/reports/asset",
-        {
-          method: "POST",
-          body: { ticker },
-        }
+        { method: "POST", body: { ticker } }
       );
-      setReportState({
-        open: true,
-        title: `${ticker} Report`,
-        content: response.report,
-        loading: false,
-        error: null,
-      });
+      setReportState({ open: true, title: `${ticker} Report`, content: response.report, loading: false, error: null });
     } catch (reportError) {
       const message =
-        reportError instanceof Error
-          ? reportError.message
-          : "Failed to generate report.";
-      setReportState({
-        open: true,
-        title: `${ticker} Report`,
-        content: null,
-        loading: false,
-        error: message,
-      });
+        reportError instanceof Error ? reportError.message : "Failed to generate report.";
+      setReportState({ open: true, title: `${ticker} Report`, content: null, loading: false, error: message });
     }
   };
 
   const openDailyBriefing = async () => {
-    setReportState({
-      open: true,
-      title: "24h Summary",
-      content: null,
-      loading: true,
-      error: null,
-    });
+    setReportState({ open: true, title: "24h Summary", content: null, loading: true, error: null });
     try {
       const response = await fetchJson<DailyReportResponse>(
         "/api/python/reports/daily",
         { method: "POST" }
       );
-      setReportState({
-        open: true,
-        title: "24h Summary",
-        content: response.report,
-        loading: false,
-        error: null,
-      });
+      setReportState({ open: true, title: "24h Summary", content: response.report, loading: false, error: null });
     } catch (reportError) {
       const message =
-        reportError instanceof Error
-          ? reportError.message
-          : "Failed to generate daily summary.";
-      setReportState({
-        open: true,
-        title: "24h Summary",
-        content: null,
-        loading: false,
-        error: message,
-      });
+        reportError instanceof Error ? reportError.message : "Failed to generate summary.";
+      setReportState({ open: true, title: "24h Summary", content: null, loading: false, error: message });
     }
   };
 
   return (
-    <div className="mx-auto flex min-h-screen max-w-6xl flex-col gap-6 px-6 py-8">
-      <header className="flex flex-wrap items-center justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-semibold">Watchlist</h1>
-          <p className="text-sm text-brodus-muted">
-            Live overview of your tracked assets.
-          </p>
-        </div>
-        <div className="flex flex-wrap items-center gap-3">
-          <Link
-            className="rounded-md border border-brodus-border px-3 py-2 text-xs uppercase tracking-wide text-brodus-muted hover:bg-brodus-panel"
-            href="/reports"
-          >
-            Research Reports
-          </Link>
-          <button
-            className="rounded-md border border-brodus-border px-3 py-2 text-xs uppercase tracking-wide text-brodus-muted hover:bg-brodus-panel"
-            onClick={() => setEditMode((current) => !current)}
-            type="button"
-          >
-            {editMode ? "Done" : "Edit"}
-          </button>
-          <button
-            className="rounded-md border border-brodus-border px-3 py-2 text-xs uppercase tracking-wide text-brodus-muted hover:bg-brodus-panel"
-            onClick={() => void loadWatchlist()}
-            type="button"
-          >
-            Refresh
-          </button>
-          <button
-            className="rounded-md border border-brodus-border bg-brodus-panel px-4 py-2 text-xs uppercase tracking-wide text-brodus-text hover:bg-brodus-background"
-            onClick={() => void openDailyBriefing()}
-            type="button"
-          >
-            24h Summary
-          </button>
-        </div>
-      </header>
+    <div className="flex flex-col gap-4">
+      <WatchlistHeader
+        editMode={editMode}
+        onToggleEdit={() => setEditMode((c) => !c)}
+        onRefresh={() => void loadWatchlist()}
+        onDailySummary={() => void openDailyBriefing()}
+      />
 
       {error ? <ErrorBanner message={error} onRetry={loadWatchlist} /> : null}
 
-      <section className="rounded-lg border border-brodus-border bg-brodus-panel p-5">
-        <h2 className="text-sm font-semibold uppercase tracking-wide text-brodus-muted">
-          Add Asset
-        </h2>
-        <div className="mt-4 grid gap-3 md:grid-cols-[120px_1fr_200px_120px]">
-          <input
-            className="rounded-md border border-brodus-border bg-brodus-background px-3 py-2 text-sm text-brodus-text"
-            placeholder="Ticker"
-            value={newTicker}
-            onChange={(event) => setNewTicker(event.target.value)}
-          />
-          <input
-            className="rounded-md border border-brodus-border bg-brodus-background px-3 py-2 text-sm text-brodus-text"
-            placeholder="Company name"
-            value={newName}
-            onChange={(event) => setNewName(event.target.value)}
-          />
-          <select
-            className="rounded-md border border-brodus-border bg-brodus-background px-3 py-2 text-sm text-brodus-text"
-            value={newCategoryId ?? ""}
-            onChange={(event) =>
-              setNewCategoryId(event.target.value || null)
-            }
-          >
-            <option value="">Uncategorized</option>
-            {categoryOptions.map((category) => (
-              <option key={category.id} value={category.id}>
-                {category.name}
-              </option>
-            ))}
-          </select>
-          <button
-            className="rounded-md border border-brodus-border bg-brodus-background px-3 py-2 text-xs uppercase tracking-wide text-brodus-text hover:bg-brodus-border"
-            onClick={() => void handleAddAsset()}
-            type="button"
-            disabled={saving}
-          >
-            {saving ? "Saving..." : "Add"}
-          </button>
-        </div>
-        <div className="mt-4 flex flex-wrap items-center gap-3">
-          <input
-            className="rounded-md border border-brodus-border bg-brodus-background px-3 py-2 text-sm text-brodus-text"
-            placeholder="New category"
-            value={newCategoryName}
-            onChange={(event) => setNewCategoryName(event.target.value)}
-          />
-          <button
-            className="rounded-md border border-brodus-border px-3 py-2 text-xs uppercase tracking-wide text-brodus-muted hover:bg-brodus-background"
-            onClick={() => void handleAddCategory()}
-            type="button"
-            disabled={saving}
-          >
-            {saving ? "Saving..." : "Add Category"}
-          </button>
-        </div>
-      </section>
+      <AddAssetForm
+        newTicker={newTicker}
+        newName={newName}
+        newCategoryId={newCategoryId}
+        newCategoryName={newCategoryName}
+        categories={categoryOptions}
+        saving={saving}
+        onTickerChange={setNewTicker}
+        onNameChange={setNewName}
+        onCategoryIdChange={setNewCategoryId}
+        onCategoryNameChange={setNewCategoryName}
+        onAddAsset={() => void handleAddAsset()}
+        onAddCategory={() => void handleAddCategory()}
+      />
 
       {loading ? (
-        <div className="space-y-3">
+        <div className="space-y-2">
           {Array.from({ length: 6 }).map((_, index) => (
             <div
               key={`skeleton-${index}`}
-              className="h-12 w-full animate-pulse rounded bg-brodus-panel"
+              className="h-9 w-full animate-pulse rounded bg-brodus-panel"
             />
           ))}
         </div>
@@ -454,157 +292,27 @@ export default function WatchlistPage() {
       ) : null}
 
       {!loading && categories.length > 0 ? (
-        <div className="space-y-6">
-          {categories.map((category) => {
-            const isExpanded =
-              expanded[category.id] ?? category.items.length > 0;
-            return (
-              <section
-                key={category.id}
-                className="rounded-lg border border-brodus-border bg-brodus-panel"
-              >
-                <div className="flex items-center justify-between border-b border-brodus-border px-5 py-4">
-                  <div className="flex items-center gap-3">
-                    <button
-                      className="rounded-md border border-brodus-border px-2 py-1 text-xs uppercase tracking-wide text-brodus-muted hover:bg-brodus-background"
-                      onClick={() =>
-                        setExpanded((current) => ({
-                          ...current,
-                          [category.id]: !isExpanded,
-                        }))
-                      }
-                      type="button"
-                    >
-                      {isExpanded ? "Hide" : "Show"}
-                    </button>
-                    <h3 className="text-base font-semibold">{category.name}</h3>
-                    <span className="text-xs text-brodus-muted">
-                      {category.items.length} assets
-                    </span>
-                  </div>
-                </div>
-                {isExpanded ? (
-                  <div className="px-5 py-4">
-                    <div className="grid grid-cols-[110px_1.3fr_110px_90px_110px_80px_80px_80px_140px] gap-3 border-b border-brodus-border pb-3 text-xs uppercase tracking-wide text-brodus-muted">
-                      <span>Ticker</span>
-                      <span>Name</span>
-                      <span>Price</span>
-                      <span>P/E</span>
-                      <span>EV/EBITDA</span>
-                      <span>1D</span>
-                      <span>1W</span>
-                      <span>1M</span>
-                      <span>Actions</span>
-                    </div>
-                    <div className="mt-3 space-y-2">
-                      {category.items.map((item) => (
-                        <div
-                          key={item.id}
-                          className="grid grid-cols-[110px_1.3fr_110px_90px_110px_80px_80px_80px_140px] items-center gap-3 rounded-md border border-transparent px-2 py-2 text-sm hover:border-brodus-border"
-                        >
-                          <span className="font-semibold">{item.ticker}</span>
-                          <span className="text-brodus-muted">{item.name}</span>
-                          <span>{formatCurrency(item.metrics?.price)}</span>
-                          <span>{formatMultiple(item.metrics?.pe_ratio)}</span>
-                          <span>{formatMultiple(item.metrics?.ev_ebitda)}</span>
-                          <span className={valueColor(item.metrics?.change_1d)}>
-                            {formatPercent(item.metrics?.change_1d)}
-                          </span>
-                          <span className={valueColor(item.metrics?.change_1w)}>
-                            {formatPercent(item.metrics?.change_1w)}
-                          </span>
-                          <span className={valueColor(item.metrics?.change_1m)}>
-                            {formatPercent(item.metrics?.change_1m)}
-                          </span>
-                          <div className="flex flex-wrap items-center gap-2 text-xs">
-                            {item.links?.tradingview ? (
-                              <a
-                                className="rounded-md border border-brodus-border px-2 py-1 text-brodus-muted hover:bg-brodus-background"
-                                href={item.links.tradingview}
-                                rel="noreferrer"
-                                target="_blank"
-                              >
-                                TV
-                              </a>
-                            ) : null}
-                            {item.links?.edgar ? (
-                              <a
-                                className="rounded-md border border-brodus-border px-2 py-1 text-brodus-muted hover:bg-brodus-background"
-                                href={item.links.edgar}
-                                rel="noreferrer"
-                                target="_blank"
-                              >
-                                EDGAR
-                              </a>
-                            ) : null}
-                            <button
-                              className="rounded-md border border-brodus-border px-2 py-1 text-brodus-muted hover:bg-brodus-background"
-                              onClick={() => void openReport(item.ticker)}
-                              type="button"
-                            >
-                              Report
-                            </button>
-                          </div>
-                          {editMode ? (
-                            <div className="col-span-full mt-2 flex flex-wrap items-center gap-2 text-xs text-brodus-muted">
-                              <button
-                                className="rounded-md border border-brodus-border px-2 py-1 hover:bg-brodus-background"
-                                onClick={() => void handleMoveItem(item, "up")}
-                                type="button"
-                                disabled={saving}
-                              >
-                                Move Up
-                              </button>
-                              <button
-                                className="rounded-md border border-brodus-border px-2 py-1 hover:bg-brodus-background"
-                                onClick={() =>
-                                  void handleMoveItem(item, "down")
-                                }
-                                type="button"
-                                disabled={saving}
-                              >
-                                Move Down
-                              </button>
-                              <select
-                                className="rounded-md border border-brodus-border bg-brodus-background px-2 py-1 text-xs text-brodus-text"
-                                value={item.category_id ?? ""}
-                                onChange={(event) =>
-                                  void handleMoveCategory(
-                                    item,
-                                    event.target.value
-                                  )
-                                }
-                              >
-                                <option value="">Uncategorized</option>
-                                {categoryOptions.map((option) => (
-                                  <option key={option.id} value={option.id}>
-                                    {option.name}
-                                  </option>
-                                ))}
-                              </select>
-                              <button
-                                className="rounded-md border border-red-500/50 px-2 py-1 text-red-300 hover:bg-red-500/10"
-                                onClick={() => void handleDeleteItem(item.id)}
-                                type="button"
-                                disabled={saving}
-                              >
-                                Delete
-                              </button>
-                            </div>
-                          ) : null}
-                        </div>
-                      ))}
-                      {category.items.length === 0 ? (
-                        <p className="text-sm text-brodus-muted">
-                          No assets in this category.
-                        </p>
-                      ) : null}
-                    </div>
-                  </div>
-                ) : null}
-              </section>
-            );
-          })}
+        <div className="space-y-4">
+          {categories.map((category) => (
+            <CategorySection
+              key={category.id}
+              category={category}
+              expanded={expanded[category.id] ?? category.items.length > 0}
+              editMode={editMode}
+              saving={saving}
+              allCategories={categoryOptions}
+              onToggleExpand={() =>
+                setExpanded((current) => ({
+                  ...current,
+                  [category.id]: !(current[category.id] ?? category.items.length > 0),
+                }))
+              }
+              onOpenReport={(ticker) => void openReport(ticker)}
+              onMoveItem={(item, dir) => void handleMoveItem(item, dir)}
+              onMoveCategory={(item, catId) => void handleMoveCategory(item, catId)}
+              onDeleteItem={(id) => void handleDeleteItem(id)}
+            />
+          ))}
         </div>
       ) : null}
 
@@ -619,7 +327,7 @@ export default function WatchlistPage() {
 
       {!loading && categories.length > 0 ? (
         <footer className="text-xs text-brodus-muted">
-          {allItems.length} assets tracked across {categories.length} categories.
+          {allItems.length} assets across {categories.length} categories
         </footer>
       ) : null}
     </div>

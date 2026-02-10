@@ -1,10 +1,11 @@
 "use client";
 
-import Link from "next/link";
-import ReactMarkdown from "react-markdown";
-import remarkGfm from "remark-gfm";
 import { useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
+import PageHeader from "@/components/layout/PageHeader";
+import ReportList from "@/components/research/ReportList";
+import ReportToc from "@/components/research/ReportToc";
+import ReportViewer from "@/components/research/ReportViewer";
 
 type ReportLink = {
   fileName: string;
@@ -40,13 +41,9 @@ const buildToc = (content: string): TocEntry[] => {
       inCodeBlock = !inCodeBlock;
       return;
     }
-    if (inCodeBlock) {
-      return;
-    }
+    if (inCodeBlock) return;
     const match = /^(#{1,3})\s+(.*)$/.exec(line);
-    if (!match) {
-      return;
-    }
+    if (!match) return;
     const level = match[1].length;
     const text = match[2].trim();
     const id = slugify(text);
@@ -102,143 +99,42 @@ export default function ReportsPage() {
   }, [content]);
 
   return (
-    <div className="mx-auto flex min-h-screen max-w-6xl flex-col gap-6 px-6 py-8">
-      <header className="flex flex-wrap items-center justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-semibold">Research Reports</h1>
-          <p className="text-sm text-brodus-muted">
-            Markdown reports from the research workspace.
-          </p>
-        </div>
-        <Link
-          className="rounded-md border border-brodus-border px-3 py-2 text-xs uppercase tracking-wide text-brodus-muted hover:bg-brodus-panel"
-          href="/"
-        >
-          Back to Watchlist
-        </Link>
-      </header>
+    <div className="flex flex-col gap-4">
+      <PageHeader
+        title="Research"
+        subtitle="Investment reports and analysis"
+      />
 
-      <div className="grid gap-6 lg:grid-cols-[260px_1fr]">
-        <aside className="space-y-4">
-          <div className="rounded-lg border border-brodus-border bg-brodus-panel p-4">
-            <h2 className="text-xs font-semibold uppercase tracking-wide text-brodus-muted">
-              Reports
-            </h2>
-            <div className="mt-3 space-y-2 text-sm">
-              {loading ? (
-                <p className="text-brodus-muted">Loading reports...</p>
-              ) : reports.length === 0 ? (
-                <p className="text-brodus-muted">No reports found.</p>
-              ) : (
-                reports.map((report) => {
-                  const isActive = selected?.fileName === report.fileName;
-                  return (
-                    <Link
-                      className={`block rounded-md px-2 py-1 ${
-                        isActive
-                          ? "bg-brodus-background text-brodus-text"
-                          : "text-brodus-muted hover:bg-brodus-background"
-                      }`}
-                      href={`/reports?report=${encodeURIComponent(
-                        report.fileName
-                      )}`}
-                      key={report.fileName}
-                      prefetch={false}
-                    >
-                      {report.label}
-                    </Link>
-                  );
-                })
-              )}
-            </div>
-          </div>
-
-          {toc.length > 0 ? (
-            <div className="rounded-lg border border-brodus-border bg-brodus-panel p-4">
-              <h2 className="text-xs font-semibold uppercase tracking-wide text-brodus-muted">
-                Contents
-              </h2>
-              <div className="mt-3 space-y-2 text-xs text-brodus-muted">
-                {toc.map((entry) => (
-                  <a
-                    className={`block hover:text-brodus-text ${
-                      entry.level === 2 ? "ml-3" : entry.level === 3 ? "ml-6" : ""
-                    }`}
-                    href={`#${entry.id}`}
-                    key={`${entry.id}-${entry.level}`}
-                  >
-                    {entry.text}
-                  </a>
-                ))}
-              </div>
-            </div>
-          ) : null}
+      <div className="grid gap-4 lg:grid-cols-[240px_1fr]">
+        <aside className="space-y-3">
+          <ReportList
+            reports={reports}
+            selectedFileName={selected?.fileName ?? null}
+            loading={loading}
+          />
+          <ReportToc entries={toc} />
         </aside>
 
-        <section className="rounded-lg border border-brodus-border bg-brodus-panel p-6">
+        <section>
           {error ? (
-            <p className="text-sm text-red-300">{error}</p>
+            <div className="rounded-lg border border-brodus-danger/40 bg-brodus-danger/10 p-4 text-sm text-red-300">
+              {error}
+            </div>
           ) : loading ? (
-            <p className="text-sm text-brodus-muted">Loading report...</p>
-          ) : selected ? (
-            <>
-              <h2 className="text-sm font-semibold uppercase tracking-wide text-brodus-muted">
-                {selected.label}
-              </h2>
-              <article className="mt-6 space-y-4 text-sm leading-relaxed">
-                <ReactMarkdown
-                  remarkPlugins={[remarkGfm]}
-                  components={{
-                    h1: ({ children }) => (
-                      <h1
-                        className="text-2xl font-semibold"
-                        id={slugify(String(children ?? ""))}
-                      >
-                        {children}
-                      </h1>
-                    ),
-                    h2: ({ children }) => (
-                      <h2
-                        className="text-xl font-semibold"
-                        id={slugify(String(children ?? ""))}
-                      >
-                        {children}
-                      </h2>
-                    ),
-                    h3: ({ children }) => (
-                      <h3
-                        className="text-lg font-semibold"
-                        id={slugify(String(children ?? ""))}
-                      >
-                        {children}
-                      </h3>
-                    ),
-                    ul: ({ children }) => (
-                      <ul className="list-disc pl-6">{children}</ul>
-                    ),
-                    ol: ({ children }) => (
-                      <ol className="list-decimal pl-6">{children}</ol>
-                    ),
-                    blockquote: ({ children }) => (
-                      <blockquote className="border-l-2 border-brodus-border pl-4 text-brodus-muted">
-                        {children}
-                      </blockquote>
-                    ),
-                    code: ({ children }) => (
-                      <code className="rounded bg-brodus-background px-1 py-0.5 text-xs text-brodus-text">
-                        {children}
-                      </code>
-                    ),
-                  }}
-                >
-                  {content}
-                </ReactMarkdown>
-              </article>
-            </>
+            <div className="space-y-2">
+              {Array.from({ length: 8 }).map((_, index) => (
+                <div
+                  key={`skeleton-${index}`}
+                  className="h-4 w-full animate-pulse rounded bg-brodus-panel"
+                />
+              ))}
+            </div>
+          ) : selected && content ? (
+            <ReportViewer content={content} label={selected.label} />
           ) : (
-            <p className="text-sm text-brodus-muted">
-              No markdown reports found in `research/reports`.
-            </p>
+            <div className="rounded-lg border border-brodus-border bg-brodus-panel p-5 text-sm text-brodus-muted">
+              No reports found in the research workspace.
+            </div>
           )}
         </section>
       </div>

@@ -1,5 +1,8 @@
 import "./globals.css";
 import type { Metadata } from "next";
+import { SidebarProvider } from "@/components/layout/SidebarContext";
+import Sidebar from "@/components/layout/Sidebar";
+import MainContent from "@/components/layout/MainContent";
 
 export const metadata: Metadata = {
   title: "Brodus",
@@ -14,7 +17,10 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className="min-h-screen bg-brodus-background text-brodus-text">
-        {children}
+        <SidebarProvider>
+          <Sidebar />
+          <MainContent>{children}</MainContent>
+        </SidebarProvider>
       </body>
     </html>
   );

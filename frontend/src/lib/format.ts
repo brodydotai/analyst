@@ -33,3 +33,26 @@ export const formatMultiple = (value?: number) => {
   }
   return `${value.toFixed(2)}x`;
 };
+
+export const formatPnl = (value?: number) => {
+  if (value === null || value === undefined || Number.isNaN(value)) {
+    return "—";
+  }
+  const prefix = value >= 0 ? "+" : "";
+  return `${prefix}${formatCurrency(value)}`;
+};
+
+const dateFormatter = new Intl.DateTimeFormat("en-US", {
+  year: "numeric",
+  month: "short",
+  day: "numeric",
+});
+
+export const formatDate = (value?: string) => {
+  if (!value) return "—";
+  try {
+    return dateFormatter.format(new Date(value));
+  } catch {
+    return value;
+  }
+};
