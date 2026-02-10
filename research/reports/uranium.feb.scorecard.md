@@ -1,0 +1,154 @@
+# Prompt Compliance Scorecard
+## Uranium [U3O8]
+
+**Prompt Used:** `uranium-and-nuclear-fuel.prompt.md`
+**Verification Date:** February 10, 2026
+**Report Word Count:** 7,366
+
+---
+
+## Overall Compliance Score: 78.8% — Grade: C
+
+| Metric | Score |
+|--------|-------|
+| Section Coverage | 9/14 (64%) |
+| Element Coverage | 38/46 (83%) |
+| Structural Requirements | 4/4 (100%) |
+| **Weighted Overall** | **78.8%** |
+
+---
+
+## Section-by-Section Analysis
+
+### ❌ Section A: Foundational Synthesis — Fuel Classification & Strategic Importance
+**Coverage:** 0/1 elements (0%)
+
+### ✅ Section A1: Fuel Cycle Classification & Demand Profile
+**Coverage:** 4/4 elements (100%)
+
+| Element | Status | Confidence |
+|---------|--------|------------|
+| Mining & Milling | ✅ | HIGH |
+| Conversion | ✅ | HIGH |
+| Enrichment | ✅ | HIGH |
+| Fuel Fabrication | ✅ | HIGH |
+
+### ❌ Section A2: Investment Vehicle Landscape
+**Coverage:** 0/1 elements (0%)
+
+### ❌ Section B: Supply/Demand Fundamentals — The Nuclear Fuel Balance Sheet
+**Coverage:** 0/1 elements (0%)
+
+### ✅ Section B1: Supply Architecture
+**Coverage:** 3/3 elements (100%)
+
+| Element | Status | Confidence |
+|---------|--------|------------|
+| Primary mine production | ✅ | HIGH |
+| Secondary supply | ✅ | HIGH |
+| Conversion & enrichment capacity | ✅ | HIGH |
+
+### ✅ Section B2: Demand Decomposition
+**Coverage:** 4/5 elements (80%)
+
+| Element | Status | Confidence |
+|---------|--------|------------|
+| Existing reactor fleet | ✅ | HIGH |
+| New reactor construction | ✅ | HIGH |
+| SMR (Small Modular Reactor) demand | ❌ | LOW |
+| HALEU demand | ✅ | HIGH |
+| Contract vs. spot market | ✅ | HIGH |
+
+### ❌ Section B3: Inventory & Contracting Dynamics
+**Coverage:** 0/1 elements (0%)
+
+### ❌ Section C: Macro Regime & Policy Driver Analysis
+**Coverage:** 0/1 elements (0%)
+
+### ✅ Section C1: Energy Policy & Nuclear Renaissance
+**Coverage:** 2/4 elements (50%)
+
+| Element | Status | Confidence |
+|---------|--------|------------|
+| Pro-nuclear policy shifts | ✅ | MEDIUM |
+| COP28/29 commitments | ❌ | LOW |
+| IRA / ADVANCE Act impacts | ❌ | LOW |
+| AI/Data center demand | ✅ | HIGH |
+
+### ✅ Section C2: Geopolitical & Supply Chain Risk
+**Coverage:** 4/4 elements (100%)
+
+| Element | Status | Confidence |
+|---------|--------|------------|
+| Russia dependency | ✅ | HIGH |
+| Kazakhstan risk | ✅ | MEDIUM |
+| Western supply chain rebuilding | ✅ | HIGH |
+| Sanctions & trade policy | ✅ | MEDIUM |
+
+### ✅ Section C3: Technology & Reactor Evolution
+**Coverage:** 4/4 elements (100%)
+
+| Element | Status | Confidence |
+|---------|--------|------------|
+| Generation III+ fleet | ✅ | HIGH |
+| SMR deployment | ✅ | HIGH |
+| Advanced/Gen IV reactors | ✅ | HIGH |
+| Fusion timeline | ✅ | HIGH |
+
+### ✅ Section D: Financial Logic & Valuation
+**Coverage:** 6/6 elements (100%)
+
+| Element | Status | Confidence |
+|---------|--------|------------|
+| Marginal cost of production analysis | ✅ | HIGH |
+| Replacement cost analysis | ✅ | HIGH |
+| Contract price vs. spot price | ✅ | HIGH |
+| Historical price regime analysis | ✅ | HIGH |
+| Inventory-adjusted supply/demand model | ✅ | HIGH |
+| Positioning-based analysis | ✅ | HIGH |
+
+### ✅ Section E: Pattern Matching & IDP Flagging
+**Coverage:** 8/8 elements (100%)
+
+| Element | Status | Confidence |
+|---------|--------|------------|
+| Spot price rising while term contract price is flat | ✅ | MEDIUM |
+| Utility uncovered requirements increasing while inventories  | ✅ | MEDIUM |
+| Physical trust accumulation accelerating | ✅ | MEDIUM |
+| New reactor announcements exceeding construction starts | ✅ | MEDIUM |
+| Enrichment/conversion bottleneck tightening | ✅ | MEDIUM |
+| Russia sanctions escalation | ✅ | MEDIUM |
+| Mine production missing guidance | ✅ | MEDIUM |
+| AI/data center nuclear PPA announcements | ✅ | MEDIUM |
+
+### ✅ Section F: Investigation Tracks
+**Coverage:** 3/3 elements (100%)
+
+| Element | Status | Confidence |
+|---------|--------|------------|
+| Fuel cycle supply chain mapping | ✅ | HIGH |
+| Utility contracting cycle verification | ✅ | HIGH |
+| Reactor pipeline reality check | ✅ | HIGH |
+
+## Structural Requirements
+
+| Requirement | Required | Found |
+|-------------|----------|-------|
+| IDP (Interesting Data Point) Flagging | 📋 | ✅ |
+| Investigation Tracks | 📋 | ✅ |
+| Information Request | — | ❌ |
+| Valuation Framework | 📋 | ✅ |
+| Risk Assessment | 📋 | ✅ |
+
+---
+
+## Identified Gaps
+
+- **Section A (Foundational Synthesis — Fuel Classification & Strategic Importance):** Missing elements: 
+- **Section A2 (Investment Vehicle Landscape):** Missing elements: 
+- **Section B (Supply/Demand Fundamentals — The Nuclear Fuel Balance Sheet):** Missing elements: 
+- **Section B3 (Inventory & Contracting Dynamics):** Missing elements: 
+- **Section C (Macro Regime & Policy Driver Analysis):** Missing elements: 
+
+---
+*Generated by Prompt Compliance Verification Engine*

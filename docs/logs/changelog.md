@@ -72,3 +72,63 @@ All code, structural, and configuration changes made by agents. Append-only.
 - Renamed frontend package identity, updated page title, and refreshed cursor rule file.
 - Updated documentation headers/body references to Brodus and adjusted config references.
 - Ran `npm install` and verified `npm run build` succeeds.
+
+---
+
+## 2026-02-10
+
+### Completed: Frontend UX Overhaul — Bloomberg Terminal Aesthetic
+
+**Scope:** Complete UX overhaul of the Next.js frontend with Bloomberg terminal-style design, collapsible sidebar navigation, componentized architecture, and new Trade Journal feature.
+
+#### Design System Expansion
+- **File:** `frontend/tailwind.config.ts` — Added 5 new color tokens: `surface`, `hover`, `accent`, `success`, `danger`, `warning`. Added `font-sans` (Inter) and `font-mono` (JetBrains Mono) families. Added `text-2xs` size.
+- **File:** `frontend/src/app/globals.css` — Added Google Fonts import, thin dark scrollbar styling, focus ring utility, `.font-data` class for monospace numerals, `.value-positive`/`.value-negative` tinted classes, selection styling.
+- **File:** `frontend/DESIGN.md` — Created design reference document covering color palette, typography, spacing conventions, component patterns, value coloring, icon sizes, and layout specs.
+- **Dependency:** Installed `lucide-react` for icons.
+
+#### Layout + Sidebar Navigation
+- **Files created:**
+  - `frontend/src/components/layout/SidebarContext.tsx` — React context for sidebar collapsed/expanded state
+  - `frontend/src/components/layout/Sidebar.tsx` — Collapsible left sidebar (220px/56px) with nav items: Watchlist, Research, Journal. Active route highlighting via `usePathname()`.
+  - `frontend/src/components/layout/MainContent.tsx` — Responsive main content wrapper with sidebar margin transitions
+  - `frontend/src/components/layout/PageHeader.tsx` — Reusable page header with title, subtitle, and action slot
+- **File modified:** `frontend/src/app/layout.tsx` — Integrated SidebarProvider, Sidebar, and MainContent wrapper
+
+#### Watchlist Page Refactor
+- **Monolith broken into 5 components:**
+  - `frontend/src/components/watchlist/WatchlistHeader.tsx` — Page actions (Edit, Refresh, 24h Summary) using PageHeader
+  - `frontend/src/components/watchlist/AddAssetForm.tsx` — Ticker/name/category input form
+  - `frontend/src/components/watchlist/CategorySection.tsx` — Collapsible category with column headers and item rows
+  - `frontend/src/components/watchlist/WatchlistRow.tsx` — Dense data row with mono numerals, value tinting, action buttons
+  - `frontend/src/components/watchlist/EditControls.tsx` — Reorder/move/delete controls
+- **File modified:** `frontend/src/app/page.tsx` — Reduced from ~627 lines to ~335 lines (state management + composition)
+
+#### Research Page Evolution
+- **Files created:**
+  - `frontend/src/components/research/ReportList.tsx` — Sidebar report list with search/filter input
+  - `frontend/src/components/research/ReportToc.tsx` — Table of contents extracted from markdown headings
+  - `frontend/src/components/research/ReportViewer.tsx` — Enhanced markdown renderer with styled tables, blockquotes, code blocks, links, and dense typography
+- **File modified:** `frontend/src/app/reports/page.tsx` — Refactored to use extracted components, removed old Link import
+
+#### Trade Journal (New Feature)
+- **File created:** `frontend/src/types/journal.ts` — Types: `TradeEntry`, `JournalEntry`, `TradeSide`, `TradeStatus`
+- **Files created:**
+  - `frontend/src/components/journal/JournalTabs.tsx` — Tab switcher between Trade Log and Daily Journal
+  - `frontend/src/components/journal/TradeLogTable.tsx` — Sortable trade table with expandable rows for thesis/notes
+  - `frontend/src/components/journal/TradeLogForm.tsx` — Modal form for adding trades (ticker, side, price, quantity, thesis, status)
+  - `frontend/src/components/journal/JournalEntryCard.tsx` — Rendered journal entry card with markdown and tags
+  - `frontend/src/components/journal/JournalEditor.tsx` — Modal editor for writing journal entries with tag support
+- **File created:** `frontend/src/app/journal/page.tsx` — Full journal page with summary stats (Total P&L, Win Rate, Open/Closed counts), tabbed interface, local state management
+- **File modified:** `frontend/src/lib/format.ts` — Added `formatPnl()` and `formatDate()` utilities
+
+#### Shared Component Cleanup
+- `EmptyState.tsx` — Added icon prop support (lucide), centered layout with icon circle
+- `ErrorBanner.tsx` — Added AlertTriangle icon, semantic danger colors
+- `ReportModal.tsx` — Updated to use X icon for close, refined spacing and color tokens
+
+#### Verification
+- `npm run build` — Passes with zero errors, zero warnings
+- Zero `any` types in codebase (grep verified)
+- All 3 pages compile as static: `/`, `/journal`, `/reports`
+- Total: 18 new files created, 7 files modified, 0 files deleted
