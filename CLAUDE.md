@@ -1,7 +1,7 @@
 # Brodus — Project Intelligence File
 
-This file is the shared source of truth for AI coding agents working on this project.
-All agents (Claude, Codex, and future specialists) read this file at session start.
+This file is the shared source of truth for project context, architecture, and constraints.
+Operational role contracts and session steps live in `docs/comms/initiation.md`.
 
 ## What Brodus Is
 
@@ -136,69 +136,5 @@ research/reports/            → Generated artifacts (reports, scorecards)
 
 ## Agent Roles & Communication
 
+See `docs/comms/initiation.md` for role contracts, session steps, and conflict resolution.
 See `docs/orchestration.md` for the full framework diagram and protocol.
-
-### Roles
-
-**Claude (orchestrator):** The primary coordinator. Responsibilities:
-- Intake and interpret user requests, break into sub-tasks, delegate
-- Maintain persistent logs (`docs/logs/`) so context survives across sessions
-- Update this file (`CLAUDE.md`) and `AGENTS.md` when architecture or strategy changes
-- Quality-check all agent outputs before surfacing to user
-- Generate investment research artifacts (reports, scorecards, playbooks)
-- Audit Codex work at each phase's audit gate per `docs/ROADMAP.md`
-- Does not rubber-stamp — failed audits go back to Codex with specific fix instructions
-
-**Codex (builder):** Executes roadmap phases, writes code, proposes features. Responsibilities:
-- Read this file at session start, then `docs/comms/backlog.md`, then the current brief in `docs/comms/briefs/`
-- Execute the active brief — each brief has a clear objective, deliverables, acceptance criteria, and file boundaries
-- Read `docs/logs/changelog.md` for recent changes by other agents
-- Recommend feature additions at "Analyst Recommendation Windows" (senior investment analyst perspective)
-- Commit incrementally — one logical unit per commit
-- After each session, update `docs/comms/status.md` and append to `docs/logs/changelog.md`
-
-**Future agents:** As the system grows, specialized agents will handle deal sourcing, portfolio monitoring, scheduling, email, and other workstreams. All agents follow the same communication protocol below.
-
-### Agent Communication Protocol
-
-All agents coordinate through shared files in this repo. There is no real-time messaging — agents communicate asynchronously by reading and writing to shared state.
-
-**Session start checklist (all agents):**
-1. Read `CLAUDE.md` (this file) — architecture, conventions, current state
-2. Read `docs/comms/backlog.md` — what's the current priority?
-3. Read the active brief in `docs/comms/briefs/` — what exactly should I build?
-4. Read `docs/comms/status.md` — what did the other agent last report?
-5. Read `docs/logs/changelog.md` — what changed since last session
-6. Read `docs/logs/best-practices.md` — patterns to follow, mistakes to avoid
-7. (Claude only) Read `docs/logs/context.md` — strategic decisions and conversation history
-
-**Session end checklist (all agents):**
-1. (Codex) Update `docs/comms/status.md` with current state, blockers, decisions
-2. Append changes to `docs/logs/changelog.md` with date and description
-3. If new patterns or lessons learned: append to `docs/logs/best-practices.md`
-4. (Claude only) Append strategic context to `docs/logs/context.md`
-5. (Claude only) Write next brief or update backlog if priorities changed
-
-**Shared state files:**
-
-| File | Purpose | Writers | Readers |
-|------|---------|---------|---------|
-| `CLAUDE.md` | Project intelligence, conventions | Claude | All agents |
-| `AGENTS.md` | Agent-specific operating instructions | Claude | Codex |
-| `docs/ROADMAP.md` | Build phases, directives, audit gates | Claude + User | Codex |
-| `docs/comms/backlog.md` | Prioritized task queue | Claude | Codex |
-| `docs/comms/briefs/*.md` | Task specifications with acceptance criteria | Claude | Codex |
-| `docs/comms/status.md` | Current state, blockers, session reports | Codex | Claude |
-| `docs/comms/PROTOCOL.md` | Communication rules of engagement | Claude | All agents |
-| `docs/logs/context.md` | Strategic decisions, conversation history | Claude | Claude |
-| `docs/logs/changelog.md` | Code and structural changes | All agents | All agents |
-| `docs/logs/best-practices.md` | Patterns, capabilities, lessons | All agents | All agents |
-| `docs/orchestration.md` | Framework diagram and delegation matrix | Claude | All agents |
-
-### Conflict Resolution
-
-If agents encounter conflicting information:
-1. `CLAUDE.md` takes precedence over all other docs
-2. `AGENTS.md` takes precedence over `docs/ROADMAP.md` for agent behavior
-3. `docs/logs/changelog.md` is the source of truth for what actually changed (not commit messages)
-4. When in doubt, do not proceed — flag the conflict in changelog and wait for Claude to resolve

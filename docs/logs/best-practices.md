@@ -50,21 +50,19 @@ Patterns, lessons learned, and capability notes that should persist across sessi
 6. All TypeScript must be strict mode, no `any`
 
 ### Session Management
-1. Start every session by reading `docs/logs/context.md` for strategic context
-2. Read `docs/logs/changelog.md` to understand recent changes
-3. Read `docs/logs/best-practices.md` (this file) for patterns to follow
-4. At session end, append to all three log files
-5. If context window is getting large, prioritize updating logs before compaction
+1. Follow `docs/comms/initiation.md` for session start and logging rules
+2. Use logs to record decisions and material changes, not every minor action
+3. If context is large, summarize and link to the most relevant artifacts
 
 ### File Organization
 - `research/prompts/` — Playbook markdown files (analytical frameworks)
 - `research/reports/` — Generated reports and scorecards
 - `docs/` — Project documentation (PRD, architecture, schema, roadmap)
 - `docs/logs/` — Persistent agent logs (context, changelog, best practices)
-- `atlas/frontend/` — Next.js 15 command center
-- `atlas/core/python/` — Shared business logic
-- `atlas/api/python/` — Vercel serverless function routes
-- `atlas/supabase/migrations/` — Append-only SQL migrations
+- `frontend/` — Next.js 15 command center
+- `core/python/` — Shared business logic
+- `api/python/` — Vercel serverless function routes
+- `supabase/migrations/` — Append-only SQL migrations
 
 ### Communication with Codex
 - CLAUDE.md and AGENTS.md are the shared communication layer

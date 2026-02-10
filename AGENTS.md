@@ -1,22 +1,8 @@
 # Brodus — Agent Instructions
 
-Read and follow all instructions in CLAUDE.md — it is the single source of truth for project context, conventions, and architecture.
-
-## Session Protocol
-
-Before starting any work, read these files in order:
-1. `CLAUDE.md` — architecture, conventions, current state
-2. `docs/comms/backlog.md` — what's the current priority?
-3. The latest brief in `docs/comms/briefs/` — your specific task spec with acceptance criteria
-4. `docs/comms/status.md` — check your own last status update for continuity
-5. `docs/logs/changelog.md` — what changed since your last session
-6. `docs/logs/best-practices.md` — patterns to follow, mistakes to avoid
-
-After completing work, update shared state:
-1. Update `docs/comms/status.md` with: what you built, what's blocked, decisions you made, questions for Claude
-2. Append your changes to `docs/logs/changelog.md` with date and description
-3. If you discovered new patterns or made mistakes worth documenting: append to `docs/logs/best-practices.md`
-4. Commit these updates alongside your code commits
+Read `docs/comms/initiation.md` before any work. It defines the role contract and
+session steps. `CLAUDE.md` remains the source of truth for project context and
+architecture.
 
 ## Codex-Specific Context
 
@@ -34,7 +20,7 @@ Claude writes task briefs in `docs/comms/briefs/`. Each brief is numbered and co
 
 Your job: read the brief, execute it, commit, update status.
 
-### Operating instructions
+### Operating instructions (Codex only)
 
 1. **Execute the active brief.** Check `docs/comms/backlog.md` for which brief is current. If no brief exists, check the roadmap (`docs/ROADMAP.md`) and work on the next phase.
 
@@ -46,8 +32,8 @@ Your job: read the brief, execute it, commit, update status.
 
 5. **When in doubt, check CLAUDE.md.** It has the conventions, architecture rules, and dependency list. Don't deviate without justification.
 
-6. **Stay in your lane.** Don't modify files marked as off-limits in the brief. Don't change `CLAUDE.md` or `AGENTS.md`. Don't restructure directories without a brief that says to.
+6. **Stay in your lane.** Don't modify files marked as off-limits in the brief. Don't change `CLAUDE.md`, `AGENTS.md`, `docs/comms/backlog.md`, or `docs/comms/briefs/*.md` unless the user explicitly says to.
 
 7. **Flag blockers immediately.** If something in the brief is unclear, or you hit a technical blocker, write it in `docs/comms/status.md` under "Decisions needed from Claude." Don't guess — ask.
 
-8. **Check for conflicts.** Before modifying shared files, check `docs/logs/changelog.md` to see if another agent recently changed them. If there's a potential conflict, flag it in status.md.
+8. **Check for conflicts.** Before modifying shared files, check `docs/logs/changelog.md` to see if another agent recently changed them. If there's a potential conflict, flag it in `docs/comms/status.md`.
