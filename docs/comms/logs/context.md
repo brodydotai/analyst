@@ -77,6 +77,67 @@ The atlas repo already has significant infrastructure:
 
 ---
 
+## Session: 2026-02-10 — UX Overhaul + Role Contract + Messari Design Direction
+
+### Role Contract Adopted
+
+The user created `docs/comms/initiation.md`, establishing a formal agent communication protocol:
+- **Claude** = advisor/orchestrator — writes briefs, audits results, maintains backlog and context. Does NOT implement code unless explicitly asked.
+- **Codex** = builder/engineer — implements code from briefs, updates status.md and changelog.md.
+- Shared files in `docs/comms/` serve as the async communication channel between agents.
+- `docs/comms/briefs/` contains numbered task specs from Claude to Codex.
+- `docs/comms/backlog.md` is the priority-ordered task queue (Claude-maintained).
+
+### Strategic Direction Change: UX-First Priority
+
+**Previous priority order** (from ROADMAP.md): Watchlist CRUD -> Enrichment -> AI Reports -> Frontend -> Sources -> Feed Pipeline -> TradingView -> Search.
+
+**New priority order** (product owner directive): UX overhaul page-by-page, each page getting both frontend design treatment AND real backend functionality simultaneously. Trade Journal first, then Watchlist, then Research.
+
+**Rationale:** The frontend needs to be visually compelling and functionally complete. Building backend-only phases in isolation delays the user-facing product. By overhauling one page at a time (design + backend together), each page ships as a complete unit.
+
+### Design Direction: Messari-Inspired Terminal
+
+The user shared Messari.io as the visual reference. Key design principles established:
+
+1. **Panel-based layouts** — every content block is a discrete rounded container with border, background, and header chrome
+2. **Dense data tables** — tight padding (py-1.5), monospace numbers (JetBrains Mono, tabular-nums), uppercase column headers
+3. **Pill toggles** — small rounded buttons for tab switching, filtering, time ranges
+4. **Value coloring** — green for positive, red for negative, with tinted background variants
+5. **Typography** — Inter for UI, JetBrains Mono for data/numbers, small base sizes (14px), dense labels
+6. **Dark terminal aesthetic** — deep navy backgrounds, subtle borders, minimal chrome
+
+These principles are codified as the "Terminal-Wide Design Directive" in Brief 002 and will apply to all future frontend work.
+
+### Work Completed
+
+1. **Frontend UX overhaul (direct implementation)** — Before the role contract was adopted, Claude directly implemented:
+   - Design system expansion (tailwind.config.ts, globals.css, DESIGN.md)
+   - Sidebar navigation with collapse/expand
+   - Watchlist page refactored from 627-line monolith to 5 components
+   - Research page refactored with search/filter
+   - Trade journal page (new) with trade log + daily journal tabs
+   - Shared component cleanup (EmptyState, ErrorBanner, ReportModal)
+   - Build passes clean, zero TypeScript errors
+
+2. **Brief 002: Trade Journal — Backend + Frontend** — Comprehensive brief for Codex covering:
+   - Database migration (trade_entries + journal_entries tables)
+   - Pydantic models
+   - 6 API routes (CRUD for trades and journal entries)
+   - Frontend overhaul with Panel/PillToggle components and real API integration
+   - Terminal-Wide Design Directive (applies to all future pages)
+   - 6-commit strategy with acceptance criteria
+
+3. **Backlog created** — `docs/comms/backlog.md` now tracks the priority-ordered task queue.
+
+### What Remains
+
+- Brief 002 is ready for Codex pickup
+- Future briefs needed: Watchlist overhaul, Research overhaul, Enrichment pipeline, AI report generation, Feed ingestion
+- CLAUDE.md may need updating to reflect the new role contract (initiation.md is the source of truth for now)
+
+---
+
 ## How to Use This File
 
 Each session should append a new dated section summarizing:
