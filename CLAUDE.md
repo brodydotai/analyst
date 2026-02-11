@@ -1,7 +1,7 @@
 # Brodus — Project Intelligence File
 
 This file is the shared source of truth for project context, architecture, and constraints.
-Operational role contracts and session steps live in `docs/comms/initiation.md`.
+Operational role contracts and session steps live in `.agents/initiation.md`.
 
 ## What Brodus Is
 
@@ -13,26 +13,27 @@ Single user. No multi-tenancy. No public-facing auth (admin gate only on config 
 
 ## Current State
 
-**Branch:** `feature/environment-setup`
-
 **What exists:**
 - Database schema: `supabase/migrations/001_initial_schema.sql` (7 tables: sources, entities, filings, articles, document_entities, summaries, ingestion_log)
-- Core Python modules: `core/python/config.py` (env vars), `db.py` (Supabase client), `queue.py` (QStash client)
-- Pydantic models: `core/python/models/` (Filing, Article, Entity)
-- API route stubs: `api/python/` (ingest_filings, ingest_feeds, process_filing, process_article — all return `not_implemented`)
-- Docs: `docs/PRD.md`, `docs/ARCHITECTURE.md`, `docs/SCHEMA.md`, `docs/ROADMAP.md`
-- Config: `vercel.json`, `requirements.txt`, `.env.example`, `.python-version` (3.12)
+- Backend infrastructure: `frontend/src/lib/` (config.ts, db.ts, queue.ts — Supabase + QStash clients)
+- Zod schemas: `frontend/src/schemas/` (Filing, Article, Entity, Journal)
+- Service layer: `frontend/src/services/` (journal CRUD)
+- API routes: `frontend/src/app/api/` (journal CRUD + pipeline stubs)
+- Frontend: Next.js command center with sidebar nav, watchlist, research, and journal pages
+- Agent infrastructure: `.agents/` directory with registry, protocol, and scoped instructions
+- Docs: `docs/architecture.md`, `docs/roadmap.md`, `docs/prd/`, `docs/STRUCTURE.md`
+- Config: `vercel.json`
 
 **What also exists (outside the main codebase):**
 - Investment research playbooks: `research/prompts/` (15 industry-specific analytical frameworks)
 - Generated reports + scorecards: `research/reports/` (TIC, ADBE, INTC, VNET)
 - Prompt compliance verifier: `research/verify_prompt_compliance.py`
-- Orchestration framework: `docs/orchestration.md`
-- Persistent agent logs: `docs/logs/` (context.md, changelog.md, best-practices.md)
+- Agent communication: `docs/comms/` (briefs, backlog, status, logs)
+- Persistent agent logs: `docs/comms/logs/` (context.md, changelog.md, best-practices.md)
 
 **What does NOT exist yet:**
-- Watchlist tables (next migration: `002_watchlist.sql`)
-- Watchlist API routes
+- Trade journal tables (next migration: `002_trade_journal.sql`)
+- Watchlist tables and API routes
 - Market data enrichment
 - AI report generation pipeline (stubs only, playbooks exist)
 - Feed ingestion pipeline (stubs only)
@@ -41,44 +42,48 @@ Single user. No multi-tenancy. No public-facing auth (admin gate only on config 
 
 ## Development Roadmap
 
-See `docs/ROADMAP.md` for the full phased plan. Build order:
+See `docs/roadmap.md` for the full phased plan. See `docs/comms/backlog.md` for the active execution queue.
 
-1. Watchlist data model + CRUD API
-2. Asset data enrichment (metrics, EDGAR links, TradingView URLs)
-3. AI report generation (per-asset + 24h briefing)
-4. Frontend watchlist dashboard
-5. Sources admin page
-6. Feed page + ingestion pipeline
-7. TradingView sync
-8. Semantic search + polish
-
-**The watchlist is the product. Everything else serves it.**
+**The command center is the product. Everything else serves it.**
 
 ## Project Structure
 
 ```
-api/python/                  → Vercel serverless functions (Python runtime)
-  ingest_filings/index.py    → Cron: fetch SEC filings
-  ingest_feeds/index.py      → Cron: fetch RSS articles
-  process_filing/index.py    → QStash: process one filing
-  process_article/index.py   → QStash: process one article
+.agents/                     → Agent infrastructure (registry, protocol, scoped instructions)
+  initiation.md              → Boot sequence and role contract
+  registry.md                → Master agent index
+  protocol.md                → Communication protocol and brief lifecycle
+  brief-template.md          → Canonical template for writing briefs
+  build/                     → Build agent group (orchestrator, backend, frontend)
+  research/                  → Research agent group (equity, macro)
 
-core/python/                 → Shared business logic (never duplicate in routes)
-  config.py                  → All env vars and constants
-  db.py                      → Supabase client singleton
-  queue.py                   → QStash client and publish helper
-  models/                    → Pydantic models (the data contract)
-  edgar/                     → EDGAR API client and parsers
-  feeds/                     → RSS fetcher and source registry
-  processing/                → Embeddings, summarization, entity extraction
+frontend/                    → Next.js app (App Router + TS + Tailwind) — frontend AND backend
+  src/app/                   → Pages (App Router)
+  src/app/api/               → Next.js API routes (backend)
+  src/schemas/               → Zod schemas (validation + type inference)
+  src/services/              → Business logic (Supabase queries)
+  src/types/                 → TypeScript types (re-exports from schemas)
+  src/components/            → React components organized by domain
+  src/lib/                   → Shared utilities (config, db, queue, api, format)
 
 supabase/migrations/         → Numbered SQL migrations (append-only)
-frontend/                    → Next.js 15 app (App Router + TS + Tailwind)
-docs/                        → PRD, architecture, schema, roadmap
-docs/comms/                  → Agent communication (briefs, backlog, status)
-docs/comms/briefs/           → Numbered task specs from Claude to Codex
-docs/logs/                   → Persistent agent logs (context, changelog, best practices)
-docs/orchestration.md        → Orchestration framework diagram and protocol
+
+docs/                        → Project documentation
+  STRUCTURE.md               → Documentation map (consult before creating docs)
+  architecture.md            → System design and data flow
+  roadmap.md                 → Long-term phased build plan
+  prd/                       → Product requirements by domain
+    overview.md              → Product vision and terminology
+    database/                → Schema reference
+    frontend/                → Page and design requirements
+    backend/                 → API conventions and route requirements
+    pipelines/               → Ingestion, enrichment, generation requirements
+  comms/                     → Agent communication hub
+    backlog.md               → Priority-ordered work queue
+    status.md                → Current state and session log
+    briefs/                  → Active task specs (archive/ for completed)
+    logs/                    → Persistent agent logs (context, changelog, best practices)
+
 research/prompts/            → Investment playbooks (analytical frameworks)
 research/reports/            → Generated artifacts (reports, scorecards)
 ```
@@ -87,24 +92,24 @@ research/reports/            → Generated artifacts (reports, scorecards)
 
 | Layer | Technology | Notes |
 |-------|-----------|-------|
-| API | Python on Vercel Serverless Functions | `api/python/` directory, BaseHTTPRequestHandler pattern |
-| Database | Supabase (PostgreSQL + pgvector + pg_trgm) | Access only through `core/python/db.py` |
-| Queue | Upstash QStash | Access only through `core/python/queue.py` |
-| AI | OpenAI (text-embedding-3-small, gpt-4o-mini) | Config in `core/python/config.py` |
-| Frontend | Next.js 15, TypeScript, Tailwind CSS | App Router, no direct Supabase calls |
+| API | Next.js API Routes (TypeScript) | `frontend/src/app/api/` directory, App Router route handlers |
+| Database | Supabase (PostgreSQL + pgvector + pg_trgm) | Access only through `frontend/src/lib/db.ts` |
+| Queue | Upstash QStash | Access only through `frontend/src/lib/queue.ts` |
+| AI | OpenAI (text-embedding-3-small, gpt-4o-mini) | Config in `frontend/src/lib/config.ts` |
+| Frontend | Next.js, TypeScript, Tailwind CSS | App Router, unified stack with backend |
+| Validation | Zod | Schemas in `frontend/src/schemas/`, replaces Pydantic |
 
 ## Conventions
 
 ### Architecture Rules
-- **API routes are thin.** Validate input, call `core/python/` functions, format output. No business logic in routes.
-- **Database access through `db.py` only.** Never instantiate a Supabase client elsewhere.
-- **QStash through `queue.py` only.** Same principle.
-- **Config from environment only.** All env vars flow through `core/python/config.py`. No hardcoded keys or URLs.
-- **Pydantic models are the contract.** All data structures defined in `core/python/models/`. Frontend TypeScript types must mirror them.
+- **API routes are thin.** Validate input with Zod, call service functions, return `NextResponse.json`. No business logic in routes.
+- **Database access through `db.ts` only.** Never instantiate a Supabase client elsewhere.
+- **QStash through `queue.ts` only.** Same principle.
+- **Config from environment only.** All env vars flow through `frontend/src/lib/config.ts`. No hardcoded keys or URLs.
+- **Zod schemas are the contract.** All data structures defined in `frontend/src/schemas/`. Types inferred from schemas — no manual type duplication.
 
 ### Code Standards
-- Python: full type hints on all function signatures.
-- TypeScript: strict mode, no `any` types.
+- TypeScript: strict mode, no `any` types. Full type annotations on exported functions.
 - No dead code — no commented-out blocks, no unused imports, no placeholder functions.
 - Every API route handles: bad input (422), not found (404), server error (500). Never return 200 with an error message in the body.
 - One responsibility per file. If a module does two unrelated things, split it.
@@ -116,13 +121,12 @@ research/reports/            → Generated artifacts (reports, scorecards)
 - Watchlist items keyed by ticker (standalone, linked to entities later).
 
 ### Dependencies
-- `httpx` for HTTP (not requests)
-- `feedparser` for RSS
-- `pydantic` for models
+- `zod` for validation and type inference
+- `@supabase/supabase-js` for database
+- `@upstash/qstash` for queue
 - `openai` for embeddings and summarization
-- `supabase` for database
-- `upstash-qstash` for queue
-- No SQLAlchemy, no anthropic SDK, no ORMs
+- `fetch` (built-in) for HTTP — no axios
+- No ORMs, no anthropic SDK
 
 ### Process
 - Migration files are append-only. Never edit a deployed migration.
@@ -136,5 +140,8 @@ research/reports/            → Generated artifacts (reports, scorecards)
 
 ## Agent Roles & Communication
 
-See `docs/comms/initiation.md` for role contracts, session steps, and conflict resolution.
-See `docs/orchestration.md` for the full framework diagram and protocol.
+See `.agents/initiation.md` for the role contract and boot sequence.
+See `.agents/registry.md` for the full agent directory.
+See `.agents/protocol.md` for communication format and brief lifecycle.
+Each agent's scoped instructions live in `.agents/[group]/[specialization]/INSTRUCTIONS.md`.
+See `docs/STRUCTURE.md` for the full documentation map.

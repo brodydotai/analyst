@@ -69,7 +69,7 @@ export default function WatchlistPage() {
     setError(null);
     try {
       const response = await fetchJson<WatchlistResponse>(
-        "/api/python/watchlist"
+        "/api/watchlist"
       );
       const normalized = normalizeWatchlist(response);
       setCategories(normalized);
@@ -114,7 +114,7 @@ export default function WatchlistPage() {
     if (!newCategoryName.trim()) return;
     setSaving(true);
     try {
-      await fetchJson<WatchlistCategory>("/api/python/watchlist/categories", {
+      await fetchJson<WatchlistCategory>("/api/watchlist/categories", {
         method: "POST",
         body: { name: newCategoryName.trim() },
       });
@@ -137,7 +137,7 @@ export default function WatchlistPage() {
     setSaving(true);
     setError(null);
     try {
-      await fetchJson<WatchlistItem>("/api/python/watchlist", {
+      await fetchJson<WatchlistItem>("/api/watchlist", {
         method: "POST",
         body: {
           ticker: newTicker.trim().toUpperCase(),
@@ -161,7 +161,7 @@ export default function WatchlistPage() {
     if (!confirm("Delete this asset from the watchlist?")) return;
     setSaving(true);
     try {
-      await fetchJson(`/api/python/watchlist/${itemId}`, { method: "DELETE" });
+      await fetchJson(`/api/watchlist/${itemId}`, { method: "DELETE" });
       await loadWatchlist();
     } catch (deleteError) {
       const message =
@@ -181,7 +181,7 @@ export default function WatchlistPage() {
     const swapped = category.items[swapIndex];
     setSaving(true);
     try {
-      await fetchJson("/api/python/watchlist/reorder", {
+      await fetchJson("/api/watchlist/reorder", {
         method: "PUT",
         body: {
           items: [
@@ -203,7 +203,7 @@ export default function WatchlistPage() {
   const handleMoveCategory = async (item: WatchlistItem, categoryId: string) => {
     setSaving(true);
     try {
-      await fetchJson(`/api/python/watchlist/${item.id}`, {
+      await fetchJson(`/api/watchlist/${item.id}`, {
         method: "PUT",
         body: { category_id: categoryId },
       });
@@ -221,7 +221,7 @@ export default function WatchlistPage() {
     setReportState({ open: true, title: `${ticker} Report`, content: null, loading: true, error: null });
     try {
       const response = await fetchJson<AssetReportResponse>(
-        "/api/python/reports/asset",
+        "/api/reports/asset",
         { method: "POST", body: { ticker } }
       );
       setReportState({ open: true, title: `${ticker} Report`, content: response.report, loading: false, error: null });
@@ -236,7 +236,7 @@ export default function WatchlistPage() {
     setReportState({ open: true, title: "24h Summary", content: null, loading: true, error: null });
     try {
       const response = await fetchJson<DailyReportResponse>(
-        "/api/python/reports/daily",
+        "/api/reports/daily",
         { method: "POST" }
       );
       setReportState({ open: true, title: "24h Summary", content: response.report, loading: false, error: null });

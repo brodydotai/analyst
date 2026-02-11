@@ -7,7 +7,7 @@ import type { TradeSide, TradeStatus } from "@/types/journal";
 type TradeFormData = {
   ticker: string;
   side: TradeSide;
-  date: string;
+  trade_date: string;
   price: string;
   quantity: string;
   thesis: string;
@@ -24,7 +24,7 @@ type TradeLogFormProps = {
 const defaultForm: TradeFormData = {
   ticker: "",
   side: "buy",
-  date: new Date().toISOString().split("T")[0],
+  trade_date: new Date().toISOString().split("T")[0],
   price: "",
   quantity: "",
   thesis: "",
@@ -56,7 +56,9 @@ export default function TradeLogForm({
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 px-6">
       <div className="w-full max-w-lg rounded-lg border border-brodus-border bg-brodus-panel shadow-xl">
         <div className="flex items-center justify-between border-b border-brodus-border px-5 py-3">
-          <h2 className="text-sm font-semibold">New Trade</h2>
+          <h2 className="text-xs font-semibold uppercase tracking-wide text-brodus-muted">
+            New Trade
+          </h2>
           <button
             className="rounded p-1 text-brodus-muted transition-colors hover:bg-brodus-hover hover:text-brodus-text"
             onClick={onClose}
@@ -85,8 +87,8 @@ export default function TradeLogForm({
               <input
                 className="mt-1 w-full rounded border border-brodus-border bg-brodus-background px-3 py-1.5 text-sm text-brodus-text focus:border-brodus-accent"
                 type="date"
-                value={form.date}
-                onChange={(e) => update("date", e.target.value)}
+                value={form.trade_date}
+                onChange={(e) => update("trade_date", e.target.value)}
               />
             </div>
           </div>

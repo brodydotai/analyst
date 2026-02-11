@@ -132,3 +132,23 @@ All code, structural, and configuration changes made by agents. Append-only.
 - Zero `any` types in codebase (grep verified)
 - All 3 pages compile as static: `/`, `/journal`, `/reports`
 - Total: 18 new files created, 7 files modified, 0 files deleted
+
+### Added: Trade Journal Backend + Frontend Wiring
+- **Migration:** `supabase/migrations/002_trade_journal.sql` (trade_entries + journal_entries, indexes, RLS, triggers)
+- **Models:** `core/python/models/journal.py` + exports in `core/python/models/__init__.py`
+- **Services:** `core/python/services/journal.py` (CRUD helpers for trades + entries)
+- **API routes:** `api/python/journal/trades`, `api/python/journal/entries` (list/create + get/update/delete)
+- **Frontend UI:** `frontend/src/components/ui/Panel.tsx`, `PillToggle.tsx`
+- **Journal page:** `frontend/src/app/journal/page.tsx` wired to APIs via `fetchJson`
+- **Journal components:** Trade log table, forms, cards, tabs restyled to terminal directive
+- **Design system:** `frontend/DESIGN.md` rewritten with terminal-wide directive
+
+### Completed: Backend Migration to TypeScript (Brief 004)
+- **Infrastructure:** Added `frontend/src/lib/config.ts`, `db.ts`, `queue.ts` for env/config, Supabase, and QStash.
+- **Schemas:** Added Zod schemas for `filing`, `article`, `entity`, and `journal` in `frontend/src/schemas/`.
+- **Services:** Added `frontend/src/services/journal.ts` with typed CRUD functions.
+- **API routes:** Added Next.js handlers for journal CRUD and pipeline stubs under `frontend/src/app/api/`.
+- **Frontend paths:** Updated API calls from `/api/python/*` to `/api/*` in watchlist + journal pages.
+- **Config:** Updated `vercel.json` cron paths, cleaned Python ignores in `.gitignore`.
+- **Cleanup:** Removed `core/`, `api/`, `requirements.txt`, and `.python-version`.
+- **Verification:** `npm install` + `npm run build` succeed.

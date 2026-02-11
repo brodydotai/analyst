@@ -1,39 +1,32 @@
 # Brodus — Agent Instructions
 
-Read `docs/comms/initiation.md` before any work. It defines the role contract and
-session steps. `CLAUDE.md` remains the source of truth for project context and
-architecture.
+Read `.agents/initiation.md` before any work. It defines the role contract and session steps.
+`CLAUDE.md` remains the source of truth for project context and architecture.
 
-## Codex-Specific Context
+## Scoped Instructions
 
-You are the **builder** on this project. Claude is your orchestrator — think of this as a senior engineer / tech lead relationship where Claude writes the specs and you execute them.
+Your detailed, role-specific instructions live in the `.agents/` directory:
 
-### How tasks arrive
+- **Backend builder:** `.agents/build/backend/INSTRUCTIONS.md`
+- **Frontend builder:** `.agents/build/frontend/INSTRUCTIONS.md`
+- **Orchestrator (Claude):** `.agents/build/orchestrator/INSTRUCTIONS.md`
+- **Equity research:** `.agents/research/equity/INSTRUCTIONS.md`
 
-Claude writes task briefs in `docs/comms/briefs/`. Each brief is numbered and contains:
-- **Objective** — what you're building and why
-- **Context** — relevant existing code and dependencies
-- **Deliverables** — exact files to create/modify
-- **Files NOT to modify** — boundaries to respect
-- **Acceptance criteria** — how Claude will judge completeness
-- **Audit results** — Claude appends review notes after you ship
+Read your scoped instructions file at the start of every session. It defines your read order, file ownership boundaries, and domain conventions.
 
-Your job: read the brief, execute it, commit, update status.
+## Agent Registry
 
-### Operating instructions (Codex only)
+See `.agents/registry.md` for the full index of all agents, their capabilities, and entry points.
 
-1. **Execute the active brief.** Check `docs/comms/backlog.md` for which brief is current. If no brief exists, check the roadmap (`docs/ROADMAP.md`) and work on the next phase.
+## Communication Protocol
 
-2. **Use your analyst judgment.** At each phase's "Analyst Recommendation Window," evaluate feature additions from a senior investment analyst perspective. Propose only what is low-cost to add now and high-value for daily portfolio research. Justify every recommendation.
+See `.agents/protocol.md` for the brief lifecycle, handoff rules, and communication channels.
 
-3. **Anticipate the audit.** Each brief has acceptance criteria. Claude will review your work against them. Write code that passes on the first review — handle edge cases, validate input, type everything.
+## Quick Reference
 
-4. **Commit incrementally.** One logical unit of work per commit. Not entire phases.
-
-5. **When in doubt, check CLAUDE.md.** It has the conventions, architecture rules, and dependency list. Don't deviate without justification.
-
-6. **Stay in your lane.** Don't modify files marked as off-limits in the brief. Don't change `CLAUDE.md`, `AGENTS.md`, `docs/comms/backlog.md`, or `docs/comms/briefs/*.md` unless the user explicitly says to.
-
-7. **Flag blockers immediately.** If something in the brief is unclear, or you hit a technical blocker, write it in `docs/comms/status.md` under "Decisions needed from Claude." Don't guess — ask.
-
-8. **Check for conflicts.** Before modifying shared files, check `docs/logs/changelog.md` to see if another agent recently changed them. If there's a potential conflict, flag it in `docs/comms/status.md`.
+| Role | Entry Point | Primary Output |
+|------|-------------|----------------|
+| Orchestrator | `.agents/build/orchestrator/INSTRUCTIONS.md` | Briefs, audits, documentation |
+| Backend builder | `.agents/build/backend/INSTRUCTIONS.md` | Migrations, models, routes, services |
+| Frontend builder | `.agents/build/frontend/INSTRUCTIONS.md` | Components, pages, types, styling |
+| Equity research | `.agents/research/equity/INSTRUCTIONS.md` | Reports, scorecards |

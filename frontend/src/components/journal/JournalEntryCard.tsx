@@ -9,18 +9,18 @@ type JournalEntryCardProps = {
 };
 
 export default function JournalEntryCard({ entry }: JournalEntryCardProps) {
+  const preview = entry.content.split("\n").slice(0, 3).join("\n");
+
   return (
-    <div className="rounded-lg border border-brodus-border bg-brodus-panel p-4">
+    <div className="rounded-lg border border-brodus-border bg-brodus-background/40 p-4">
       <div className="flex items-center justify-between gap-3">
-        <h3 className="text-sm font-semibold text-brodus-text">
-          {entry.title}
-        </h3>
+        <h3 className="text-sm font-semibold text-brodus-text">{entry.title}</h3>
         <div className="flex items-center gap-1 text-2xs text-brodus-muted">
           <Calendar size={12} />
-          {formatDate(entry.date)}
+          {formatDate(entry.entry_date)}
         </div>
       </div>
-      {entry.tags && entry.tags.length > 0 ? (
+      {entry.tags.length > 0 ? (
         <div className="mt-1.5 flex flex-wrap items-center gap-1">
           {entry.tags.map((tag) => (
             <span
@@ -59,7 +59,7 @@ export default function JournalEntryCard({ entry }: JournalEntryCardProps) {
             ),
           }}
         >
-          {entry.content}
+          {preview}
         </ReactMarkdown>
       </article>
     </div>

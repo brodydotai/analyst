@@ -45,7 +45,9 @@ export default function JournalEditor({
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 px-6">
       <div className="w-full max-w-2xl rounded-lg border border-brodus-border bg-brodus-panel shadow-xl">
         <div className="flex items-center justify-between border-b border-brodus-border px-5 py-3">
-          <h2 className="text-sm font-semibold">New Journal Entry</h2>
+          <h2 className="text-xs font-semibold uppercase tracking-wide text-brodus-muted">
+            New Journal Entry
+          </h2>
           <button
             className="rounded p-1 text-brodus-muted transition-colors hover:bg-brodus-hover hover:text-brodus-text"
             onClick={onClose}
