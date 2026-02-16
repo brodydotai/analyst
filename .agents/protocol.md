@@ -1,148 +1,93 @@
-# Brodus — Agent Communication Protocol
+# Analyst — Agent Communication Protocol
 
-How agents coordinate work, communicate status, and hand off tasks.
+How agents coordinate work and hand off tasks.
 
 ---
 
-## Brief Lifecycle
+## Task Format
 
-Every unit of work flows through this lifecycle:
+Tasks are assigned inline (via chat) or as markdown files. Every task specifies:
 
 ```
-Draft → Ready → In Progress → Review → Promote → Archived
+Agent: research/equity
+Ticker: INTC
+Playbook: semiconductors-and-accelerators.prompt.md
+Deliverables: research/reports/intc.mar.md, research/reports/intc.mar.scorecard.md
 ```
 
-| Stage | Who | What happens |
-|-------|-----|-------------|
-| **Draft** | Claude (orchestrator) | Writes the brief in `docs/comms/briefs/`. Status field: `Draft`. Not yet on the backlog. |
-| **Ready** | Claude | Marks the brief `Ready`, adds it to `docs/comms/backlog.md`. Assigned agent can pick it up. |
-| **In Progress** | Assigned agent | Begins work. Updates `docs/comms/status.md` with current state. |
-| **Review** | Claude | Agent completes work. Claude audits against the brief's acceptance criteria. |
-| **Promote** | Claude | Extract reusable patterns into standing PRDs (see Promote step below). |
-| **Archived** | Claude | Appends audit results to the brief, moves it to `docs/comms/briefs/archive/`, updates the backlog. |
-
-### Promote Step: Reusable Patterns → PRDs
-
-After a brief passes audit and before archiving, Claude evaluates whether the brief introduced patterns, conventions, or standards that future briefs will need to reference. If so, those patterns are extracted into persistent PRD documents in `docs/prd/`.
-
-**When to promote:** A pattern qualifies for promotion if it meets ANY of these criteria:
-- It will be referenced by 2+ future briefs (e.g., a design system, API convention, data model pattern)
-- It establishes a convention that future agents must follow (e.g., component structure, error handling patterns)
-- It defines a reusable component, utility, or architectural decision that should be consistent across the codebase
-- Losing it in the archive would force a future agent to re-derive or re-invent it
-
-**How to promote:**
-1. Identify the reusable content in the brief (design directives, component patterns, API conventions, etc.)
-2. Extract it into the appropriate PRD file in `docs/prd/` — create the file if it doesn't exist, append if it does
-3. Replace the inline content in the brief with a cross-reference to the new PRD location
-4. Update `docs/STRUCTURE.md` if a new PRD file was created
-
-**Examples:**
-- Brief 002 defines the terminal-wide design directive → promote to `docs/prd/frontend/design-system.md`
-- A backend brief establishes an API error handling pattern → promote to `docs/prd/backend/api-conventions.md`
-- A brief introduces a new data model convention → promote to `docs/prd/database/conventions.md`
-
-**When NOT to promote:** Brief-specific implementation details (exact file lists, commit strategies, one-off acceptance criteria) stay in the archived brief. Only patterns that generalize beyond the brief get promoted.
-
-**Rules:**
-- Brief numbers are never reused.
-- Archived briefs retain full content including audit results — they are the project's ticket history.
-- The archive is append-only. Never delete or modify archived briefs.
-
----
-
-## Communication Channels
-
-| Channel | Location | Owner | Purpose |
-|---------|----------|-------|---------|
-| Backlog | `docs/comms/backlog.md` | Claude | Priority-ordered work queue |
-| Briefs | `docs/comms/briefs/*.md` | Claude | Active task specifications |
-| Archive | `docs/comms/briefs/archive/*.md` | Claude | Completed task history |
-| Status | `docs/comms/status.md` | Codex | Current state, blockers, session log |
-| Changelog | `docs/comms/logs/changelog.md` | Codex | Code and structural change history |
-| Context | `docs/comms/logs/context.md` | Claude | Strategic decisions, session context |
-| Best Practices | `docs/comms/logs/best-practices.md` | Any agent | Patterns, lessons learned |
-
----
-
-## Async Handoff Flow
+## Task Lifecycle
 
 ```
-User gives task to Claude (via Cowork)
-        │
-        ▼
-Claude writes a task brief to docs/comms/briefs/
-        │
-        ▼
-User opens Cursor → Agent reads .agents/initiation.md → reads INSTRUCTIONS.md → reads brief
-        │
-        ▼
-Agent executes the brief, commits code
-        │
-        ▼
-Agent writes status update to docs/comms/status.md
-        │
-        ▼
-User returns to Cowork → Claude reads status.md → audits work → archives brief or requests fixes
+Assigned → In Progress → Delivered → Reviewed → Done
 ```
 
----
+| Stage | Who | What |
+|-------|-----|------|
+| **Assigned** | Orchestrator | Specifies agent, ticker, playbook, deliverables |
+| **In Progress** | Agent | Reads playbook, gathers data, generates output |
+| **Delivered** | Agent | Writes artifacts to specified paths |
+| **Reviewed** | Orchestrator | Audits against playbook, checks scorecard |
+| **Done** | Orchestrator | Accepts or requests revision |
 
-## Handoff Rules
+## Full Analysis Pipeline
 
-1. **Agents never modify each other's files directly.** If one agent needs another to act, it writes a brief or a status update.
-2. **The backlog is the single source of priority.** Agents work the top item assigned to them.
-3. **Blockers go in status.md.** If an agent is stuck, it logs the blocker under "Decisions needed from Claude" and halts.
-4. **Audit before archive.** No brief moves to archive without Claude reviewing the work against acceptance criteria.
-
----
-
-## Task Delegation Matrix
-
-| Task Type | Primary Agent | Output |
-|-----------|--------------|--------|
-| Feature development (backend) | build/backend | Code commits |
-| Feature development (frontend) | build/frontend | Code commits |
-| Architecture decisions | build/orchestrator | CLAUDE.md updates, briefs |
-| Brief writing | build/orchestrator | docs/comms/briefs/*.md |
-| Investment research | research/equity | Markdown reports in research/reports/ |
-| Report verification | research/equity | Scorecards |
-| Database migrations | build/backend | SQL files |
-| Documentation updates | build/orchestrator | docs/ files |
-| Playbook creation | build/orchestrator | research/prompts/ files |
-| Bug fixes (backend) | build/backend | Code commits |
-| Bug fixes (frontend) | build/frontend | Code commits |
-
----
-
-## Daily Operating Loop (Target State)
+For a complete analysis (report + perspectives + synthesis):
 
 ```
-06:00  Feed agents ingest overnight filings + news
-06:30  Analysis agents process new documents, extract entities, generate embeddings
-07:00  Claude generates 24h briefing across all watchlist assets
-07:30  Briefing surfaced to user via command center
-       ↓
-       User reviews briefing, flags items for deeper research
-       ↓
-       Claude delegates deep-dive reports to research agents
-       ↓
-       Reports generated, verified, stored in artifact store
-       ↓
-       User reviews reports, provides feedback
-       ↓
-       Feedback logged → playbooks refined → next cycle improves
+Step 1: Equity agent → report + opinion block       (writes to research/reports/)
+Step 2: Compliance agent → scorecard                 (writes to research/reports/)
+Step 3: Bull + Bear + Macro agents → perspectives    (in-memory, parallel)
+Step 4: Synthesis service → synthesized opinion       (stored in DB via API)
 ```
 
----
+Steps 1-2 are sequential. Steps 3 can run in parallel after Step 1 completes.
+Step 4 runs after all perspectives are collected.
 
-## Future: Database-Backed Communication
+### Perspective Agents
 
-When the Supabase artifact store matures, agent communication will evolve:
+Bull, Bear, and Macro agents are **lightweight and stateless**. They:
+- Read the completed report (not the playbook)
+- Return a structured `PerspectiveOpinion` JSON object
+- Do NOT write files to disk
+- Are orchestrated by the parent system, not self-directed
 
-1. **Task queue table** — Claude writes tasks, agents claim and execute them
-2. **Artifact registry** — All agent outputs stored with metadata (agent, timestamp, quality score)
-3. **Agent state table** — Track what each agent knows, last sync timestamp
-4. **Event log** — Append-only record of all agent actions for audit trail
+### Synthesis
 
-This replaces file-based communication with structured, queryable state.
+The synthesis service (`analyst/services/synthesis.py`) combines opinions using:
+- Primary opinion gets 2x weight (it's from the deep analysis)
+- Each perspective weighted by its confidence x domain relevance
+- Disagreement between perspectives reduces overall confidence
+- Consensus level assessed by rating spread
+
+## Agent Rules
+
+1. **Agents own their output paths.** Don't write outside your scope.
+2. **Read your INSTRUCTIONS.md first.** It defines what you can and cannot touch.
+3. **Never fabricate data.** If a metric isn't available, say so.
+4. **Save work frequently.** Don't risk losing output to context limits.
+5. **Keep it lean.** Minimize files read on boot. Only load what you need for the current task.
+
+## Context Window Optimization
+
+Agent boot sequence should consume < 2000 tokens:
+
+1. Read `INSTRUCTIONS.md` (~80 lines)
+2. Read assigned task (~20 lines)
+3. Read relevant playbook (loaded as-needed, not on boot)
+
+Do NOT read on boot: CLAUDE.md (orchestrator reads this), registry.md, protocol.md, unrelated reports.
+
+## Delegation Matrix
+
+| Task | Agent | Output |
+|------|-------|--------|
+| Generate investment report | research/equity | `research/reports/{ticker}.{period}.md` |
+| Run compliance scorecard | research/compliance | `research/reports/{ticker}.{period}.scorecard.md` |
+| Bull perspective | research/bull | `PerspectiveOpinion` (in-memory) |
+| Bear perspective | research/bear | `PerspectiveOpinion` (in-memory) |
+| Macro overlay | research/macro | `PerspectiveOpinion` (in-memory) |
+| Synthesize opinions | synthesis service | `SynthesizedOpinion` (API/DB) |
+| Backend feature | build/backend | `analyst/` Python code |
+| Database migration | build/backend | `migrations/*.sql` |
+| Architecture decision | orchestrator | `docs/`, `CLAUDE.md` |
+| Playbook creation/edit | orchestrator | `research/prompts/` |

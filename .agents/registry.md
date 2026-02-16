@@ -1,20 +1,80 @@
-# Brodus — Agent Registry
+# Analyst — Agent Registry
 
 Master index of all agents. Consult this file to route tasks to the correct agent.
 
 ---
 
-## build/orchestrator
+## research/equity
 
 | Field | Value |
 |-------|-------|
-| **Name** | Claude (Orchestrator) |
-| **Group** | build |
-| **Role** | Interprets user intent, writes briefs, audits results, maintains backlog and agent infrastructure |
-| **Entry point** | `.agents/build/orchestrator/INSTRUCTIONS.md` |
-| **Owns** | `CLAUDE.md`, `AGENTS.md`, `.agents/`, `docs/comms/backlog.md`, `docs/comms/briefs/*.md`, `docs/comms/logs/context.md`, `docs/STRUCTURE.md`, `docs/prd/` |
-| **Reads** | `docs/comms/status.md`, `docs/comms/logs/changelog.md`, `docs/comms/logs/best-practices.md`, `docs/roadmap.md`, `docs/architecture.md` |
-| **Never touches** | `frontend/src/`, `supabase/migrations/`, `docs/comms/status.md` (Codex's territory) |
+| **Name** | Equity Research Agent |
+| **Group** | research |
+| **Role** | Executes investment playbooks, generates company reports with structured opinion blocks |
+| **Entry point** | `.agents/research/equity/INSTRUCTIONS.md` |
+| **Owns** | `research/reports/*.md` (reports, not scorecards) |
+| **Reads** | `research/prompts/` (playbooks), Supabase (report history), assigned task |
+| **Never touches** | `analyst/` (backend code), `docs/`, `.agents/`, `CLAUDE.md` |
+| **Status** | Active |
+
+---
+
+## research/compliance
+
+| Field | Value |
+|-------|-------|
+| **Name** | Compliance Verification Agent |
+| **Group** | research |
+| **Role** | Runs prompt compliance checks on generated reports, produces scorecards |
+| **Entry point** | `.agents/research/compliance/INSTRUCTIONS.md` |
+| **Owns** | `research/reports/*.scorecard.md` |
+| **Reads** | `research/prompts/`, `research/reports/`, `analyst/services/compliance.py` |
+| **Never touches** | `analyst/` (backend code), `docs/`, `.agents/`, `CLAUDE.md` |
+| **Status** | Active |
+
+---
+
+## research/bull
+
+| Field | Value |
+|-------|-------|
+| **Name** | Bull Perspective Agent |
+| **Group** | research |
+| **Role** | Reads a completed report and produces the strongest data-grounded bull case |
+| **Entry point** | `.agents/research/bull/INSTRUCTIONS.md` |
+| **Owns** | Nothing — returns structured `PerspectiveOpinion` to orchestrator |
+| **Reads** | Completed report for assigned ticker/period |
+| **Never touches** | All files. Output is in-memory only. |
+| **Status** | Active |
+
+---
+
+## research/bear
+
+| Field | Value |
+|-------|-------|
+| **Name** | Bear Perspective Agent |
+| **Group** | research |
+| **Role** | Reads a completed report and produces the strongest data-grounded bear case |
+| **Entry point** | `.agents/research/bear/INSTRUCTIONS.md` |
+| **Owns** | Nothing — returns structured `PerspectiveOpinion` to orchestrator |
+| **Reads** | Completed report for assigned ticker/period |
+| **Never touches** | All files. Output is in-memory only. |
+| **Status** | Active |
+
+---
+
+## research/macro
+
+| Field | Value |
+|-------|-------|
+| **Name** | Macro Overlay Agent |
+| **Group** | research |
+| **Role** | Reads a completed report and assesses how the current macro regime affects the thesis |
+| **Entry point** | `.agents/research/macro/INSTRUCTIONS.md` |
+| **Owns** | Nothing — returns structured `PerspectiveOpinion` to orchestrator |
+| **Reads** | Completed report, macro data via web search |
+| **Never touches** | All files. Output is in-memory only. |
 | **Status** | Active |
 
 ---
@@ -25,42 +85,38 @@ Master index of all agents. Consult this file to route tasks to the correct agen
 |-------|-------|
 | **Name** | Backend Builder |
 | **Group** | build |
-| **Role** | Implements database migrations, Zod schemas, API routes, and service layer |
+| **Role** | Implements Python backend — models, services, API routes, CLI, database migrations |
 | **Entry point** | `.agents/build/backend/INSTRUCTIONS.md` |
-| **Owns** | `supabase/migrations/`, `frontend/src/schemas/`, `frontend/src/services/`, `frontend/src/app/api/`, `frontend/src/types/`, `vercel.json` |
-| **Reads** | `CLAUDE.md` (conventions), `frontend/src/components/` (data requirements), `docs/prd/database/`, `docs/prd/backend/`, active brief |
-| **Never touches** | `frontend/src/components/`, `frontend/src/app/[pages]/page.tsx`, `CLAUDE.md`, `AGENTS.md`, `.agents/`, `docs/comms/briefs/`, `docs/comms/backlog.md` |
+| **Owns** | `analyst/`, `tests/`, `pyproject.toml`, `migrations/` |
+| **Reads** | `CLAUDE.md`, `docs/prd.md`, `docs/architecture.md`, assigned task |
+| **Never touches** | `research/reports/`, `research/prompts/`, `.agents/`, `CLAUDE.md` |
 | **Status** | Active |
 
 ---
 
-## build/frontend
+## orchestrator
 
 | Field | Value |
 |-------|-------|
-| **Name** | Frontend Builder |
-| **Group** | build |
-| **Role** | Implements React components, pages, TypeScript types, and styling following the design system |
-| **Entry point** | `.agents/build/frontend/INSTRUCTIONS.md` |
-| **Owns** | `frontend/src/components/`, `frontend/src/app/[pages]/page.tsx`, `frontend/DESIGN.md` |
-| **Reads** | `CLAUDE.md` (conventions), `frontend/src/schemas/` (type definitions), `docs/prd/frontend/`, active brief |
-| **Never touches** | `frontend/src/app/api/`, `frontend/src/schemas/`, `frontend/src/services/`, `supabase/`, `CLAUDE.md`, `AGENTS.md`, `.agents/`, `docs/comms/briefs/`, `docs/comms/backlog.md` |
+| **Name** | Claude (Orchestrator) |
+| **Group** | — (top-level) |
+| **Role** | Interprets user intent, writes tasks, audits results, maintains project intelligence |
+| **Entry point** | `CLAUDE.md` |
+| **Owns** | `CLAUDE.md`, `.agents/`, `docs/` |
+| **Reads** | Everything |
+| **Never touches** | Should delegate code changes to build/backend or research agents |
 | **Status** | Active |
 
 ---
 
-## research/equity
+## Research Workflow: Full Analysis Pipeline
 
-| Field | Value |
-|-------|-------|
-| **Name** | Equity Research Agent |
-| **Group** | research |
-| **Role** | Executes investment playbooks, generates company reports and scorecards |
-| **Entry point** | `.agents/research/equity/INSTRUCTIONS.md` |
-| **Owns** | `research/reports/` (generated artifacts) |
-| **Reads** | `research/prompts/` (playbooks), data layer (via API or Supabase), assigned brief or task |
-| **Never touches** | `frontend/`, `supabase/migrations/`, `docs/comms/`, `.agents/`, `CLAUDE.md`, `AGENTS.md` |
-| **Status** | Active |
+```
+1. Equity agent generates report + opinion block     → research/reports/{ticker}.{period}.md
+2. Compliance agent scores the report                → research/reports/{ticker}.{period}.scorecard.md
+3. Bull, Bear, Macro agents read report in parallel  → PerspectiveOpinion (in-memory)
+4. Synthesis service combines all opinions            → SynthesizedOpinion (stored in DB)
+```
 
 ---
 
@@ -68,25 +124,14 @@ Master index of all agents. Consult this file to route tasks to the correct agen
 
 | ID | Group | Role | Status |
 |----|-------|------|--------|
-| `build/pm` | build | Project management — tracks milestones, dependencies, blockers | Planned |
-| `research/macro` | research | Macro/thematic research — market-level analysis, sector rotations | Planned |
-| `ops/monitoring` | ops | Portfolio monitoring — price alerts, filing alerts, position tracking | Planned |
-| `ops/scheduling` | ops | Task scheduling — cron management, pipeline orchestration | Planned |
-| `data/ingestion` | data | Data pipeline agent — feed ingestion, EDGAR sync, enrichment | Planned |
+| `data/edgar` | data | SEC EDGAR data ingestion and filing parsing | Planned |
+| `data/enrichment` | data | Financial data enrichment — prices, fundamentals, estimates | Planned |
 
 ---
 
 ## Adding a New Agent
 
-1. Create a directory under the appropriate group (e.g., `.agents/build/devops/`)
-2. Add an `INSTRUCTIONS.md` following the template (Identity, Read Order, Scope, Conventions, Output Format — see any existing agent for reference)
-3. Register the agent in this file with all required fields
-4. Update `docs/STRUCTURE.md` to reflect the new agent
-
-## Adding a New Group
-
-1. Create a top-level directory under `.agents/` (e.g., `.agents/ops/`)
-2. Add an `AGENT.md` with shared group conventions
-3. Add agent specializations as subdirectories with `INSTRUCTIONS.md`
-4. Register all new agents in this file
-5. Update `docs/STRUCTURE.md`
+1. Create a directory under the appropriate group (e.g., `.agents/research/sentiment/`)
+2. Add an `INSTRUCTIONS.md` with: Identity, Read Order, Scope, Conventions, Output Format
+3. Register the agent in this file
+4. Keep INSTRUCTIONS.md lean — under 100 lines. Agent context windows are precious.

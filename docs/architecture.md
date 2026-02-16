@@ -1,222 +1,424 @@
-# Brodus — Architecture
-
-## Authority and Scope
-
-This document describes the system design, data flow, and deployment model for Brodus. It reflects the current state and near-term direction.
-
-- **Architecture authority:** `CLAUDE.md` (conventions, constraints, tech stack)
-- **Agent infrastructure:** `.agents/` (registry, protocol, scoped instructions)
-- **Active work queue:** `docs/comms/backlog.md`
-- **If there is any conflict:** `CLAUDE.md` takes precedence
-
-Last updated: 2026-02-10
-
----
+# Analyst — System Architecture
 
 ## System Overview
 
-Brodus is a personal operating system powered by AI agents. The first workstream is market intelligence — tracking assets, ingesting SEC filings and financial news, and generating AI-powered research. The architecture is designed to support additional autonomous workflows (deal sourcing, portfolio monitoring, operations) as the system matures.
+Analyst is a distributed AI research system composed of four layers: CLI/API frontend, service layer, database, and external integrations. The system executes industry-specific analytical playbooks to generate structured equity research reports, verifies compliance against specifications, and persists artifacts for retrieval and cross-analysis.
 
 ```
-┌──────────────────────────────────────────────────────────────────┐
-│                         USER (Brody)                             │
-│   Reviews outputs, edits playbooks, sets strategic direction     │
-└───────────────────────────┬──────────────────────────────────────┘
-                            │
-                            ▼
-┌──────────────────────────────────────────────────────────────────┐
-│                    ORCHESTRATION LAYER                            │
-│                    Claude (Cowork)                                │
-│                                                                   │
-│   Interprets intent → writes briefs → routes to agents →         │
-│   audits results → maintains infrastructure                      │
-│                                                                   │
-│   .agents/registry.md routes tasks by type                       │
-└──────┬──────────┬──────────┬──────────┬──────────────────────────┘
-       │          │          │          │
-       ▼          ▼          ▼          ▼
-┌──────────┐┌──────────┐┌──────────┐┌──────────────────────┐
-│ Backend  ││ Frontend ││ Research ││ Future Agents         │
-│ Builder  ││ Builder  ││ Agents   ││                       │
-│          ││          ││          ││ • Portfolio monitoring │
-│ Migra-   ││ React    ││ Playbook ││ • Deal sourcing       │
-│ tions,   ││ compo-   ││ execu-   ││ • Data pipelines      │
-│ models,  ││ nents,   ││ tion,    ││ • Operations          │
-│ routes,  ││ pages,   ││ reports, ││ • Scheduling          │
-│ services ││ types    ││ scores   ││                       │
-└──────┬───┘└──────┬───┘└──────┬───┘└──────────┬────────────┘
-       │          │          │               │
-       ▼          ▼          ▼               ▼
-┌──────────────────────────────────────────────────────────────────┐
-│                       DATA LAYER                                  │
-│                                                                   │
-│  Supabase (PostgreSQL + pgvector + pg_trgm):                     │
-│  • Watchlist items + categories     • Trade entries + journal     │
-│  • Entities + entity links          • Filings + articles         │
-│  • Summaries + embeddings           • Ingestion logs             │
-│                                                                   │
-│  APIs & External Services:                                        │
-│  • SEC EDGAR (EFTS + Submissions)   • OpenAI (embeddings, gen)   │
-│  • Financial data API (TBD)         • RSS feeds                  │
-│  • TradingView (URL generation)     • QStash (async processing)  │
-└──────────────────────────────────────────────────────────────────┘
-                            │
-                            ▼
-┌──────────────────────────────────────────────────────────────────┐
-│                    COMMAND CENTER                                  │
-│                    Next.js 15 (App Router + TS + Tailwind)        │
-│                                                                   │
-│  Pages:                              Design:                      │
-│  • Watchlist (/)                     • Messari-inspired terminal  │
-│  • Research (/reports)               • Panel-based layouts        │
-│  • Trade Journal (/journal)          • Dense data tables          │
-│  • Feed (/feed) — planned            • Dark theme (brodus-*)     │
-│  • Admin (/admin) — planned                                       │
-└──────────────────────────────────────────────────────────────────┘
+┌─────────────────────────────────────────────────────────────┐
+│                    User Interface Layer                     │
+├─────────────────────┬─────────────────────────────────────┤
+│  CLI Tools          │  REST API (Next.js)                 │
+│  - generate         │  - GET /reports                     │
+│  - verify           │  - POST /reports                    │
+│  - list             │  - GET /reports/:id                 │
+│  - search           │  - GET /reports/search              │
+└─────────────┬───────┴──────────────┬──────────────────────┘
+              │                      │
+┌─────────────v──────────────────────v──────────────────────┐
+│                    Service Layer                          │
+├───────────────────────────────────────────────────────────┤
+│  • Report Generation (LLM orchestration)                  │
+│  • Playbook Resolution & Validation                       │
+│  • Compliance Scoring Engine                              │
+│  • Report Query & Retrieval                               │
+│  • Data Enrichment (future)                               │
+└─────────────┬───────────────────────────────────────────┘
+              │
+┌─────────────v──────────────────────────────────────────────┐
+│                    Database Layer                          │
+├───────────────────────────────────────────────────────────┤
+│  Supabase (PostgreSQL)                                    │
+│  • reports (id, ticker, content, compliance_score, ...)  │
+│  • Index: ticker, prompt_used, compliance_grade          │
+│  • Full-text search (content)                             │
+│  • Vector embeddings (future: pgvector)                   │
+└─────────────┬───────────────────────────────────────────┘
+              │
+┌─────────────v──────────────────────────────────────────────┐
+│                External Integrations                       │
+├───────────────────────────────────────────────────────────┤
+│  • OpenAI (gpt-4o-mini, text-embedding-3-small)          │
+│  • SEC EDGAR (future)                                     │
+│  • Financial Data APIs (future)                           │
+│  • News Aggregators (future)                              │
+└───────────────────────────────────────────────────────────┘
 ```
 
 ---
 
-## Application Architecture
+## Component Breakdown
 
-### Domain Module Pattern
+### 1. CLI Tools
+**Purpose:** Local command-line interface for development, testing, and operational tasks.
 
-The application is organized by domain. Each domain is a self-contained vertical slice:
+**Components:**
+- `analyst generate` — Execute playbook against ticker; output report to file
+- `analyst verify` — Score existing report against playbook specification
+- `analyst list` — Query and list stored reports (by ticker, industry, grade)
+- `analyst search` — Full-text search across report database
+- `analyst fetch` — Retrieve single report by ID
+
+**Technology:** Node.js or Python CLI framework, Supabase client library, OpenAI client
+
+**Current Status:** Stub implementation; full implementation Phase 1
+
+---
+
+### 2. REST API
+
+**Purpose:** Stateless HTTP endpoints for parent OS integration and external clients.
+
+**Key Endpoints:**
+- `GET /api/research/reports` — List reports with filters
+- `GET /api/research/reports/:id` — Fetch single report
+- `GET /api/research/reports/search` — Full-text search
+- `POST /api/research/reports` — Create/store report
+- `POST /api/research/reports/generate` — Generate new report
+- `POST /api/research/reports/:id/verify` — Run compliance check
+
+**Technology:** Next.js API Routes, TypeScript, Zod validation, Supabase client
+
+**Current Status:** Route stubs exist; business logic Phase 2
+
+---
+
+### 3. Service Layer
+
+**Key Services:**
+
+**ReportService:**
+- `generateReport()` — Execute playbook via LLM
+- `getReport()` — Retrieve single report
+- `listReports()` — Query with filters
+- `searchReports()` — Full-text search
+- `storeReport()` — Persist to database
+
+**ComplianceService:**
+- `verifyReport()` — Score against playbook
+- `scoreSections()` — Section-level coverage
+- `scoreElements()` — Element-level coverage
+
+**PlaybookService:**
+- `loadPlaybook()` — Read prompt specification
+- `resolvePlaybookForTicker()` — Match ticker to industry
+- `listPlaybooks()` — Enumerate available playbooks
+
+**DataService (Future):**
+- `getCompanyData()` — Fetch fundamentals
+- `getRecentFilings()` — SEC EDGAR data
+- `getRecentNews()` — News feed
+
+**Technology:** TypeScript, Zod schemas, dependency injection
+
+**Current Status:** Stubs defined; implementation Phase 1-2
+
+---
+
+### 4. Database Layer
+
+**Primary Table: reports**
+```sql
+CREATE TABLE reports (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  ticker VARCHAR(10) NOT NULL,
+  title VARCHAR(255) NOT NULL,
+  report_type VARCHAR(50) DEFAULT 'equity_analysis',
+  period VARCHAR(20),
+  prompt_used VARCHAR(255) NOT NULL,
+  content TEXT NOT NULL,
+  word_count INTEGER,
+  compliance_score FLOAT CHECK (compliance_score >= 0 AND compliance_score <= 100),
+  compliance_grade VARCHAR(1) CHECK (compliance_grade IN ('A', 'B', 'C', 'D', 'F')),
+  metadata JSONB DEFAULT '{}',
+  created_at TIMESTAMP DEFAULT NOW(),
+  updated_at TIMESTAMP DEFAULT NOW(),
+  
+  KEY idx_ticker (ticker),
+  KEY idx_prompt_used (prompt_used),
+  KEY idx_compliance_grade (compliance_grade),
+  KEY idx_created_at (created_at DESC)
+);
+```
+
+**Metadata Fields (JSONB):**
+```json
+{
+  "industry": "Semiconductors & Accelerators",
+  "codename": "INTC-Q3-2024",
+  "model_used": "gpt-4o-mini",
+  "idp_count": 8,
+  "investigation_tracks": ["TAM expansion", "Design win retention"],
+  "section_coverage": {"A": 0.95, "B": 0.88},
+  "element_coverage": {"A": [7, 7], "B": [5, 6]},
+  "generated_by": "analyst-v1"
+}
+```
+
+**Future Tables (Phase 3+):**
+- `filings` — SEC 10-K, 10-Q, 8-K documents
+- `articles` — News articles and research summaries
+- `report_embeddings` — Vector embeddings (pgvector)
+- `interesting_data_points` — Extracted IDPs and cross-links
+
+**Technology:** Supabase (PostgreSQL), pgvector (future), pg_trgm (future)
+
+**Current Status:** Schema designed; migration Phase 1
+
+---
+
+### 5. External Integrations
+
+**OpenAI Integration:**
+- Report generation via `gpt-4o-mini` (Phase 2)
+- Embeddings via `text-embedding-3-small` (Phase 4)
+- Rate limiting and retry logic
+- Configuration via `OPENAI_API_KEY` environment variable
+
+**SEC EDGAR Integration (Future):**
+- EFTS API for discovery
+- Submissions API for entity data
+- Rate limit: 10 req/sec, 100ms min delay
+- Filing parsing and financial data extraction
+
+**Financial Data APIs (Future):**
+- Potential sources: Alpha Vantage, IEX Cloud, Finnhub, Twelve Data
+- Revenue, margins, growth, valuation, debt metrics
+
+**News Aggregation (Future):**
+- NewsAPI, RSS feeds, press releases
+- Daily/hourly refresh, deduplication, filtering
+
+---
+
+## Data Flow Diagrams
+
+### Report Generation Flow (Phase 2+)
 
 ```
-Domain = Migration + Models + Services + API Routes + Types + Components + Page
+User/Parent OS
+  ↓
+POST /api/research/reports/generate
+  ↓
+Validate input (Zod)
+  ↓
+ReportService.generateReport()
+  ├─ PlaybookService.loadPlaybook()
+  ├─ Construct LLM prompt (role, tone, sections A-H)
+  ├─ Call OpenAI API (gpt-4o-mini)
+  ├─ ComplianceService.verifyReport()
+  │  ├─ Score section coverage
+  │  ├─ Score element coverage
+  │  └─ Calculate grade (A-F)
+  ├─ ReportService.storeReport()
+  │  └─ INSERT into reports table
+  └─ Return report object
+  ↓
+Return 201 { id, content, compliance_score }
+  ↓
+Database (reports table)
 ```
 
-| Domain | Database | Backend | Frontend | Status |
-|--------|----------|---------|----------|--------|
-| Watchlist | `002_watchlist.sql` (planned) | models, routes, services | components, page | Frontend built, backend pending |
-| Journal | `002_trade_journal.sql` (Brief 002) | models, routes, services | components, page | Brief written, awaiting execution |
-| Research | — (uses existing tables) | report generation | components, page | Frontend built, generation pending |
-| Feed | — (uses existing tables) | ingestion pipeline | components, page | Stubs only |
-
-Domains share the data layer (`frontend/src/lib/db.ts`) and the design system (`frontend/src/components/ui/`) but do NOT import each other's services directly.
-
-### Layered Architecture
+### Report Retrieval Flow
 
 ```
-┌─────────────────────────────────────────────┐
-│ Frontend (Next.js)                          │
-│ src/app/[domain]/page.tsx                   │
-│ src/components/[domain]/*.tsx               │
-│ src/types/[domain].ts                       │
-│                                             │
-│ Calls API routes via fetchJson()            │
-│ Never accesses Supabase directly            │
-├─────────────────────────────────────────────┤
-│ API Routes (Next.js App Router)             │
-│ frontend/src/app/api/[domain]/route.ts      │
-│                                             │
-│ Thin: validate input → call service →       │
-│ format output. No business logic here.      │
-├─────────────────────────────────────────────┤
-│ Services (frontend/src/services/)           │
-│ services/[domain].ts                        │
-│                                             │
-│ All business logic lives here.              │
-│ CRUD, validation, aggregation, enrichment.  │
-├─────────────────────────────────────────────┤
-│ Schemas (frontend/src/schemas/)             │
-│ schemas/[domain].ts                         │
-│                                             │
-│ Zod schemas = the data contract.            │
-│ Frontend and backend validation.            │
-├─────────────────────────────────────────────┤
-│ Database (Supabase)                         │
-│ supabase/migrations/NNN_*.sql               │
-│                                             │
-│ Accessed only through db.ts.               │
-│ Migrations are append-only.                 │
-└─────────────────────────────────────────────┘
+User/Parent OS
+  ↓
+GET /api/research/reports?ticker=INTC&grade=A
+  ↓
+Validate query params (Zod)
+  ↓
+ReportService.listReports(filters)
+  ↓
+SELECT * FROM reports WHERE ticker=? AND compliance_grade=?
+  ↓
+Return 200 { reports, total, offset, limit }
+  ↓
+Client receives report list
+```
+
+### Compliance Verification Flow
+
+```
+User/CLI
+  ↓
+analyst verify --report reports/INTC_report.md --playbook semiconductors-and-accelerators.prompt.md
+  ↓
+Read report from file
+  ↓
+ComplianceService.verifyReport()
+  ├─ PlaybookService.loadPlaybook()
+  ├─ Extract sections A-H from markdown
+  ├─ For each section:
+  │  ├─ Check presence (binary)
+  │  ├─ Count elements (present vs. required)
+  │  └─ Calculate coverage %
+  ├─ Assess structural requirements
+  │  ├─ Word count
+  │  ├─ IDP density
+  │  └─ Investigation track count
+  └─ Calculate weighted score
+      (section_coverage*0.4 + element_coverage*0.4 + structural*0.2)
+  ↓
+Print scorecard to console
+  ↓
+User sees verification results
 ```
 
 ---
 
-## Data Flow
+## Integration with Parent OS
 
-### User-Facing CRUD (e.g., Trade Journal)
+Analyst operates as a microservice within the larger agentic OS (Brodus):
 
-```
-User action in Command Center
-    │
-    ▼
-Frontend calls fetchJson('/api/journal/trades', { method: 'POST', body })
-    │
-    ▼
-API route validates with Zod → calls service function → returns JSON
-    │
-    ▼
-Service function calls db.ts → Supabase INSERT/UPDATE/DELETE
-    │
-    ▼
-Response flows back through the chain → UI updates
-```
+**API Contract:**
+- Parent OS calls `/api/research/reports/generate` with ticker and playbook
+- Analyst returns report ID, content, compliance metadata
+- Parent OS stores report reference in its state
 
-### Feed Ingestion Pipeline (planned)
+**Webhook (Future):**
+- Analyst publishes: `report.generated`, `report.failed`
+- Parent OS subscribes for async workflows
 
-```
-Vercel Cron triggers ingest_filings / ingest_feeds
-    │
-    ▼
-Route queries EDGAR EFTS or fetches RSS feeds
-    │
-    ├── New filings: INSERT into filings table, dispatch QStash message
-    └── New articles: INSERT into articles table, dispatch QStash message
-         │
-         ▼
-    QStash delivers message to process_filing / process_article
-         │
-         ▼
-    Processing: fetch full content → generate embedding → extract entities → store
-         │
-         ▼
-    Supabase: full text, embedding, entity links stored
-         │
-         ▼
-    Available in Command Center feed page and semantic search
-```
+**Data Sharing (Future):**
+- Semantic search API for cross-report queries
+- Pattern detection and portfolio insights
+- Cross-asset comparison
 
-### AI Report Generation (planned)
-
-```
-User clicks "Generate Report" for a ticker
-    │
-    ▼
-API route fetches: current metrics + recent filings + recent articles
-    │
-    ▼
-Assembles context → sends to OpenAI (gpt-4o-mini) with structured prompt
-    │
-    ▼
-Returns markdown report → rendered in Command Center
-    │
-    ▼
-Optionally persisted to summaries table
-```
+**Authentication (Future):**
+- API key or OAuth for parent OS
+- Rate limiting and quota management
+- Audit logging
 
 ---
 
-## EDGAR API Strategy
+## Technology Rationale
 
-Brodus uses two SEC EDGAR APIs:
+| Component | Technology | Rationale |
+|-----------|-----------|-----------|
+| **API Framework** | Next.js | Unified Node.js stack; streaming support; fast iterations |
+| **Database** | Supabase | Built-in full-text search; pgvector support; managed backups |
+| **Validation** | Zod | Type inference; runtime safety; good error messages |
+| **LLM** | OpenAI gpt-4o-mini | Low latency; economical; proven for structured output |
+| **Embeddings** | text-embedding-3-small | 1536 dims; fast inference; good quality |
+| **CLI** | Node.js/Python | Consistent with stack; service layer reuse |
+| **Config** | Environment variables | Secure; zero-config deployment; no secrets in code |
 
-- **EFTS Full-Text Search** (`efts.sec.gov/LATEST`) — Discover filings by keywords, form type, date range.
-- **Submissions** (`data.sec.gov/submissions`) — Look up all filings by a specific CIK.
+---
 
-Rate limiting: SEC requires max 10 requests/second and a User-Agent header. Brodus enforces a 100ms minimum delay between requests. The user agent is configured via `EDGAR_USER_AGENT` environment variable.
+## Error Handling & Resilience
 
-## Entity Linking
+**Report Generation:**
+- LLM error → log, retry with exponential backoff
+- Timeout (>60s) → abort, return 503
+- Invalid playbook → return 422
+- Database failure → return 500, log
 
-Entities (companies, people, funds) are identified by CIK (exact match for SEC filers), pg_trgm trigram similarity (fuzzy name matching), and ticker symbol extraction from text. The `document_entities` junction table links documents to entities with a role and confidence score.
+**Compliance Verification:**
+- Playbook not found → 404
+- Malformed markdown → log, score what can be extracted
+- Unexpected structure → degrade gracefully
 
-## Deduplication
+**Database:**
+- Connection timeout → retry 3x with backoff
+- Query timeout → return 503, log slow query
+- Transaction rollback → return 500, log
 
-Filings are deduped by `accession_number`, articles by `url` (unique constraints). Semantic deduplication via pgvector cosine similarity is planned for flagging near-duplicate content.
+**Rate Limiting (Future):**
+- OpenAI: Respect per-minute token limits, queue excess
+- API endpoints: 1000 req/min per consumer
+- SEC EDGAR: 10 req/sec enforced
 
-## Deployment
+---
 
-API routes are Next.js API Routes deployed on Vercel. Cron schedules are defined in `vercel.json`. The frontend deploys as a standard Next.js app on Vercel. Supabase provides the managed PostgreSQL database with pgvector and pg_trgm extensions.
+## Monitoring & Observability
+
+**Metrics:**
+- Generation: count, latency, success rate, grade distribution
+- Compliance: score distribution, coverage trends
+- API: request count, error rates, response times
+- Database: query latency, row count, index hit rates
+
+**Logging:**
+- All generation attempts with timestamp, ticker, playbook, result
+- All failures with error message and stack trace
+- API requests with method, path, status, duration
+
+**Alerting (Future):**
+- Generation failure rate >5% → alert
+- Compliance score divergence → investigate
+- API p95 latency >1s → investigate
+- Database query timeout → investigate
+
+---
+
+## Security Considerations
+
+**Input Validation:**
+- All API inputs validated with Zod; 422 on failure
+- Ticker symbols matched against whitelist (future)
+- Playbook paths verified (prevent directory traversal)
+
+**API Authentication (Phase 5):**
+- API key or OAuth required
+- Rate limiting per-consumer
+- IP whitelisting optional
+
+**Data Protection:**
+- No PII in reports (company data only)
+- Sanitized error responses; no stack traces
+- Credentials via environment; never hardcoded
+
+**Supply Chain:**
+- No untrusted dependencies
+- HTTPS for all external APIs
+- Dependency updates reviewed
+
+---
+
+## Deployment Architecture
+
+**Development:**
+- Local Supabase (Docker)
+- OpenAI API key configured locally
+- CLI and API on localhost:3000
+
+**Staging:**
+- Supabase staging environment
+- OpenAI API (separate quota)
+- Full integration tests
+
+**Production:**
+- Supabase managed service (backup, failover)
+- OpenAI API with billing limits
+- Vercel or similar PaaS
+- CLI via npm, Homebrew
+
+---
+
+## Future Enhancements
+
+**Phase 4 — Vector Search:**
+- Index sections in pgvector
+- Semantic search: "margin expansion across all reports"
+- Similarity matching: "5 companies most like INTC"
+
+**Phase 4 — IDP Cross-Linking:**
+- Extract IDPs into dedicated table
+- Build IDP graph; cross-company patterns
+- Anomaly detection: "unusual cluster across 3 competitors"
+
+**Phase 5 — Versioning & Editing:**
+- Manual report edits
+- Edit history tracking
+- Playbook A/B testing
+
+**Phase 5 — Multimodal Reports:**
+- Charts and tables in markdown
+- Auto-generated sparklines
+- PDF/Word export
+
+**Phase 5 — Real-Time Feeds:**
+- Streaming updates as data arrives
+- Compliance re-scoring
+- Webhook notifications

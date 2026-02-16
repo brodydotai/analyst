@@ -1,263 +1,467 @@
-# Brodus — Development Roadmap
+# Analyst — Development Roadmap
 
-> **Active execution queue:** `docs/comms/backlog.md`
-> This roadmap is the long-term feature vision. The backlog is what's being built now.
+## Overview
 
-## Authority and Scope
-
-This document is the strategic build plan for Brodus. It describes the phased journey from current state to the full autonomous operating system. It is guidance for sequencing and prioritization — not a task list.
-
-- **Highest authority:** `.agents/initiation.md` (role contract) and `CLAUDE.md` (architecture and constraints)
-- **Active work:** `docs/comms/backlog.md` (priority-ordered task queue with briefs)
-- **Architecture reference:** `docs/architecture.md` (system design and data flow)
-- **If there is any conflict:** `CLAUDE.md` takes precedence
-
-Last updated: 2026-02-10
+Analyst is building an institutional-grade AI equity research system in five phases over 12-18 months. Each phase builds on the previous and delivers concrete value to the parent OS (Brodus).
 
 ---
 
-## Strategic Principles
+## Phase 1: Foundation (Current — Weeks 1-4)
 
-These principles govern all build decisions. They supersede the original Phase 1-8 plan.
+**Goal:** Build data persistence layer, compliance engine, tooling, and seed database with existing reports.
 
-**1. UX-first, page by page.** The frontend is the product surface. Each page gets a complete vertical-slice treatment: design overhaul + backend wiring + real data. No "backend-only" phases that leave the frontend as a hollow shell.
+**Entry Criteria:**
+- Project structure initialized
+- Playbook inventory complete (18 playbooks)
+- Existing reports available (9+ reports across commodities and equities)
+- CLAUDE.md and team onboarded
 
-**2. Domain module pattern.** Each domain (journal, watchlist, research, feed) is a self-contained slice: migration + models + services + API routes + types + components + page. Domains share the data layer and design system but do not import each other's services.
+**Deliverables:**
 
-**3. Design patterns propagate forward.** The first page to be overhauled (Trade Journal) establishes the design system: Panel, PillToggle, dense tables, value coloring, typography, spacing. Every subsequent page inherits these patterns — no re-inventing the wheel.
+1. **Database Migration**
+   - Create `reports` table with proper schema and indexes
+   - Schema: id, ticker, title, report_type, period, prompt_used, content, word_count, compliance_score, compliance_grade, metadata, created_at, updated_at
+   - Indexes on: ticker, prompt_used, compliance_grade, created_at
+   - Migration file: `supabase/migrations/002_analyst_reports.sql`
 
-**4. Agents execute, humans direct.** Build agents (backend, frontend) execute briefs autonomously. The orchestrator writes briefs, audits results, and maintains infrastructure. The product owner sets priorities and reviews outputs. This separation scales to additional agent types (research, ops, data) without changing the operating model.
+2. **Report Seeding**
+   - Write data import script to parse existing markdown reports
+   - Extract metadata (industry, codename, compliance grade)
+   - Import all existing reports (INTC, ADBE, VNET, SNAP, ASPI, CRCL, S, TIC, commodities)
+   - Verify import consistency
 
-**5. Backend follows frontend demand.** API routes and services are built when a page needs them — not speculatively. The exception is data infrastructure (migrations, entity linking) which has long lead times.
+3. **Compliance Verification Tool**
+   - Integrate existing `research/verify_prompt_compliance.py` into codebase
+   - Output JSON scorecard: section coverage, element coverage, structural assessment
+   - Grade assignment (A-F) based on score (90+, 80-89, 70-79, 60-69, <60)
+   - Run against all seeded reports to establish baseline
 
----
+4. **List API Endpoint** (`GET /api/research/reports`)
+   - Query parameters: ticker, industry, grade, min_score, offset, limit
+   - Return paginated report list with metadata
+   - Response contract: { reports: [...], total, offset, limit }
+   - Handle bad input with 422, missing records with 404
 
-## Current State (as of 2026-02-10)
+5. **Fetch API Endpoint** (`GET /api/research/reports/:id`)
+   - Retrieve single report by ID
+   - Return full report content + metadata
+   - Error handling: 404 if not found, 500 on database failure
 
-### What's Built
+6. **CLI Tools**
+   - `analyst list --ticker INTC --grade A --offset 0 --limit 20` — List reports
+   - `analyst fetch --id {uuid}` — Retrieve single report
+   - `analyst verify --report {path} --playbook {path}` — Score report locally
+   - Output results as JSON or formatted table
 
-**Frontend shell:** Next.js 15 command center with collapsible sidebar navigation, three pages (Watchlist, Research, Journal), expanded design system (brodus-* color tokens, JetBrains Mono data font, Panel and PillToggle components, dense table patterns). Pages use local component state — not yet wired to backend APIs.
+7. **Documentation**
+   - `/docs/prd.md` — Full product requirements document
+   - `/docs/architecture.md` — System architecture and component breakdown
+   - `/docs/roadmap.md` — Development phases (this file)
+   - `/README.md` — Project overview and quick start
 
-**Backend stubs:** API route stubs for ingestion and processing (return `not_implemented`). Core modules for config, database client, queue client. Zod schemas for Filing, Article, Entity.
+**Testing:**
+- Unit tests for compliance scoring (verify against known good reports)
+- Integration tests for API endpoints (valid queries, error cases)
+- Manual testing of CLI commands
+- Spot-check report data quality
 
-**Database:** Initial schema with 7 tables (sources, entities, filings, articles, document_entities, summaries, ingestion_log). No domain-specific tables yet (watchlist, journal).
-
-**Agent infrastructure:** `.agents/` directory with registry, protocol, and scoped instructions for 4 active agents (orchestrator, backend builder, frontend builder, equity research). Brief lifecycle system with archive.
-
-**Research:** 15 investment playbooks in `research/prompts/`, 4 generated reports in `research/reports/`.
-
-### What's Not Built
-
-- Domain-specific backend (journal tables, watchlist tables, CRUD APIs)
-- Market data enrichment pipeline
-- AI report generation pipeline (playbooks exist, generation does not)
-- Feed ingestion pipeline (stubs exist, implementation does not)
-- EDGAR integration beyond URL generation
-- Semantic search
-- Autonomous agent scheduling
-- Portfolio monitoring, deal sourcing, operations workflows
-
----
-
-## Phase 1: Command Center (IN PROGRESS)
-
-**Goal:** Make the frontend visually compelling and functionally complete, page by page. Each page gets the Messari-inspired terminal treatment plus real backend functionality.
-
-**Design reference:** Messari.io — dark, dense, data-heavy financial terminal. Panel-based layouts, pill toggles, monospace numbers, green/red value coloring.
-
-### 1A. Trade Journal (Brief 002 — Active)
-
-The first page to receive the full treatment. Establishes the design patterns that all other pages will follow.
-
-- Database migration: `trade_entries` + `journal_entries` tables
-- Zod schemas: `TradeEntry`, `JournalEntry` with Create variants
-- API routes: full CRUD for trades and journal entries
-- Frontend overhaul: Panel/PillToggle components, two-tab layout (Trade Log / Daily Journal), stat cards, dense trade table with expandable rows, journal entry cards
-- DESIGN.md: codified terminal-wide design directive
-
-**Unlocks:** Reusable Panel and PillToggle components used by all subsequent pages.
-
-### 1B. Watchlist Overhaul (Up Next)
-
-Apply the terminal design to the existing watchlist page. Wire to real Supabase-backed APIs.
-
-- Database migration: `watchlist_categories` + `watchlist_items` tables (scope from deferred Brief 001)
-- Zod schemas + API routes: full CRUD, category management, reorder
-- Frontend overhaul: decompose the 600+ line monolith into composable components, apply Panel chrome, dense data rows, category panels
-- Market data enrichment: basic metric display (price, change) — data source TBD
-
-**Unlocks:** The primary daily-use surface with real data.
-
-### 1C. Research Page Overhaul
-
-Apply the terminal design to the research/reports viewer.
-
-- Frontend overhaul: improved report list with search/filter, better markdown rendering (tables, blockquotes, links), report table of contents
-- No new backend required initially — reports are generated flat files
-- Later: API routes for report metadata, generation triggers
-
-**Unlocks:** A usable research reading experience.
-
-### 1D. Feed Page (New)
-
-Build a new page for the ingestion pipeline's output.
-
-- Frontend: reverse-chronological feed of articles and filings, filter tabs (All/News/Filings), ticker filter, visual indicator for watchlist-linked items
-- Requires Phase 2 (data infrastructure) to show real data — build with empty states and types first
+**Exit Criteria:**
+- All existing reports successfully imported and indexed
+- Compliance scores stable and match baseline verification
+- API endpoints return correct data with proper error handling
+- CLI tools operational and documented
+- Documentation complete and reviewed
+- Team confident in data model and API contracts
+- 95%+ test coverage for core services
 
 ---
 
-## Phase 2: Data Infrastructure
+## Phase 2: Generation Pipeline (Weeks 5-8)
 
-**Goal:** Build the backend services and pipelines that feed the command center with real data.
+**Goal:** Implement automated report generation via LLM with real-time compliance verification.
 
-### 2A. Market Data Enrichment
+**Entry Criteria:**
+- Phase 1 complete
+- OpenAI API credentials configured
+- Playbook format standardized and documented
+- Team familiar with Zod schema patterns
 
-- Evaluate and integrate a financial data API (FMP, Alpha Vantage, or similar)
-- `frontend/src/services/market-data.ts`: current price, multiples (P/E, EV/EBITDA, P/S, P/B), performance (1D through 1Y), market cap, 52w range
-- Enrichment API route: real-time lookup per ticker, returns to frontend
-- TradingView URL generation for chart links
+**Deliverables:**
 
-### 2B. EDGAR Integration
+1. **Playbook Processing Engine**
+   - `PlaybookService.loadPlaybook()` — Parse *.prompt.md files into structured spec
+   - Extract: role definition, tone, required sections (A-H), elements per section, structural requirements
+   - Validate playbook structure (all required sections present)
+   - Support version pinning for reproducibility
 
-- `frontend/src/services/edgar.ts`: query EFTS for filing discovery, submissions API for entity-specific lookups
-- Direct links to most recent 10-K, 10-Q, 8-K per entity
-- Entity linking: map tickers to CIKs, link filings to entities via `document_entities`
-- Rate limiting: 100ms minimum delay, proper User-Agent header
+2. **LLM Integration**
+   - `OpenAIService.generateReport()` — Call gpt-4o-mini with playbook prompt
+   - Construct system prompt from playbook role/tone
+   - Construct user prompt with company context
+   - Stream output for real-time updates
+   - Extract metadata (IDPs, investigation tracks) from markdown
 
-### 2C. Feed Ingestion Pipeline
+3. **Report Generation Endpoint** (`POST /api/research/reports/generate`)
+   - Input: { ticker, playbook, company_context? }
+   - Orchestrate: PlaybookService → OpenAI → ComplianceService → Database
+   - Return 201 { id, status, compliance_score, compliance_grade, content }
+   - Handle errors: 422 (invalid input), 503 (timeout), 500 (failure)
+   - Implement request logging and retry logic
 
-- Activate the existing route stubs: `ingest_filings`, `ingest_feeds`, `process_filing`, `process_article`
-- RSS fetcher: parse active sources, insert new articles, dispatch QStash jobs
-- EDGAR fetcher: query recent filings, insert, dispatch QStash jobs
-- Processing: fetch full content, generate embeddings (OpenAI text-embedding-3-small), extract entities
-- Deduplication: accession_number for filings, URL for articles
+4. **Real-Time Compliance Scoring**
+   - Run `ComplianceService.verifyReport()` immediately after generation
+   - Score and grade computed before return
+   - Include section coverage, element coverage, structural assessment in metadata
+   - Store full scorecard in report metadata JSONB
 
-### 2D. Sources Management
+5. **Report Storage & Indexing**
+   - `ReportService.storeReport()` — INSERT report with all metadata
+   - Auto-populate: created_at, word_count, compliance_score, compliance_grade
+   - Ensure indexes on ticker, prompt_used, compliance_grade are efficient
+   - Implement upsert logic (handle duplicate generation requests)
 
-- Sources admin page (`/admin/sources`): CRUD for RSS feeds and EDGAR search configs
-- Simple admin gate (env-based password)
-- Test button per source to validate URL/feed
+6. **Error Handling & Observability**
+   - Log all generation attempts (timestamp, ticker, playbook, duration, result)
+   - Track failures: LLM errors, timeouts, compliance failures, database errors
+   - Implement exponential backoff for retries
+   - Add monitoring for generation success rate, average latency, grade distribution
 
----
+7. **CLI Generation Command**
+   - `analyst generate --ticker INTC --playbook semiconductors-and-accelerators`
+   - `analyst generate --ticker SNAP --playbook social-media-and-digital-advertising --save`
+   - Output: report content to stdout or file, compliance scorecard
+   - Options: `--save` (write to file), `--format` (markdown, json)
 
-## Phase 3: Intelligence Layer
+8. **Testing & Validation**
+   - Generate reports for 5 test tickers (INTC, ADBE, SNAP, VNET, TIC)
+   - Validate compliance scores against Phase 1 baseline
+   - Measure generation latency, error rates
+   - Manual quality review of generated reports
 
-**Goal:** Turn raw data into actionable research using AI.
+**Quality Thresholds:**
+- 90%+ of generated reports achieve grade B or higher
+- Generation latency < 60 seconds per report
+- Error rate < 2% (transient failures excluded)
+- Compliance scores consistent ±5 points from verification tool
 
-### 3A. AI Report Generation
-
-- `frontend/src/services/reports.ts`: structured report generation using existing playbooks
-- Per-asset reports: company overview, price action, key metrics, filings summary, bull/bear thesis
-- 24-hour watchlist briefing: cross-asset daily summary
-- OpenAI gpt-4o-mini with structured prompts, optional persistence to summaries table
-- Wire to Research page: "Generate Report" button per ticker
-
-### 3B. Semantic Search
-
-- Vector search API: generate query embedding, search filings and articles by cosine similarity
-- Search bar accessible from all pages
-- Results page: ranked filings/articles with relevance score, snippet, entity tags
-- pgvector-powered, using embeddings generated during ingestion
-
-### 3C. Playbook Evolution
-
-- Feedback loop: orchestrator captures report quality signals, refines playbooks
-- Scorecard auto-generation alongside reports
-- Playbook versioning and A/B comparison
-
----
-
-## Phase 4: Autonomous Workflows
-
-**Goal:** Evolve from a manual research tool to an autonomous operating system.
-
-### 4A. Portfolio Monitoring
-
-- Ops agent: track positions, price alerts, filing alerts
-- Scheduled briefings: daily and weekly automated summaries
-- Alert system: unusual price moves, new filings for watchlist entities, earnings within N days
-
-### 4B. Deal Sourcing
-
-- Research agent expansion: identify opportunities from filings, news patterns, sector rotations
-- Macro/thematic research agent: market-level analysis
-- Opportunity scoring and pipeline tracking
-
-### 4C. Scheduling and Orchestration
-
-- Cron-driven agent tasks via Vercel cron + QStash
-- Agent task queue: prioritized, observable, auditable
-- Cross-agent coordination: research agents feed data to monitoring agents
-
-### 4D. TradingView Sync
-
-- Import/export watchlists between Brodus and TradingView
-- Merge logic: existing items stay, new ones added, no category disruption
-- Bidirectional sync (eventual)
+**Exit Criteria:**
+- Full end-to-end report generation working
+- All 18 playbooks tested successfully
+- Generation quality meets thresholds
+- Monitoring dashboards in place
+- Documentation complete
 
 ---
 
-## Phase 5: Scale and Polish
+## Phase 3: Data Ingestion (Weeks 9-14)
 
-**Goal:** Harden the system for daily autonomous operation.
+**Goal:** Build data collection layer for company fundamentals, filings, and news.
 
-- Performance: all pages load in under 2 seconds with full data
-- Keyboard shortcuts: `/` to search, `Esc` to close modals, vim-style navigation
-- Error boundaries on all pages, loading skeletons for async operations
-- Database-backed artifact store (reports, scorecards) replacing flat files
-- Semantic deduplication via pgvector cosine similarity
-- Observability: agent execution logs, pipeline health dashboard
-- Multi-agent scaling: add agents for new domains without architectural changes
+**Entry Criteria:**
+- Phase 2 complete
+- External API credentials configured (SEC EDGAR, financial data, news)
+- Data schema designed and reviewed
+
+**Deliverables:**
+
+1. **SEC EDGAR Integration**
+   - Implement EFTS API client for filing discovery
+   - Implement Submissions API client for entity-specific data
+   - Extract: accession_number, filing_type, filed_date, financial data, risk factors, MD&A
+   - Enforce rate limits: 10 req/sec, 100ms min delay, custom User-Agent
+   - Parse JSON response and extract key metrics
+
+2. **Filings Table & Schema**
+   - `CREATE TABLE filings` with: id, ticker, filing_type, accession_number, filed_date, content, metadata
+   - Unique constraint on accession_number (deduplication)
+   - Index on ticker and filed_date for fast queries
+   - Store full filing text for full-text search
+
+3. **Financial Data Enrichment**
+   - Integrate financial data API (Alpha Vantage, IEX Cloud, or equivalent)
+   - Fetch quarterly and annual financials: revenue, gross profit, operating income, margins, growth rates
+   - Enrich company_context object with: latest revenue, margins, growth, valuation ratios
+   - Cache financial data with TTL (e.g., update daily)
+
+4. **News Aggregation**
+   - Integrate NewsAPI or RSS feed aggregator
+   - Fetch recent articles by ticker
+   - `CREATE TABLE articles` with: id, ticker, headline, url, published_date, content, source
+   - Unique constraint on URL (deduplication)
+   - Filter and rank by relevance to ticker
+
+5. **Data Ingestion Pipeline**
+   - Scheduled job: Daily refresh of filings for tracked tickers
+   - Scheduled job: Daily refresh of financial data
+   - Scheduled job: Hourly news aggregation
+   - Implement data quality checks: validate data format, detect anomalies
+   - Implement backoff and retry logic for API failures
+
+6. **Company Context Builder**
+   - `DataService.getCompanyData(ticker)` — Aggregate data from all sources
+   - Return enriched context: financials, recent filings, recent news, metadata
+   - Pass to LLM for improved report generation
+
+7. **Testing & Validation**
+   - Verify EDGAR integration against known filings (INTC 10-K, SNAP 10-Q)
+   - Validate financial data accuracy against trusted sources
+   - Spot-check news ingestion for relevance and deduplication
+   - Monitor data freshness and pipeline error rates
+
+**Quality Thresholds:**
+- Complete financials available for 50+ tickers
+- Latest filings ingested within 24 hours of SEC publication
+- News feed returning 10+ articles per ticker per day
+- Data quality checks pass 95%+ of the time
+
+**Exit Criteria:**
+- All data sources integrated and tested
+- Filings and articles tables populated with historical data
+- Scheduled ingestion pipeline running stable
+- Company context builder used in generation (Phase 2 updated)
+- Performance and reliability meet thresholds
 
 ---
 
-## Agent Operating Model
+## Phase 4: Intelligence Layer (Weeks 15-18)
 
-The roadmap is executed through the agent system. Agents don't work phases — they work briefs.
+**Goal:** Add embedding, search, and recommendation capabilities.
 
-```
-Product owner sets priorities
-    │
-    ▼
-Orchestrator writes briefs from the roadmap
-    │
-    ▼
-Briefs are queued in docs/comms/backlog.md
-    │
-    ▼
-Build agents execute the top brief in their group
-    │
-    ▼
-Orchestrator audits results against acceptance criteria
-    │
-    ▼
-Brief archived → next brief promoted
-```
+**Entry Criteria:**
+- Phase 3 complete
+- 100+ reports in database
+- pgvector extension available in Supabase
+- OpenAI text-embedding-3-small API access
 
-The roadmap informs WHAT to build. The backlog determines WHEN. Briefs specify HOW. This separation means the roadmap can be revised without disrupting active work, and agents can be added or reassigned without changing the plan.
+**Deliverables:**
 
-### Current Agent Roster
+1. **Vector Embeddings**
+   - `EmbeddingService.embedReportSections()` — Call text-embedding-3-small on each section (A-H)
+   - Store embeddings in `report_embeddings` table: report_id, section, embedding (1536-dim vector)
+   - Index embeddings with pgvector for fast similarity search
+   - Batch embed existing reports in Phase 3
 
-| Agent | Group | Role | Status |
-|-------|-------|------|--------|
-| Claude (Orchestrator) | build | Writes briefs, audits results, maintains infrastructure | Active |
-| Backend Builder | build | Migrations, models, services, API routes | Active |
-| Frontend Builder | build | React components, pages, types, styling | Active |
-| Equity Research | research | Executes playbooks, generates reports | Active |
+2. **Semantic Search**
+   - `SearchService.semanticSearch(query, limit)` — Embed user query, find similar sections
+   - Return top K matching sections with relevance scores
+   - Implement hybrid search: combine semantic + full-text (metadata JSONB search on IDP, investigation tracks)
+   - Response: { results: [{ report_id, section, excerpt, relevance_score }], total }
 
-See `.agents/registry.md` for the full directory including planned agents.
+3. **Report Similarity**
+   - `AnalysisService.findSimilarReports(report_id, limit)` — Find most similar reports
+   - Compare embeddings across all sections, weight by similarity
+   - Useful for: "Show me analysis of 5 similar companies to INTC"
+
+4. **IDP Extraction & Cross-Linking**
+   - `IDPService.extractIDPs(report)` — Parse report for Interesting Data Points
+   - Extract and store in `interesting_data_points` table: report_id, content, category (anomaly, threat, opportunity, pattern)
+   - Build IDP graph: which companies mention which patterns?
+   - Enable pattern detection: "Unusual cluster of X risk detected across 3 competitors"
+
+5. **Recommendation Engine**
+   - `RecommendationService.findRelatedAnalysis(ticker)` — Return similar companies, adjacent sectors
+   - `RecommendationService.findPatternMatches(pattern)` — Find companies with similar characteristics
+   - Drive insights: "5 companies showing margin expansion patterns like INTC"
+
+6. **Search API Endpoints**
+   - `GET /api/research/reports/search?q={query}&limit=10` — Semantic + full-text search
+   - `GET /api/research/reports/{id}/similar` — Find similar reports
+   - `GET /api/research/reports/{id}/recommendations` — Get recommendations based on report
+   - Response format: { results: [...], total, relevance_scores }
+
+7. **CLI Commands**
+   - `analyst search "margin expansion" --limit 10` — Semantic search
+   - `analyst similar --report-id {uuid} --limit 5` — Find similar reports
+   - `analyst patterns --pattern "TAM growth" --sector semiconductors` — Cross-sector pattern search
+
+8. **Testing & Validation**
+   - Validate embedding quality on sample queries
+   - A/B test semantic vs. full-text search effectiveness
+   - Manual evaluation: does similarity matching return relevant reports?
+   - Performance test: search latency < 500ms for 1000+ reports
+
+**Quality Thresholds:**
+- Semantic search latency < 500ms
+- Embedding quality validated via manual samples (relevance > 80%)
+- Recommendation engine returns relevant suggestions in 95%+ of cases
+- Vector index efficient at 1000+ reports
+
+**Exit Criteria:**
+- All 100+ reports embedded and indexed
+- Semantic search working across playbooks
+- Recommendation engine live
+- Performance and quality thresholds met
 
 ---
 
-## Standing Directives
+## Phase 5: Integration Hardening (Weeks 19-24)
 
-These rules apply to all phases and all agents. They restate core constraints from `CLAUDE.md` for convenience — if anything here conflicts, `CLAUDE.md` takes precedence.
+**Goal:** Prepare for production deployment within Brodus as a hardened microservice.
 
-**Code quality:** No dead code. Full type hints (Python) and strict mode (TypeScript). Every API route handles 422, 404, 500. Config from environment only. One responsibility per file.
+**Entry Criteria:**
+- Phase 4 complete
+- Parent OS integration pattern defined
+- Security and compliance requirements finalized
 
-**Architecture:** API routes are thin wrappers. Business logic lives in `frontend/src/services/`. Database access through `db.ts` only. QStash through `queue.ts` only. Zod schemas are the data contract — frontend TypeScript types must mirror them.
+**Deliverables:**
 
-**Process:** Commit after each logical unit. Migrations are append-only. Test with real data (real tickers, real CIKs, real RSS feeds). No secrets in code or git.
+1. **API Authentication & Authorization**
+   - Implement API key authentication for parent OS
+   - API key issued per consumer (Brodus, external integrations)
+   - Rate limiting: 1000 req/min per consumer
+   - Quota enforcement: X reports/month, Y searches/month
+   - Implement rate limiting headers (X-RateLimit-Remaining, X-RateLimit-Reset)
 
-**Dependencies:** `zod` for validation, `@supabase/supabase-js` for database, `@upstash/qstash` for queue, `openai` for AI, `fetch` (built-in) for HTTP. No ORMs, no anthropic SDK.
+2. **OAuth/SSO (Optional)**
+   - Support OAuth 2.0 for user-facing clients
+   - Integrate with parent OS identity provider
+   - Token refresh and expiration handling
+
+3. **Webhook Support**
+   - Publish events: report.generated, report.failed, report.updated
+   - Parent OS subscribes and receives notifications
+   - Webhook retry logic with exponential backoff
+   - Webhook signature verification (HMAC)
+
+4. **API Versioning**
+   - Endpoint scheme: `/api/v1/research/reports`
+   - Backward compatibility strategy
+   - Deprecation timeline (6+ month notice before sunset)
+
+5. **SLA Monitoring & Alerting**
+   - 99.5% uptime SLA
+   - Automated health checks: database, OpenAI API, SECintregate
+   - Alert on: error rate > 5%, latency p95 > 1s, SLA violation
+   - Status dashboard for parent OS
+
+6. **Load Testing & Scaling**
+   - Validate system handles 1000 req/min without degradation
+   - Test concurrent report generation (10+ simultaneous)
+   - Identify bottlenecks and optimize
+   - Horizontal scaling readiness (stateless API layer)
+
+7. **Comprehensive Documentation**
+   - OpenAPI/Swagger specification for all endpoints
+   - API authentication guide
+   - Rate limiting and quota documentation
+   - Error code reference
+   - Integration guide for parent OS
+
+8. **Security Hardening**
+   - Input validation on all endpoints (Zod schemas)
+   - Sanitized error responses (no stack traces, internal details)
+   - CORS configuration for parent OS domain
+   - Security headers: X-Content-Type-Options, X-Frame-Options, CSP
+   - Regular dependency updates and security scanning
+
+9. **Audit Logging**
+   - Log all report generation, retrieval, and search requests
+   - Track: timestamp, consumer_id, endpoint, parameters, result
+   - Retain audit logs for 90 days
+   - Audit dashboard for compliance and investigation
+
+10. **Performance Optimization**
+    - Database query optimization (plan analysis, index tuning)
+    - Caching layer (Redis) for frequently accessed reports
+    - API response compression (gzip)
+    - CDN for static assets (if applicable)
+
+11. **Disaster Recovery**
+    - Automated daily backups (Supabase)
+    - Point-in-time recovery capability (14-day retention minimum)
+    - Tested restore procedures
+    - RTO/RPO targets defined (< 1 hour)
+
+12. **Operational Runbooks**
+    - Incident response playbook (generation failures, data issues)
+    - Manual report reprocessing guide
+    - Database rollback procedures
+    - API rollback strategy
+
+**Exit Criteria:**
+- 99.5% uptime maintained over 2-week test period
+- Load testing validates 1000+ req/min handling
+- API documentation complete and validated
+- Security audit passed
+- All alerting configured and tested
+- Parent OS integration ready for prod
+
+---
+
+## Long-Term Vision (Post-Phase 5)
+
+### Multimodal Reports (Phase 5+)
+- Embed charts, tables, and visualizations in markdown reports
+- Auto-generate sparklines for key metrics
+- PDF/Word export for institutional distribution
+
+### Report Versioning & Editing
+- Support manual edits to generated reports
+- Track edit history and attribution
+- Playbook A/B testing (generate with variant, compare scores)
+
+### Real-Time Data Feeds
+- Streaming updates to reports as new data arrives
+- Compliance re-scoring on material changes
+- Webhook notifications for threshold breaches (e.g., margin drop > 5%)
+
+### Advanced Analytics
+- Predictive scoring: "This company likely to outperform peers"
+- Portfolio analysis: cross-holding sector concentration, correlation matrices
+- Risk aggregation: sum of downside scenarios across portfolio
+
+### Third-Party Integrations
+- TradingView connector: sync watchlists, link to analysis
+- Slack bot: "/analyst $INTC" → inline report snippet
+- Email newsletter: weekly digest of new analyses
+
+---
+
+## Milestones & Key Dates
+
+| Phase | Duration | Start | End | Key Milestones |
+|-------|----------|-------|-----|-----------------|
+| 1: Foundation | 4 weeks | Week 1 | Week 4 | Reports imported, API working, CLI functional |
+| 2: Generation | 4 weeks | Week 5 | Week 8 | End-to-end generation working for all playbooks |
+| 3: Ingestion | 6 weeks | Week 9 | Week 14 | EDGAR, financials, news feeds live |
+| 4: Intelligence | 4 weeks | Week 15 | Week 18 | Vector search, recommendations, IDP extraction |
+| 5: Hardening | 6 weeks | Week 19 | Week 24 | Production-ready, hardened, documented |
+
+**Total: 18 weeks (~4.5 months)**
+
+---
+
+## Dependencies & Blockers
+
+**Critical Dependencies:**
+- Supabase infrastructure availability
+- OpenAI API stability and quota
+- External API credentials (SEC EDGAR, financial data, news)
+- Parent OS integration contract defined
+
+**Potential Blockers:**
+- API rate limit exhaustion (mitigation: queue and backoff)
+- LLM quality degradation (mitigation: prompt tuning, fallback strategies)
+- Data quality issues from ingestion (mitigation: validation, monitoring)
+- Performance scaling (mitigation: caching, indexing, query optimization)
+
+---
+
+## Success Metrics
+
+- **Adoption:** Parent OS integrates Analyst API within Phase 5
+- **Quality:** 95% of generated reports achieve grade B or higher
+- **Velocity:** Generate new report in < 60 seconds
+- **Coverage:** 18 playbooks deployed, 100+ reports in database
+- **Reliability:** 99.5% uptime, < 2% generation failure rate
+- **Search:** Semantic search latency < 500ms for 1000+ reports
+- **Scalability:** Handle 1000+ req/min without degradation
+
+---
+
+## Review & Iteration
+
+- Weekly sync with stakeholders on progress and blockers
+- Phase completion review before advancing
+- Post-phase retrospective: lessons learned, process improvements
+- Quarterly roadmap update based on feedback and market changes
