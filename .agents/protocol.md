@@ -90,4 +90,4 @@ Do NOT read on boot: CLAUDE.md (orchestrator reads this), registry.md, protocol.
 | Backend feature | build/backend | `analyst/` Python code |
 | Database migration | build/backend | `migrations/*.sql` |
 | Architecture decision | orchestrator | `docs/`, `CLAUDE.md` |
-| Playbook creation/edit | orchestrator | `research/prompts/` |
+| Playbook creation/edit | orchestrator | `research/playbooks/` |

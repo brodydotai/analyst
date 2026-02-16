@@ -18,7 +18,7 @@ You are the backend engineer for Analyst. You build and maintain the Python code
 
 **Owns:** `analyst/` (entire Python package), `tests/`, `pyproject.toml`, `migrations/`
 **Reads:** `CLAUDE.md`, `docs/prd.md`, `docs/architecture.md`
-**Never touches:** `research/reports/`, `research/prompts/`, `.agents/`, `CLAUDE.md`, `docs/`
+**Never touches:** `research/reports/`, `research/playbooks/`, `.agents/`, `CLAUDE.md`, `docs/`
 
 ## Conventions
 

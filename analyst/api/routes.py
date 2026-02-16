@@ -5,20 +5,20 @@ from uuid import UUID
 
 from fastapi import APIRouter, HTTPException, Query
 
-from analyst.models import PlaybookSummary, Report, ReportSummary
+from analyst.models import PlaybookSummary, Report, ReportSummary, Scorecard
 from analyst.models.opinion import (
     Opinion,
     PerspectiveOpinion,
     SynthesizedOpinion,
 )
 from analyst.services.compliance import verify_compliance
-from analyst.services.generation import generate_report, get_playbook, list_playbooks
+from analyst.services.generation import get_playbook, list_playbooks
+from analyst.services.orchestration import run_research_pipeline
 from analyst.services.reports import (
-    create_report,
-    delete_report,
     get_report,
     get_reports_by_ticker,
     list_reports,
+    delete_report,
     search_reports,
 )
 from analyst.services.synthesis import synthesize
@@ -80,31 +80,73 @@ def delete_report_endpoint(report_id: UUID):
 
 @router.post("/reports/generate", response_model=Report)
 def generate_report_endpoint(
-    ticker: str, company: str, playbook: str
+    ticker: str,
+    company: str,
+    playbook: str,
+    period: str = "current",
 ):
-    """Generate a new report using a playbook (stub)."""
+    """Generate, verify, and persist a report using the canonical loop."""
     try:
-        report = generate_report(ticker=ticker, company=company, playbook_name=playbook)
+        report = run_research_pipeline(
+            ticker=ticker,
+            company=company,
+            playbook_name=playbook,
+            period=period,
+        )
         return report
-    except NotImplementedError as e:
-        raise HTTPException(status_code=501, detail=str(e))
+    except ValueError as e:
+        raise HTTPException(status_code=422, detail=str(e))
     except Exception as e:
-        raise HTTPException(status_code=400, detail=str(e))
+        raise HTTPException(status_code=500, detail=str(e))
 
 
 # --- Compliance ---
 
 
-@router.post("/reports/verify")
+@router.post("/reports/verify", response_model=Scorecard)
 def verify_compliance_endpoint(
     ticker: str,
     period: str,
+    playbook: str | None = None,
 ):
-    """Verify compliance for a report (stub - needs prompt_path and report_path)."""
-    raise HTTPException(
-        status_code=501,
-        detail="Compliance verification endpoint not yet fully implemented",
-    )
+    """Verify compliance for a stored report by ticker and period."""
+    reports = get_reports_by_ticker(ticker)
+    matching = [
+        report
+        for report in reports
+        if report.period == period and report.report_type == "report"
+    ]
+    if not matching:
+        raise HTTPException(status_code=404, detail="Report not found for ticker/period")
+
+    report = matching[0]
+    playbook_filename = playbook or report.prompt_used
+    if not playbook_filename:
+        raise HTTPException(
+            status_code=422,
+            detail="No playbook provided and report does not include prompt_used metadata",
+        )
+
+    playbook_name = playbook_filename.removesuffix(".md")
+    playbook_obj = get_playbook(playbook_name)
+    if not playbook_obj:
+        raise HTTPException(status_code=404, detail="Playbook not found")
+
+    report_path = Path("research/reports") / f"{ticker.lower()}.{period}.md"
+    if not report_path.exists():
+        # Fallback: verify content from DB row using a temporary local file path-less flow
+        from analyst.services.compliance import verify_report_content
+
+        return verify_report_content(
+            playbook_text=playbook_obj.content,
+            playbook_filename=playbook_obj.filename,
+            report_text=report.content,
+            ticker=ticker,
+            period=period,
+        )
+
+    playbook_path = Path("research/playbooks") / playbook_obj.filename
+    return verify_compliance(playbook_path=playbook_path, report_path=report_path)
 
 
 # --- Synthesis ---

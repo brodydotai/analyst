@@ -2,7 +2,7 @@
 
 ## Vision
 
-Analyst is an AI equity research system that autonomously produces institutional-quality investment analysis. The system executes domain-specific analytical frameworks (playbooks) against securities data to generate structured reports, verifies compliance against prompt specifications, and maintains a queryable research database.
+Analyst is an AI equity research system that autonomously produces institutional-quality investment analysis. The system executes domain-specific analytical frameworks (playbooks) against securities data to generate structured reports, verifies compliance against playbook specifications, and maintains a queryable research database.
 
 Analyst serves as a core intelligence layer within a larger agentic operating system, processing investment opportunities across 18 industry verticals and delivering grade-assessed research artifacts in real time.
 
@@ -31,7 +31,7 @@ Analyst provides:
 ### 1. Playbook Selection
 - **Input:** Ticker symbol, optional industry override
 - **Process:** Match ticker to industry vertical (e.g., INTC → semiconductors, SNAP → social media)
-- **Output:** Load appropriate playbook from `research/prompts/`
+- **Output:** Load appropriate playbook from `research/playbooks/`
 - **Status:** Manual selection (future: auto-categorization via market data)
 
 ### 2. Data Collection (Future)
@@ -62,7 +62,7 @@ Analyst provides:
   - Assess structural requirements (formatting, length, citation density)
   - Score weighted: 40% Section Coverage + 40% Element Coverage + 20% Structural
 - **Output:** Compliance report with per-section status, overall grade (A-F), score (0-100)
-- **Status:** Python verification tool exists (`research/verify_prompt_compliance.py`); scheduled for integration in Phase 2
+- **Status:** Compliance service exists in `analyst/services/compliance.py` and is driven by `research/compliance/rules.json`
 
 ### 5. Storage
 - **Input:** Report content, compliance scorecard, metadata
@@ -82,13 +82,13 @@ Analyst provides:
   - Filter by compliance grade threshold
   - Full-text search on content (future: vector embeddings)
 - **Output:** Report(s) with metadata accessible to parent OS or CLI
-- **Status:** API routes stubbed; scheduled for Phase 2-4
+- **Status:** Core generation/verification routes are wired through a canonical orchestration loop; further enrichment scheduled for later phases
 
 ---
 
 ## Playbook Architecture
 
-Each playbook is a prompt specification file (`*.prompt.md`) containing:
+Each playbook is a specification file (`*.prompt.md`) containing:
 
 ### Playbook Header
 - **Filename:** `{industry-name}.prompt.md`

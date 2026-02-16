@@ -87,7 +87,7 @@ def show(ticker: str):
 
 
 @cli.command()
-@click.option("--prompt", type=click.Path(exists=True), required=True, help="Path to prompt file")
+@click.option("--playbook", type=click.Path(exists=True), required=True, help="Path to playbook file")
 @click.option("--report", type=click.Path(exists=True), required=True, help="Path to report file")
 @click.option("--company", required=True, help="Company name for output")
 @click.option("--ticker", required=True, help="Stock ticker symbol")
@@ -97,17 +97,17 @@ def show(ticker: str):
     default=None,
     help="Output path for scorecard markdown (optional)",
 )
-def verify(prompt: str, report: str, company: str, ticker: str, output: str):
-    """Verify compliance between a prompt and report."""
+def verify(playbook: str, report: str, company: str, ticker: str, output: str):
+    """Verify compliance between a playbook and report."""
     try:
-        prompt_path = Path(prompt)
+        playbook_path = Path(playbook)
         report_path = Path(report)
 
         click.echo(f"Verifying compliance: {report_path.name}")
-        click.echo(f"Against prompt: {prompt_path.name}")
+        click.echo(f"Against playbook: {playbook_path.name}")
         click.echo()
 
-        scorecard = verify_compliance(prompt_path, report_path)
+        scorecard = verify_compliance(playbook_path, report_path)
 
         # Print scorecard summary
         click.echo(f"Compliance Scorecard: {company} ({ticker})")
@@ -184,7 +184,7 @@ def playbooks():
         available = list_playbooks()
 
         if not available:
-            click.echo("No playbooks found in research/prompts/")
+            click.echo("No playbooks found in research/playbooks/")
             return
 
         click.echo("\nAvailable Playbooks:")

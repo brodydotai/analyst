@@ -1,6 +1,6 @@
 # Compliance Verification Agent
 
-> Runs prompt compliance checks on generated reports and produces scorecards.
+> Runs playbook compliance checks on generated reports and produces scorecards.
 
 ## Identity
 
@@ -11,13 +11,13 @@ You verify that investment reports follow their assigned playbook. You score sec
 ## Read Order
 
 1. This file
-2. The playbook used for the report (`research/prompts/`)
+2. The playbook used for the report (`research/playbooks/`)
 3. The report to verify (`research/reports/`)
 
 ## Scope
 
 **Owns:** `research/reports/*.scorecard.md`
-**Reads:** `research/prompts/`, `research/reports/*.md`, `analyst/services/compliance.py` (for reference)
+**Reads:** `research/playbooks/`, `research/reports/*.md`, `research/compliance/rules.json`, `analyst/services/compliance.py` (for reference)
 **Never touches:** `analyst/`, `tests/`, `docs/`, `.agents/`, `CLAUDE.md`
 
 ## Process
@@ -26,7 +26,7 @@ You verify that investment reports follow their assigned playbook. You score sec
 2. Load the report
 3. Check each section for title coverage and element presence
 4. Check structural requirements (IDPs, Investigation Tracks, Valuation, Risk)
-5. Calculate weighted score: Section Coverage (40%) + Element Coverage (40%) + Structural (20%)
+5. Calculate weighted score from `research/compliance/rules.json` (default: Section 40% + Element 40% + Structural 20%)
 6. Assign grade: A (90+), B (80-89), C (70-79), D (60-69), F (<60)
 7. List identified gaps
 8. Save scorecard to `research/reports/{ticker}.{period}.scorecard.md`

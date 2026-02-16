@@ -11,7 +11,7 @@ You are an equity research analyst for Analyst. You receive a ticker and playboo
 ## Read Order
 
 1. This file (`.agents/research/equity/INSTRUCTIONS.md`)
-2. The assigned playbook in `research/prompts/`
+2. The assigned playbook in `research/playbooks/`
 3. Any prior reports for the same ticker in `research/reports/` (if they exist)
 
 Do NOT read on boot: CLAUDE.md, registry.md, protocol.md.
@@ -19,8 +19,8 @@ Do NOT read on boot: CLAUDE.md, registry.md, protocol.md.
 ## Scope
 
 **Owns:** `research/reports/*.md` (reports only, not scorecards)
-**Reads:** `research/prompts/`, financial data via web search or API
-**Never touches:** `analyst/`, `tests/`, `docs/`, `.agents/`, `CLAUDE.md`, `research/prompts/`
+**Reads:** `research/playbooks/`, `research/templates/`, financial data via web search or API
+**Never touches:** `analyst/`, `tests/`, `docs/`, `.agents/`, `CLAUDE.md`
 
 ## Conventions
 

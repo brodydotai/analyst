@@ -8,7 +8,7 @@ Analyst is a distributed AI research system composed of four layers: CLI/API fro
 ┌─────────────────────────────────────────────────────────────┐
 │                    User Interface Layer                     │
 ├─────────────────────┬─────────────────────────────────────┤
-│  CLI Tools          │  REST API (Next.js)                 │
+│  CLI Tools          │  REST API (FastAPI)                 │
 │  - generate         │  - GET /reports                     │
 │  - verify           │  - POST /reports                    │
 │  - list             │  - GET /reports/:id                 │
@@ -77,7 +77,7 @@ Analyst is a distributed AI research system composed of four layers: CLI/API fro
 - `POST /api/research/reports/generate` — Generate new report
 - `POST /api/research/reports/:id/verify` — Run compliance check
 
-**Technology:** Next.js API Routes, TypeScript, Zod validation, Supabase client
+**Technology:** FastAPI routes, Pydantic validation, Supabase client
 
 **Current Status:** Route stubs exist; business logic Phase 2
 
@@ -109,7 +109,7 @@ Analyst is a distributed AI research system composed of four layers: CLI/API fro
 - `getRecentFilings()` — SEC EDGAR data
 - `getRecentNews()` — News feed
 
-**Technology:** TypeScript, Zod schemas, dependency injection
+**Technology:** Python services, Pydantic models, explicit orchestration
 
 **Current Status:** Stubs defined; implementation Phase 1-2
 
@@ -200,7 +200,7 @@ User/Parent OS
   ↓
 POST /api/research/reports/generate
   ↓
-Validate input (Zod)
+Validate input (Pydantic models)
   ↓
 ReportService.generateReport()
   ├─ PlaybookService.loadPlaybook()
@@ -226,7 +226,7 @@ User/Parent OS
   ↓
 GET /api/research/reports?ticker=INTC&grade=A
   ↓
-Validate query params (Zod)
+Validate query params (Pydantic models)
   ↓
 ReportService.listReports(filters)
   ↓
@@ -242,7 +242,7 @@ Client receives report list
 ```
 User/CLI
   ↓
-analyst verify --report reports/INTC_report.md --playbook semiconductors-and-accelerators.prompt.md
+analyst verify --report reports/INTC_report.md --playbook research/playbooks/semiconductors-and-accelerators.prompt.md
   ↓
 Read report from file
   ↓
@@ -296,12 +296,12 @@ Analyst operates as a microservice within the larger agentic OS (Analyst):
 
 | Component | Technology | Rationale |
 |-----------|-----------|-----------|
-| **API Framework** | Next.js | Unified Node.js stack; streaming support; fast iterations |
+| **API Framework** | FastAPI | Typed Python API layer with OpenAPI docs |
 | **Database** | Supabase | Built-in full-text search; pgvector support; managed backups |
-| **Validation** | Zod | Type inference; runtime safety; good error messages |
+| **Validation** | Pydantic | Runtime validation with typed Python models |
 | **LLM** | OpenAI gpt-4o-mini | Low latency; economical; proven for structured output |
 | **Embeddings** | text-embedding-3-small | 1536 dims; fast inference; good quality |
-| **CLI** | Node.js/Python | Consistent with stack; service layer reuse |
+| **CLI** | Click (Python) | Reuses backend services directly |
 | **Config** | Environment variables | Secure; zero-config deployment; no secrets in code |
 
 ---
@@ -355,7 +355,7 @@ Analyst operates as a microservice within the larger agentic OS (Analyst):
 ## Security Considerations
 
 **Input Validation:**
-- All API inputs validated with Zod; 422 on failure
+- All API inputs validated with Pydantic; 422 on failure
 - Ticker symbols matched against whitelist (future)
 - Playbook paths verified (prevent directory traversal)
 

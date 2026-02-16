@@ -5,7 +5,7 @@ Agent role contracts and coordination live in `.agents/`.
 
 ## What Analyst Is
 
-An AI-powered equity research system that generates institutional-grade investment reports. Analyst executes industry-specific analytical playbooks against company data, verifies report compliance against prompt specifications, and stores structured research artifacts in a database.
+An AI-powered equity research system that generates institutional-grade investment reports. Analyst executes industry-specific analytical playbooks against company data, verifies report compliance against playbook specifications, and stores structured research artifacts in a database.
 
 Analyst is designed as a modular research service — it will be consumed by a larger agentic operating system but operates independently with its own data layer, CLI tools, and API.
 
@@ -14,9 +14,9 @@ Single user. No multi-tenancy. Research-first architecture.
 ## Current State
 
 **What exists:**
-- Investment research playbooks: `research/prompts/` (18 industry-specific analytical frameworks)
+- Investment research playbooks: `research/playbooks/` (18 industry-specific analytical frameworks)
 - Generated reports + scorecards: `research/reports/` (13 tickers, paired report + scorecard per asset)
-- Prompt compliance verifier: `research/verify_prompt_compliance.py`
+- Runtime compliance verifier: `analyst/services/compliance.py` with shared rules in `research/compliance/rules.json`
 - Agent infrastructure: `.agents/` directory with registry and scoped instructions
 
 **What is being built:**
@@ -40,7 +40,7 @@ analyst/                         → Python package (backend + services)
   services/                      → Business logic
     __init__.py
     reports.py                   → Report CRUD, search, filtering
-    compliance.py                → Prompt compliance verification (refactored from script)
+    compliance.py                → Playbook compliance verification with shared scoring rules
     generation.py                → AI report generation pipeline
     ingestion.py                 → Seed reports from markdown files into DB
   api/                           → FastAPI routes
@@ -51,8 +51,10 @@ analyst/                         → Python package (backend + services)
     main.py                      → Click CLI (generate, verify, seed, list)
 
 research/
-  prompts/                       → Investment playbooks (analytical frameworks)
+  playbooks/                     → Investment playbooks (analytical frameworks)
     *.prompt.md                  → 18 industry-specific prompts
+  templates/                     → Canonical report/opinion templates
+  compliance/                    → Compliance scoring rules
   reports/                       → Generated artifacts (reports + scorecards)
     *.feb.md                     → Full investment reports
     *.feb.scorecard.md           → Compliance scorecards

@@ -16,7 +16,7 @@ Different problems, different designs.
 | **Agent count per asset** | 1 (equity research agent) | 5 (fundamental, technical, macro, sentiment, synthesizer) |
 | **Depth vs. breadth** | Deep — one 4000+ word report per asset | Broad — five short opinions synthesized into one rating |
 | **Output** | Long-form markdown report + compliance scorecard | Structured rating (1-10) + confidence score + thesis paragraph |
-| **Quality control** | Prompt compliance verification engine (section/element scoring) | Confidence-weighted synthesis with deference rules |
+| **Quality control** | Playbook compliance verification engine (section/element scoring) | Confidence-weighted synthesis with deference rules |
 
 ---
 
@@ -54,7 +54,7 @@ This is a **craftsman model**. The agent is an analyst; the scorecard is the edi
 
 1. **Industry-specific analytical depth** — 18 playbooks covering semiconductors, SaaS, oil & gas, pharma, quantum, defense, space, precious metals, etc. Each playbook is a 2000+ word analytical framework tailored to that industry's economics. Their agents use generic methodologies applied to any asset. Our Intel report covers wafer-level economics, process node transitions, and foundry capacity dynamics — domain knowledge their framework can't replicate without custom prompting per asset.
 
-2. **Prompt compliance verification** — A scoring engine that measures report quality against the playbook specification. Section coverage, element coverage, structural requirements, weighted into a grade. They have no equivalent QA system — their quality metric is just the confidence score each agent self-reports.
+2. **Playbook compliance verification** — A scoring engine that measures report quality against the playbook specification. Section coverage, element coverage, structural requirements, weighted into a grade. They have no equivalent QA system — their quality metric is just the confidence score each agent self-reports.
 
 3. **Long-form research artifacts** — Our reports are 4000+ word institutional-grade documents with sourced data, investigation tracks, and IDP flagging. Their output is a rating + short thesis. Different use cases, but ours produces something a portfolio manager can actually read and act on.
 

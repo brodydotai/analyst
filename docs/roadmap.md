@@ -31,7 +31,7 @@ Analyst is building an institutional-grade AI equity research system in five pha
    - Verify import consistency
 
 3. **Compliance Verification Tool**
-   - Integrate existing `research/verify_prompt_compliance.py` into codebase
+   - Use `analyst/services/compliance.py` with shared rules in `research/compliance/rules.json`
    - Output JSON scorecard: section coverage, element coverage, structural assessment
    - Grade assignment (A-F) based on score (90+, 80-89, 70-79, 60-69, <60)
    - Run against all seeded reports to establish baseline
@@ -84,7 +84,7 @@ Analyst is building an institutional-grade AI equity research system in five pha
 - Phase 1 complete
 - OpenAI API credentials configured
 - Playbook format standardized and documented
-- Team familiar with Zod schema patterns
+- Team familiar with Pydantic model patterns
 
 **Deliverables:**
 
@@ -348,7 +348,7 @@ Analyst is building an institutional-grade AI equity research system in five pha
    - Integration guide for parent OS
 
 8. **Security Hardening**
-   - Input validation on all endpoints (Zod schemas)
+   - Input validation on all endpoints (Pydantic models)
    - Sanitized error responses (no stack traces, internal details)
    - CORS configuration for parent OS domain
    - Security headers: X-Content-Type-Options, X-Frame-Options, CSP

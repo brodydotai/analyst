@@ -3,7 +3,9 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
+from analyst.api.local_ui import router as local_ui_router
 from analyst.api.routes import router
+from analyst.local_store import init_local_db
 
 
 def create_app() -> FastAPI:
@@ -25,5 +27,7 @@ def create_app() -> FastAPI:
 
     # Include router
     app.include_router(router)
+    app.include_router(local_ui_router)
+    init_local_db()
 
     return app

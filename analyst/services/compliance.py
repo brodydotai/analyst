@@ -1,229 +1,251 @@
-"""Compliance verification service — refactored from verify_prompt_compliance.py."""
+"""Compliance verification service for playbook-based report scoring."""
 
+import json
 import re
 from pathlib import Path
 
 from analyst.models import Scorecard, ScorecardMetrics, SectionResult
 
+RULES_PATH = Path("research/compliance/rules.json")
 
-def parse_prompt_sections(prompt_text: str) -> list[dict]:
-    """Parse a prompt into sections with headers and element lists."""
-    sections = []
-    lines = prompt_text.split("\n")
 
-    current_section = None
+def load_compliance_rules() -> dict:
+    """Load compliance scoring rules from disk."""
+    default_rules = {
+        "weights": {"section_coverage": 0.4, "element_coverage": 0.4, "structural": 0.2},
+        "thresholds": {"a": 90, "b": 80, "c": 70, "d": 60},
+        "structural": {
+            "min_words": 500,
+            "require_h1": True,
+            "require_section_headers": True,
+            "require_lists": True,
+            "require_opinion_block": True,
+        },
+    }
+    if not RULES_PATH.exists():
+        return default_rules
+    with RULES_PATH.open(encoding="utf-8") as rules_file:
+        loaded = json.load(rules_file)
+    return loaded
 
-    for line in lines:
-        # Check for section header (## format)
-        if line.startswith("## "):
-            if current_section:
-                sections.append(current_section)
 
-            section_title = line[3:].strip()
-            current_section = {
+def parse_playbook_sections(playbook_text: str) -> list[dict]:
+    """Parse top-level A-H sections and element hints from a playbook."""
+    sections: list[dict] = []
+    pattern = re.compile(r"\*\*([A-H])\.\s+(.+?)\*\*", re.MULTILINE)
+    matches = list(pattern.finditer(playbook_text))
+
+    if not matches:
+        return sections
+
+    for index, match in enumerate(matches):
+        section_id = match.group(1)
+        section_title = match.group(2).strip()
+        start = match.end()
+        end = matches[index + 1].start() if index + 1 < len(matches) else len(playbook_text)
+        section_content = playbook_text[start:end]
+
+        elements = []
+        bold_terms = re.findall(r"\*\*(.+?)\*\*", section_content)
+        bullet_terms = re.findall(r"^\s*[-*]\s+(.+)$", section_content, re.MULTILINE)
+        for term in bold_terms + bullet_terms:
+            cleaned = term.strip().rstrip(":")
+            if cleaned and len(cleaned) < 140 and cleaned not in elements:
+                elements.append(cleaned)
+
+        sections.append(
+            {
+                "id": section_id.lower(),
                 "title": section_title,
-                "id": section_title.lower().replace(" ", "_"),
-                "elements": [],
+                "elements": elements[:20],
             }
-        # Check for bullet points (elements)
-        elif line.startswith("- ") and current_section:
-            element = line[2:].strip()
-            current_section["elements"].append(element)
-
-    if current_section:
-        sections.append(current_section)
+        )
 
     return sections
 
 
-def check_section_coverage(
-    report_text: str, section_title: str, elements: list[str]
-) -> dict:
-    """Check how many elements from a section are covered in the report."""
-    covered_count = 0
-    covered_elements = []
-    missing_elements = []
+def _keyword_score(text: str, phrase: str) -> float:
+    """Compute simple keyword coverage score for a phrase."""
+    words = [word.lower() for word in re.findall(r"[A-Za-z0-9]+", phrase) if len(word) > 3]
+    if not words:
+        return 0.0
+    text_lower = text.lower()
+    hits = sum(1 for word in words if word in text_lower)
+    return (hits / len(words)) * 100
 
+
+def check_section_coverage(report_text: str, section_title: str, elements: list[str]) -> dict:
+    """Check section title and element coverage for one playbook section."""
+    title_coverage = _keyword_score(report_text, section_title)
+    covered_elements = 0
     for element in elements:
-        # Simple substring matching (case-insensitive)
-        if element.lower() in report_text.lower():
-            covered_count += 1
-            covered_elements.append(element)
-        else:
-            missing_elements.append(element)
+        if _keyword_score(report_text, element) >= 60 or element.lower() in report_text.lower():
+            covered_elements += 1
 
-    total = len(elements)
-    coverage_pct = (covered_count / total * 100) if total > 0 else 0.0
+    total_elements = len(elements)
+    element_coverage = (covered_elements / total_elements * 100) if total_elements else 0.0
+    section_coverage = (title_coverage * 0.5) + (element_coverage * 0.5)
 
-    # Determine status
-    if coverage_pct >= 80:
+    if section_coverage >= 80:
         status = "✓"
-    elif coverage_pct >= 50:
+    elif section_coverage >= 50:
         status = "⚠"
     else:
         status = "✗"
 
     return {
         "section_title": section_title,
-        "covered": covered_count,
-        "total": total,
-        "coverage_pct": coverage_pct,
         "status": status,
-        "covered_elements": covered_elements,
-        "missing_elements": missing_elements,
+        "section_coverage": section_coverage,
+        "covered": covered_elements,
+        "total": total_elements,
+        "element_coverage": element_coverage,
     }
 
 
-def check_structural_requirements(report_text: str, prompt_text: str) -> list[dict]:
-    """Check structural requirements like headings, formatting, minimum length."""
-    results = []
+def check_structural_requirements(report_text: str, rules: dict) -> list[dict]:
+    """Check baseline structure requirements from compliance rules."""
+    structural_rules = rules["structural"]
+    checks = []
 
-    # Check for H1 header
-    has_h1 = bool(re.search(r"^# ", report_text, re.MULTILINE))
-    results.append(
+    checks.append(
         {
             "requirement": "Report has H1 title",
-            "passed": has_h1,
-            "status": "✓" if has_h1 else "✗",
+            "passed": bool(re.search(r"^# ", report_text, re.MULTILINE))
+            if structural_rules.get("require_h1", True)
+            else True,
         }
     )
-
-    # Check for section headers (##)
-    section_count = len(re.findall(r"^## ", report_text, re.MULTILINE))
-    has_sections = section_count > 0
-    results.append(
+    checks.append(
         {
-            "requirement": f"Report has section headers ({section_count} found)",
-            "passed": has_sections,
-            "status": "✓" if has_sections else "✗",
+            "requirement": "Report has section headers",
+            "passed": bool(re.search(r"^## ", report_text, re.MULTILINE))
+            if structural_rules.get("require_section_headers", True)
+            else True,
         }
     )
-
-    # Check word count (minimum 500 words as baseline)
-    word_count = len(report_text.split())
-    min_words = 500
-    passes_word_count = word_count >= min_words
-    results.append(
+    checks.append(
         {
-            "requirement": f"Report meets minimum word count ({word_count} words, min {min_words})",
-            "passed": passes_word_count,
-            "status": "✓" if passes_word_count else "✗",
+            "requirement": "Report uses bullet points",
+            "passed": bool(re.search(r"^\s*[-*] ", report_text, re.MULTILINE))
+            if structural_rules.get("require_lists", True)
+            else True,
         }
     )
-
-    # Check for lists (bullet points)
-    has_lists = bool(re.search(r"^\s*[-*] ", report_text, re.MULTILINE))
-    results.append(
+    min_words = structural_rules.get("min_words", 500)
+    checks.append(
         {
-            "requirement": "Report uses bullet points or lists",
-            "passed": has_lists,
-            "status": "✓" if has_lists else "✗",
+            "requirement": f"Report meets minimum word count ({min_words})",
+            "passed": len(report_text.split()) >= min_words,
         }
     )
+    checks.append(
+        {
+            "requirement": "Report includes opinion block",
+            "passed": "## Opinion" in report_text and "```yaml" in report_text
+            if structural_rules.get("require_opinion_block", True)
+            else True,
+        }
+    )
+    return checks
 
-    return results
 
+def verify_report_content(
+    playbook_text: str,
+    playbook_filename: str,
+    report_text: str,
+    ticker: str,
+    period: str,
+) -> Scorecard:
+    """Verify report compliance against a playbook using in-memory content."""
+    rules = load_compliance_rules()
+    sections = parse_playbook_sections(playbook_text)
 
-def verify_compliance(
-    prompt_path: Path, report_path: Path
-) -> tuple[Scorecard, str]:
-    """
-    Verify compliance between a prompt and report.
-
-    Returns: (Scorecard object, error message if any)
-    """
-    try:
-        prompt_text = prompt_path.read_text(encoding="utf-8")
-        report_text = report_path.read_text(encoding="utf-8")
-    except FileNotFoundError as e:
-        raise FileNotFoundError(f"Missing file: {e}")
-
-    # Parse sections from prompt
-    sections = parse_prompt_sections(prompt_text)
-
-    # Check coverage for each section
     section_results = []
-    total_covered = 0
+    section_scores = []
+    total_covered_elements = 0
     total_elements = 0
 
     for section in sections:
-        coverage = check_section_coverage(
-            report_text, section["title"], section["elements"]
-        )
-        total_covered += coverage["covered"]
+        coverage = check_section_coverage(report_text, section["title"], section["elements"])
+        section_scores.append(coverage["section_coverage"])
+        total_covered_elements += coverage["covered"]
         total_elements += coverage["total"]
-
         section_results.append(
             SectionResult(
                 section_id=section["id"],
                 title=section["title"],
                 status=coverage["status"],
-                coverage_pct=coverage["coverage_pct"],
+                coverage_pct=coverage["section_coverage"],
                 covered=coverage["covered"],
                 total=coverage["total"],
             )
         )
 
-    # Check structural requirements
-    structural_checks = check_structural_requirements(report_text, prompt_text)
-    structural_passed = sum(1 for c in structural_checks if c["passed"])
-    structural_pct = (
-        (structural_passed / len(structural_checks) * 100)
-        if structural_checks
-        else 0.0
+    structural_checks = check_structural_requirements(report_text, rules)
+    structural_passed = sum(1 for item in structural_checks if item["passed"])
+    structural_pct = (structural_passed / len(structural_checks) * 100) if structural_checks else 0.0
+
+    section_coverage_pct = sum(section_scores) / len(section_scores) if section_scores else 0.0
+    element_coverage_pct = (
+        (total_covered_elements / total_elements * 100) if total_elements else 0.0
+    )
+    weights = rules["weights"]
+    weighted_overall = (
+        section_coverage_pct * weights["section_coverage"]
+        + element_coverage_pct * weights["element_coverage"]
+        + structural_pct * weights["structural"]
     )
 
-    # Calculate overall coverage
-    section_coverage_pct = (
-        (total_covered / total_elements * 100) if total_elements > 0 else 0.0
-    )
-    element_coverage_pct = section_coverage_pct
-    weighted_overall = (section_coverage_pct * 0.6) + (structural_pct * 0.4)
-
-    # Determine grade
-    if weighted_overall >= 90:
+    thresholds = rules["thresholds"]
+    if weighted_overall >= thresholds["a"]:
         grade = "A"
-    elif weighted_overall >= 80:
+    elif weighted_overall >= thresholds["b"]:
         grade = "B"
-    elif weighted_overall >= 70:
+    elif weighted_overall >= thresholds["c"]:
         grade = "C"
-    elif weighted_overall >= 60:
+    elif weighted_overall >= thresholds["d"]:
         grade = "D"
     else:
         grade = "F"
 
-    # Gather gaps
     gaps = []
-    for section_result in section_results:
-        if section_result.coverage_pct < 80:
-            gaps.append(f"{section_result.title}: {section_result.coverage_pct:.0f}% covered")
+    for section in section_results:
+        if section.coverage_pct < 80:
+            gaps.append(f"{section.title}: {section.coverage_pct:.0f}% covered")
+    for check in structural_checks:
+        if not check["passed"]:
+            gaps.append(f"Structural: {check['requirement']}")
 
-    for structural_check in structural_checks:
-        if not structural_check["passed"]:
-            gaps.append(f"Structural: {structural_check['requirement']}")
-
-    # Extract ticker and period from filenames
-    ticker = prompt_path.stem.upper()
-    period = report_path.stem.split(".")[-2] if "." in report_path.stem else "unknown"
-
-    metrics = ScorecardMetrics(
-        section_coverage=f"{section_coverage_pct:.1f}%",
-        element_coverage=f"{element_coverage_pct:.1f}%",
-        structural_requirements=f"{structural_pct:.1f}%",
-        weighted_overall=weighted_overall,
-        grade=grade,
-    )
-
-    scorecard = Scorecard(
-        ticker=ticker,
+    return Scorecard(
+        ticker=ticker.upper(),
         period=period,
-        prompt_used=prompt_path.name,
-        metrics=metrics,
+        prompt_used=playbook_filename,
+        metrics=ScorecardMetrics(
+            section_coverage=f"{section_coverage_pct:.1f}%",
+            element_coverage=f"{element_coverage_pct:.1f}%",
+            structural_requirements=f"{structural_pct:.1f}%",
+            weighted_overall=weighted_overall,
+            grade=grade,
+        ),
         sections=section_results,
         gaps=gaps,
     )
 
-    return scorecard
+
+def verify_compliance(playbook_path: Path, report_path: Path) -> Scorecard:
+    """Verify compliance between a playbook file and report file."""
+    playbook_text = playbook_path.read_text(encoding="utf-8")
+    report_text = report_path.read_text(encoding="utf-8")
+    period = report_path.stem.split(".")[-1] if "." in report_path.stem else "unknown"
+    ticker = report_path.stem.split(".")[0] if "." in report_path.stem else "unknown"
+    return verify_report_content(
+        playbook_text=playbook_text,
+        playbook_filename=playbook_path.name,
+        report_text=report_text,
+        ticker=ticker,
+        period=period,
+    )
 
 
 def generate_scorecard_markdown(

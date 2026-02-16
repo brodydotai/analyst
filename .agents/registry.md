@@ -13,7 +13,7 @@ Master index of all agents. Consult this file to route tasks to the correct agen
 | **Role** | Executes investment playbooks, generates company reports with structured opinion blocks |
 | **Entry point** | `.agents/research/equity/INSTRUCTIONS.md` |
 | **Owns** | `research/reports/*.md` (reports, not scorecards) |
-| **Reads** | `research/prompts/` (playbooks), Supabase (report history), assigned task |
+| **Reads** | `research/playbooks/` (playbooks), Supabase (report history), assigned task |
 | **Never touches** | `analyst/` (backend code), `docs/`, `.agents/`, `CLAUDE.md` |
 | **Status** | Active |
 
@@ -25,10 +25,10 @@ Master index of all agents. Consult this file to route tasks to the correct agen
 |-------|-------|
 | **Name** | Compliance Verification Agent |
 | **Group** | research |
-| **Role** | Runs prompt compliance checks on generated reports, produces scorecards |
+| **Role** | Runs playbook compliance checks on generated reports, produces scorecards |
 | **Entry point** | `.agents/research/compliance/INSTRUCTIONS.md` |
 | **Owns** | `research/reports/*.scorecard.md` |
-| **Reads** | `research/prompts/`, `research/reports/`, `analyst/services/compliance.py` |
+| **Reads** | `research/playbooks/`, `research/reports/`, `analyst/services/compliance.py` |
 | **Never touches** | `analyst/` (backend code), `docs/`, `.agents/`, `CLAUDE.md` |
 | **Status** | Active |
 
@@ -89,7 +89,7 @@ Master index of all agents. Consult this file to route tasks to the correct agen
 | **Entry point** | `.agents/build/backend/INSTRUCTIONS.md` |
 | **Owns** | `analyst/`, `tests/`, `pyproject.toml`, `migrations/` |
 | **Reads** | `CLAUDE.md`, `docs/prd.md`, `docs/architecture.md`, assigned task |
-| **Never touches** | `research/reports/`, `research/prompts/`, `.agents/`, `CLAUDE.md` |
+| **Never touches** | `research/reports/`, `research/playbooks/`, `.agents/`, `CLAUDE.md` |
 | **Status** | Active |
 
 ---
