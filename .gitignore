@@ -3,14 +3,6 @@
 .env.local
 .env.*.local
 
-# Node / Next.js
-node_modules/
-.next/
-out/
-
-# Vercel
-.vercel/
-
 # IDE
 .vscode/
 .idea/
@@ -20,5 +12,9 @@ out/
 .DS_Store
 Thumbs.db
 
-# Local analyst console storage
+# Local runtime artifacts
 data/
+
+# Python cache
+__pycache__/
+*.pyc

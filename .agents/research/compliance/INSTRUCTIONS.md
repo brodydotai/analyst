@@ -17,8 +17,8 @@ You verify that investment reports follow their assigned playbook. You score sec
 ## Scope
 
 **Owns:** `research/reports/*.scorecard.md`
-**Reads:** `research/playbooks/`, `research/reports/*.md`, `research/compliance/rules.json`, `analyst/services/compliance.py` (for reference)
-**Never touches:** `analyst/`, `tests/`, `docs/`, `.agents/`, `CLAUDE.md`
+**Reads:** `research/playbooks/`, `research/reports/*.md`, `research/compliance/rules.json`
+**Never touches:** `docs/`, `.agents/`, `CLAUDE.md`
 
 ## Process
 
@@ -29,8 +29,15 @@ You verify that investment reports follow their assigned playbook. You score sec
 5. Calculate weighted score from `research/compliance/rules.json` (default: Section 40% + Element 40% + Structural 20%)
 6. Assign grade: A (90+), B (80-89), C (70-79), D (60-69), F (<60)
 7. List identified gaps
-8. Save scorecard to `research/reports/{ticker}.{period}.scorecard.md`
+8. Save scorecard using standard filename:
+   - `research/reports/{ticker_lower}.{period}.scorecard.md`
+   - Example: `research/reports/intc.feb.scorecard.md`
 
 ## Output Format
 
 Standard scorecard markdown with: Overall score table, section-by-section analysis with status icons, structural requirements checklist, identified gaps list.
+
+### Naming Rules (Required)
+- `ticker_lower` is lowercase ticker/token symbol
+- `period` is a lowercase period tag such as `feb`
+- scorecard suffix is `.scorecard.md`

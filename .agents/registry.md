@@ -13,8 +13,8 @@ Master index of all agents. Consult this file to route tasks to the correct agen
 | **Role** | Executes investment playbooks, generates company reports with structured opinion blocks |
 | **Entry point** | `.agents/research/equity/INSTRUCTIONS.md` |
 | **Owns** | `research/reports/*.md` (reports, not scorecards) |
-| **Reads** | `research/playbooks/` (playbooks), Supabase (report history), assigned task |
-| **Never touches** | `analyst/` (backend code), `docs/`, `.agents/`, `CLAUDE.md` |
+| **Reads** | `research/playbooks/` (playbooks), assigned task, prior reports |
+| **Never touches** | `docs/`, `.agents/`, `CLAUDE.md` |
 | **Status** | Active |
 
 ---
@@ -28,8 +28,8 @@ Master index of all agents. Consult this file to route tasks to the correct agen
 | **Role** | Runs playbook compliance checks on generated reports, produces scorecards |
 | **Entry point** | `.agents/research/compliance/INSTRUCTIONS.md` |
 | **Owns** | `research/reports/*.scorecard.md` |
-| **Reads** | `research/playbooks/`, `research/reports/`, `analyst/services/compliance.py` |
-| **Never touches** | `analyst/` (backend code), `docs/`, `.agents/`, `CLAUDE.md` |
+| **Reads** | `research/playbooks/`, `research/reports/`, `research/compliance/rules.json` |
+| **Never touches** | `docs/`, `.agents/`, `CLAUDE.md` |
 | **Status** | Active |
 
 ---
@@ -79,21 +79,6 @@ Master index of all agents. Consult this file to route tasks to the correct agen
 
 ---
 
-## build/backend
-
-| Field | Value |
-|-------|-------|
-| **Name** | Backend Builder |
-| **Group** | build |
-| **Role** | Implements Python backend — models, services, API routes, CLI, database migrations |
-| **Entry point** | `.agents/build/backend/INSTRUCTIONS.md` |
-| **Owns** | `analyst/`, `tests/`, `pyproject.toml`, `migrations/` |
-| **Reads** | `CLAUDE.md`, `docs/prd.md`, `docs/architecture.md`, assigned task |
-| **Never touches** | `research/reports/`, `research/playbooks/`, `.agents/`, `CLAUDE.md` |
-| **Status** | Active |
-
----
-
 ## orchestrator
 
 | Field | Value |
@@ -104,7 +89,7 @@ Master index of all agents. Consult this file to route tasks to the correct agen
 | **Entry point** | `CLAUDE.md` |
 | **Owns** | `CLAUDE.md`, `.agents/`, `docs/` |
 | **Reads** | Everything |
-| **Never touches** | Should delegate code changes to build/backend or research agents |
+| **Never touches** | Should delegate report and instruction edits to research agents |
 | **Status** | Active |
 
 ---
@@ -112,10 +97,10 @@ Master index of all agents. Consult this file to route tasks to the correct agen
 ## Research Workflow: Full Analysis Pipeline
 
 ```
-1. Equity agent generates report + opinion block     → research/reports/{ticker}.{period}.md
-2. Compliance agent scores the report                → research/reports/{ticker}.{period}.scorecard.md
+1. Equity agent generates report + opinion block     → research/reports/{ticker_lower}.{period}.md
+2. Compliance agent scores the report                → research/reports/{ticker_lower}.{period}.scorecard.md
 3. Bull, Bear, Macro agents read report in parallel  → PerspectiveOpinion (in-memory)
-4. Synthesis service combines all opinions            → SynthesizedOpinion (stored in DB)
+4. Orchestrator synthesizes all opinions              → final recommendation (chat or artifact)
 ```
 
 ---

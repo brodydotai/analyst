@@ -20,7 +20,7 @@ Do NOT read on boot: CLAUDE.md, registry.md, protocol.md.
 
 **Owns:** `research/reports/*.md` (reports only, not scorecards)
 **Reads:** `research/playbooks/`, `research/templates/`, financial data via web search or API
-**Never touches:** `analyst/`, `tests/`, `docs/`, `.agents/`, `CLAUDE.md`
+**Never touches:** `docs/`, `.agents/`, `CLAUDE.md`
 
 ## Conventions
 
@@ -30,7 +30,9 @@ Do NOT read on boot: CLAUDE.md, registry.md, protocol.md.
 3. Apply the playbook framework section by section (A through H)
 4. Cite sources for all financial figures
 5. Flag Interesting Data Points (IDPs) when bull/bear cases conflict
-6. Save report to `research/reports/{ticker}.{period}.md`
+6. Save report using the standard filename:
+   - `research/reports/{ticker_lower}.{period}.md`
+   - Example: `research/reports/intc.feb.md`
 7. Append the Opinion Block at the end of the report (see below)
 
 ### Data Integrity
@@ -47,10 +49,15 @@ Do NOT read on boot: CLAUDE.md, registry.md, protocol.md.
 ## Output Format
 
 ### Report File
-- **File:** `research/reports/{ticker}.{period}.md`
+- **File:** `research/reports/{ticker_lower}.{period}.md`
 - **Format:** Markdown with headings matching playbook sections
 - **Header:** Title, codename (from playbook), prompt used, analyst framework
 - **Length:** Comprehensive — substantive content per section, not one-liners
+
+### Naming Rules (Required)
+- `ticker_lower` is lowercase ticker/token symbol (`INTC` -> `intc`)
+- `period` is a lowercase period tag such as `feb`
+- report suffix is `.md`
 
 ### Opinion Block (appended at end of report)
 

@@ -31,13 +31,13 @@ Assigned → In Progress → Delivered → Reviewed → Done
 
 ## Full Analysis Pipeline
 
-For a complete analysis (report + perspectives + synthesis):
+For a complete analysis (report + scorecard + perspectives):
 
 ```
 Step 1: Equity agent → report + opinion block       (writes to research/reports/)
 Step 2: Compliance agent → scorecard                 (writes to research/reports/)
 Step 3: Bull + Bear + Macro agents → perspectives    (in-memory, parallel)
-Step 4: Synthesis service → synthesized opinion       (stored in DB via API)
+Step 4: Orchestrator → synthesis note (optional)     (chat output or markdown artifact)
 ```
 
 Steps 1-2 are sequential. Steps 3 can run in parallel after Step 1 completes.
@@ -53,11 +53,11 @@ Bull, Bear, and Macro agents are **lightweight and stateless**. They:
 
 ### Synthesis
 
-The synthesis service (`analyst/services/synthesis.py`) combines opinions using:
-- Primary opinion gets 2x weight (it's from the deep analysis)
-- Each perspective weighted by its confidence x domain relevance
-- Disagreement between perspectives reduces overall confidence
-- Consensus level assessed by rating spread
+Synthesis is handled by the orchestrator using:
+- Primary opinion as the anchor view
+- Perspective confidence weighting
+- Explicit disagreement handling (rating and thesis spread)
+- A clear final recommendation with invalidation criteria
 
 ## Agent Rules
 
@@ -81,13 +81,11 @@ Do NOT read on boot: CLAUDE.md (orchestrator reads this), registry.md, protocol.
 
 | Task | Agent | Output |
 |------|-------|--------|
-| Generate investment report | research/equity | `research/reports/{ticker}.{period}.md` |
-| Run compliance scorecard | research/compliance | `research/reports/{ticker}.{period}.scorecard.md` |
+| Generate investment report | research/equity | `research/reports/{ticker_lower}.{period}.md` |
+| Run compliance scorecard | research/compliance | `research/reports/{ticker_lower}.{period}.scorecard.md` |
 | Bull perspective | research/bull | `PerspectiveOpinion` (in-memory) |
 | Bear perspective | research/bear | `PerspectiveOpinion` (in-memory) |
 | Macro overlay | research/macro | `PerspectiveOpinion` (in-memory) |
-| Synthesize opinions | synthesis service | `SynthesizedOpinion` (API/DB) |
-| Backend feature | build/backend | `analyst/` Python code |
-| Database migration | build/backend | `migrations/*.sql` |
+| Synthesize opinions | orchestrator | recommendation + rationale |
 | Architecture decision | orchestrator | `docs/`, `CLAUDE.md` |
 | Playbook creation/edit | orchestrator | `research/playbooks/` |
