@@ -2,7 +2,7 @@
 
 ## Overview
 
-Analyst is building an institutional-grade AI equity research system in five phases over 12-18 months. Each phase builds on the previous and delivers concrete value to the parent OS (Brodus).
+Analyst is building an institutional-grade AI equity research system in five phases over 12-18 months. Each phase builds on the previous and delivers concrete value to the parent OS (Analyst).
 
 ---
 
@@ -296,7 +296,7 @@ Analyst is building an institutional-grade AI equity research system in five pha
 
 ## Phase 5: Integration Hardening (Weeks 19-24)
 
-**Goal:** Prepare for production deployment within Brodus as a hardened microservice.
+**Goal:** Prepare for production deployment within Analyst as a hardened microservice.
 
 **Entry Criteria:**
 - Phase 4 complete
@@ -307,7 +307,7 @@ Analyst is building an institutional-grade AI equity research system in five pha
 
 1. **API Authentication & Authorization**
    - Implement API key authentication for parent OS
-   - API key issued per consumer (Brodus, external integrations)
+   - API key issued per consumer (Analyst, external integrations)
    - Rate limiting: 1000 req/min per consumer
    - Quota enforcement: X reports/month, Y searches/month
    - Implement rate limiting headers (X-RateLimit-Remaining, X-RateLimit-Reset)

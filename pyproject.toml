@@ -8,7 +8,7 @@ version = "0.1.0"
 description = "Analyst — AI Equity Research System"
 requires-python = ">=3.11"
 authors = [
-    {name = "Brodus", email = "noreply@brodus.local"}
+    {name = "Analyst", email = "noreply@analyst.local"}
 ]
 dependencies = [
     "fastapi",

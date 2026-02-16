@@ -269,7 +269,7 @@ User sees verification results
 
 ## Integration with Parent OS
 
-Analyst operates as a microservice within the larger agentic OS (Brodus):
+Analyst operates as a microservice within the larger agentic OS (Analyst):
 
 **API Contract:**
 - Parent OS calls `/api/research/reports/generate` with ticker and playbook
