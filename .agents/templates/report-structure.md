@@ -13,3 +13,6 @@
 
 ## Opinion
 {opinion_block}
+
+## Summary for Perspectives
+{perspective_summary_block}

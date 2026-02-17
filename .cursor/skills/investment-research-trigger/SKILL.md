@@ -19,7 +19,7 @@ This is a **no-code execution skill**. It does not change code.
 - Never modify files or code as part of this workflow.
 - Use existing framework assets only.
 - If required data is missing, state that clearly and continue with best-effort analysis.
-- Keep outputs structured and ingestible by the current local UI workflow.
+- Keep outputs structured and ingestible by the current artifact workflow.
 
 ## Step 1: Detect Trigger and Extract Instrument
 
@@ -33,10 +33,10 @@ When user intent is investment analysis:
 
 ### Equity (supported now)
 Run the Analyst no-code research workflow:
-- Playbook source: `research/playbooks/*.prompt.md`
-- Report template: `research/templates/report-structure.md`
-- Opinion schema: `research/templates/opinion-block.yaml`
-- Compliance rules: `research/compliance/rules.json`
+- Playbook source: `.agents/playbooks/*.prompt.md`
+- Report template: `.agents/templates/report-structure.md`
+- Opinion schema: `.agents/templates/opinion-block.yaml`
+- Compliance rules: `.agents/compliance/rules.json`
 - Agent behavior reference: `.agents/research/equity/INSTRUCTIONS.md`
 
 Output in this exact structure:
@@ -45,7 +45,29 @@ Output in this exact structure:
 3. `## System Monitoring Entries`
 4. `## Operator Notes`
 
-### Crypto / Bond / Commodity / ETF / Other (not fully covered)
+### Crypto (supported with Droyd experiment overlay)
+Run best-effort crypto workflow with explicit experiment instrumentation:
+- Routing index: `.agents/templates/api-routing-index.yaml`
+- Experiment runbook: `.agents/templates/droyd-crypto-experiments.md`
+- Report template: `.agents/templates/report-structure.md`
+- Opinion schema: `.agents/templates/opinion-block.yaml`
+- Output path: `artifacts/crypto/reports/{ticker_lower}.{period}.md`
+- Optional compliance path: `artifacts/crypto/scorecards/{ticker_lower}.{period}.scorecard.md`
+
+Required behavior for crypto runs:
+1. Execute at least 2 Droyd experiment modes (A/B/C from runbook).
+2. Capture query parameters and summarize evidence quality.
+3. Corroborate high-impact claims with one independent source.
+4. Add a `### Droyd Experiment Summary` block under `## Operator Notes`.
+5. If Droyd key or endpoint unavailable, continue with fallback research and mark experiment as skipped.
+
+Output in this exact structure:
+1. `## Report Markdown`
+2. `## Compliance Self-Score`
+3. `## System Monitoring Entries`
+4. `## Operator Notes`
+
+### Bond / Commodity / ETF / Other (not fully covered)
 If asset class is not fully supported by current playbooks/skillbase:
 1. Say it is currently outside covered scope.
 2. Ask whether the user wants:
@@ -65,17 +87,19 @@ Please extend Analyst to support **{asset_class}** research for **{instrument}**
 ### Requested capability
 - Asset class: {asset_class}
 - Instrument example: {instrument}
-- Target workflow: no-code research execution + report viewing in current local UI
+- Target workflow: no-code research execution + report viewing from `artifacts/{asset_class}/reports/` and `artifacts/{asset_class}/scorecards/`
 
 ### Requirements
 1. Add or adapt playbook(s) for {asset_class}.
 2. Define required report sections and opinion schema for {asset_class}.
 3. Add compliance rules for scoring section/element/structure quality.
 4. Keep compatibility with:
-   - `research/templates/report-structure.md`
-   - `research/templates/opinion-block.yaml` (or a class-specific variant)
-   - `research/compliance/rules.json` (or class-specific rule set)
-5. Ensure outputs remain viewable in current Research/System pages.
+   - `.agents/templates/report-structure.md`
+   - `.agents/templates/opinion-block.yaml` (or a class-specific variant)
+   - `.agents/compliance/rules.json` (or class-specific rule set)
+5. Ensure outputs remain readable from:
+   - `artifacts/{asset_class}/reports/`
+   - `artifacts/{asset_class}/scorecards/`
 
 ### Acceptance criteria
 - User can say: "do investment research on {instrument}"

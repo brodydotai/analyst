@@ -12,8 +12,8 @@ Master index of all agents. Consult this file to route tasks to the correct agen
 | **Group** | research |
 | **Role** | Executes investment playbooks, generates company reports with structured opinion blocks |
 | **Entry point** | `.agents/research/equity/INSTRUCTIONS.md` |
-| **Owns** | `research/reports/*.md` (reports, not scorecards) |
-| **Reads** | `research/playbooks/` (playbooks), assigned task, prior reports |
+| **Owns** | `artifacts/{asset_class}/reports/*.md` (reports, not scorecards) |
+| **Reads** | `.agents/playbooks/` (playbooks), assigned task, prior reports |
 | **Never touches** | `docs/`, `.agents/`, `CLAUDE.md` |
 | **Status** | Active |
 
@@ -27,8 +27,8 @@ Master index of all agents. Consult this file to route tasks to the correct agen
 | **Group** | research |
 | **Role** | Runs playbook compliance checks on generated reports, produces scorecards |
 | **Entry point** | `.agents/research/compliance/INSTRUCTIONS.md` |
-| **Owns** | `research/reports/*.scorecard.md` |
-| **Reads** | `research/playbooks/`, `research/reports/`, `research/compliance/rules.json` |
+| **Owns** | `artifacts/{asset_class}/scorecards/*.scorecard.md` |
+| **Reads** | `.agents/playbooks/`, `artifacts/`, `.agents/compliance/rules.json` |
 | **Never touches** | `docs/`, `.agents/`, `CLAUDE.md` |
 | **Status** | Active |
 
@@ -87,7 +87,7 @@ Master index of all agents. Consult this file to route tasks to the correct agen
 | **Group** | — (top-level) |
 | **Role** | Interprets user intent, writes tasks, audits results, maintains project intelligence |
 | **Entry point** | `CLAUDE.md` |
-| **Owns** | `CLAUDE.md`, `.agents/`, `docs/` |
+| **Owns** | `CLAUDE.md`, `.agents/` |
 | **Reads** | Everything |
 | **Never touches** | Should delegate report and instruction edits to research agents |
 | **Status** | Active |
@@ -97,8 +97,8 @@ Master index of all agents. Consult this file to route tasks to the correct agen
 ## Research Workflow: Full Analysis Pipeline
 
 ```
-1. Equity agent generates report + opinion block     → research/reports/{ticker_lower}.{period}.md
-2. Compliance agent scores the report                → research/reports/{ticker_lower}.{period}.scorecard.md
+1. Equity agent generates report + opinion block     → artifacts/{asset_class}/reports/{ticker_lower}.{period}.md
+2. Compliance agent scores the report                → artifacts/{asset_class}/scorecards/{ticker_lower}.{period}.scorecard.md
 3. Bull, Bear, Macro agents read report in parallel  → PerspectiveOpinion (in-memory)
 4. Orchestrator synthesizes all opinions              → final recommendation (chat or artifact)
 ```

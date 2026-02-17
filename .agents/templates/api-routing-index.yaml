@@ -1,0 +1,50 @@
+# API Routing Index (file-first, model-agnostic)
+# Purpose: let agents map research intent -> provider -> env var.
+# Secrets are stored in .env only. This index stores references only.
+
+version: 1
+last_updated: "2026-02-16"
+
+categories:
+  crypto_market_research:
+    description: "Crypto protocol, market microstructure, on-chain telemetry, and token intelligence."
+    providers:
+      - provider_id: "droyd"
+        label: "Droyd Crypto Intelligence"
+        use_cases:
+          - "protocol market share and volume diagnostics"
+          - "tokenomics and unlock tracking"
+          - "on-chain flow and concentration analysis"
+          - "crypto report evidence enrichment"
+        credentials:
+          env_var: "DROYD_API_KEY"
+          required: true
+        status: "active"
+        priority: 1
+
+  equity_market_research:
+    description: "Traditional equity fundamentals, filings, estimates, and market data."
+    providers: []
+
+  commodities_market_research:
+    description: "Commodity pricing, supply-demand balances, inventories, and macro linkages."
+    providers: []
+
+  macro_market_research:
+    description: "Rates, liquidity, FX, and cross-asset macro regime indicators."
+    providers: []
+
+routing_rules:
+  - when_asset_class: "crypto"
+    preferred_categories:
+      - "crypto_market_research"
+      - "macro_market_research"
+  - when_asset_class: "equities"
+    preferred_categories:
+      - "equity_market_research"
+      - "macro_market_research"
+  - when_asset_class: "commodities"
+    preferred_categories:
+      - "commodities_market_research"
+      - "macro_market_research"
+

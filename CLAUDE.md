@@ -1,11 +1,10 @@
-# Analyst — Project Intelligence
+# Analyst — Workflow Context
 
-Shared context for this repository.
+Operational context for this repository.
 
-## What Analyst Is
+## Purpose
 
-Analyst is an agentic investment research workspace.
-It focuses on:
+Analyst is an agentic investment research workspace focused on:
 - Playbook-driven report generation
 - Compliance scorecard verification
 - Perspective overlays (bull, bear, macro)
@@ -19,26 +18,26 @@ There is no backend application, frontend application, API server, or database l
 ## Source of Truth
 
 - Agent contracts and workflow: `.agents/`
-- Playbooks: `research/playbooks/`
-- Compliance rules: `research/compliance/rules.json`
-- Research artifacts: `research/reports/`
-- Templates: `research/templates/`
+- Playbooks: `.agents/playbooks/`
+- Compliance rules: `.agents/compliance/rules.json`
+- Research artifacts: `artifacts/{asset_class}/reports/` and `artifacts/{asset_class}/scorecards/`
+- Templates: `.agents/templates/`
 
 ## Core Workflow
 
-1. `research/equity` produces `research/reports/{ticker_lower}.{period}.md`
-2. `research/compliance` produces `research/reports/{ticker_lower}.{period}.scorecard.md`
+1. `research/equity` produces `artifacts/{asset_class}/reports/{ticker_lower}.{period}.md`
+2. `research/compliance` produces `artifacts/{asset_class}/scorecards/{ticker_lower}.{period}.scorecard.md`
 3. `research/bull`, `research/bear`, and `research/macro` return in-memory perspective opinions
 4. Orchestrator synthesizes a final recommendation
 
 ## Naming Convention
 
-- Report: `{ticker_lower}.{period}.md`
-- Scorecard: `{ticker_lower}.{period}.scorecard.md`
+- Report: `{asset_class}/reports/{ticker_lower}.{period}.md`
+- Scorecard: `{asset_class}/scorecards/{ticker_lower}.{period}.scorecard.md`
 
 Examples:
-- `intc.feb.md`
-- `intc.feb.scorecard.md`
+- `equities/reports/intc.feb.md`
+- `equities/scorecards/intc.feb.scorecard.md`
 
 ## Operating Rules
 
