@@ -1,0 +1,73 @@
+{
+  "playbook_file": "shipping-and-maritime.prompt.md",
+  "version": "v1",
+  "generated_at": "2026-03-03",
+  "section_count": 6,
+  "sections": [
+    {
+      "id": "A",
+      "title": "Foundational Synthesis — Fleet Architecture & Competitive Positioning",
+      "required_elements": [
+        "Fleet composition by ship type and size class with age distribution",
+        "Orderbook and future fleet expansion optionality",
+        "Competitive tier and market share position",
+        "Fleet utilization rates and idle/lay-up capacity monitoring"
+      ]
+    },
+    {
+      "id": "B",
+      "title": "Day Rates, Charter Economics & TCE Analysis",
+      "required_elements": [
+        "Spot vs. period contract revenue mix and exposure",
+        "Time Charter Equivalent (TCE) calculation and Baltic index tracking",
+        "Freight rate indices and cyclicality assessment",
+        "Contract duration and revenue visibility from repricing"
+      ]
+    },
+    {
+      "id": "C",
+      "title": "Fleet Cycle & Scrapping Economics",
+      "required_elements": [
+        "Weighted average fleet age and scrapping age profile",
+        "Newbuild price vs. scrap value spread analysis",
+        "Regulatory drivers for early scrapping (IMO EEXI, CII)",
+        "Dry dock schedule and maintenance cost inflation"
+      ]
+    },
+    {
+      "id": "D",
+      "title": "Financial Logic & Valuation",
+      "required_elements": [
+        "EV/TCE multiple benchmarking and market cycle positioning",
+        "Sustainable earnings power calculation under scenarios",
+        "NAV per share analysis and vessel valuation approach",
+        "FCF yield and capital return capacity (dividends, buybacks)"
+      ]
+    },
+    {
+      "id": "E",
+      "title": "Pattern Matching & IDP Flagging",
+      "required_elements": [
+        "Freight rate weakness and global trade demand signals",
+        "Fleet capacity oversupply and newbuild delivery pipeline risk",
+        "Debt maturity and refinancing risk in rising-rate environment",
+        "Regulatory compliance cost and geopolitical trade disruption"
+      ]
+    },
+    {
+      "id": "F",
+      "title": "Investigation Tracks",
+      "required_elements": [
+        "TCE cycle positioning and spot rate exposure earnings sensitivity",
+        "Fleet regulatory compliance timeline and cost burden analysis",
+        "Balance sheet resilience and capital return capacity under downturns"
+      ]
+    }
+  ],
+  "structural_requirements": [
+    "Opinion block present",
+    "Summary for Perspectives present",
+    "All financial claims cited",
+    "Investigation tracks specified"
+  ]
+}

@@ -1,0 +1,73 @@
+{
+  "playbook_file": "consumer-and-ecommerce.prompt.md",
+  "version": "v1",
+  "generated_at": "2026-03-03",
+  "section_count": 6,
+  "sections": [
+    {
+      "id": "A",
+      "title": "Foundational Synthesis — Platform Architecture & Competitive Positioning",
+      "required_elements": [
+        "Platform model classification and revenue channel breakdown",
+        "Gross Merchandise Value (GMV) and take-rate benchmarking",
+        "Market share and competitive positioning assessment",
+        "Fulfillment model and cost structure overview"
+      ]
+    },
+    {
+      "id": "B",
+      "title": "GMV Growth & Take-Rate Economics",
+      "required_elements": [
+        "Comparable GMV/same-store sales growth decomposition (traffic and conversion)",
+        "Take-rate trends and channel mix shift analysis",
+        "1P vs. 3P gross margin economics comparison",
+        "Private label/exclusive product economics and strategic value"
+      ]
+    },
+    {
+      "id": "C",
+      "title": "Fulfillment Cost & Supply Chain Economics",
+      "required_elements": [
+        "Fulfillment cost per unit trend and benchmark analysis",
+        "Inventory turnover and working capital dynamics",
+        "Return rate and reverse logistics cost impact",
+        "Operating leverage modeling as GMV scales"
+      ]
+    },
+    {
+      "id": "D",
+      "title": "Financial Logic & Valuation",
+      "required_elements": [
+        "EV/GMV multiple benchmarking vs. peers",
+        "EV/Revenue and adjusted EBITDA multiples by platform type",
+        "Subscription/loyalty revenue margin and LTV contribution",
+        "Advertising and services segment valuation"
+      ]
+    },
+    {
+      "id": "E",
+      "title": "Pattern Matching & IDP Flagging",
+      "required_elements": [
+        "Traffic, conversion, and GMV growth deceleration signals",
+        "Merchant/seller concentration and churn risk",
+        "Fulfillment cost inflation and margin squeeze dynamics",
+        "Competitive threats and regulatory commission cap impact"
+      ]
+    },
+    {
+      "id": "F",
+      "title": "Investigation Tracks",
+      "required_elements": [
+        "Take-rate compression drivers and GMV growth path under scenarios",
+        "Fulfillment economics and operating leverage projections",
+        "Competitive market share and category expansion opportunity assessment"
+      ]
+    }
+  ],
+  "structural_requirements": [
+    "Opinion block present",
+    "Summary for Perspectives present",
+    "All financial claims cited",
+    "Investigation tracks specified"
+  ]
+}

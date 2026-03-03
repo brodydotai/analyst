@@ -1,0 +1,100 @@
+{
+  "playbook_file": "precious-metals-commodity.prompt.md",
+  "version": "v1",
+  "generated_at": "2026-03-03",
+  "section_count": 6,
+  "sections": [
+    {
+      "id": "A",
+      "title": "Foundational Synthesis — Metal Classification & Dual-Use Economics",
+      "required_elements": [
+        "Metal classification on monetary-industrial spectrum (% monetary/store-of-value, industrial, jewelry, emerging/green energy)",
+        "Demand profile analysis and dual-use economics",
+        "Investment vehicle landscape mapping (physical, ETFs, futures, mining equities, streaming/royalty companies)"
+      ]
+    },
+    {
+      "id": "B",
+      "title": "Supply/Demand Fundamentals — The Physical Balance Sheet",
+      "required_elements": [
+        "Supply architecture decomposition (mine production, recycling/secondary, government/institutional sales, by-product dynamics)",
+        "Supply elasticity assessment (new mine production response to price, development timeline)",
+        "Demand decomposition by end-market with volume and price sensitivity",
+        "Central bank/sovereign demand assessment",
+        "Supply/demand deficit or surplus analysis (trailing 3 years, forward 2-year estimate)",
+        "Identifiable above-ground inventory tracking (COMEX, LBMA, SHFE, ETF holdings)",
+        "Inventory-to-consumption ratio assessment (<3 months = tightness signal)"
+      ]
+    },
+    {
+      "id": "C",
+      "title": "Macro Regime & Price Driver Analysis",
+      "required_elements": [
+        "Real interest rate sensitivity and inverse correlation analysis",
+        "Fed funds rate trajectory impact on precious metals",
+        "Dollar strength (DXY) correlation with metal prices",
+        "Inflation expectations (breakeven inflation, CPI, M2 growth) impact",
+        "Central bank gold reserve accumulation trend analysis",
+        "Current macro regime identification (risk-on, risk-off, stagflation, reflation)"
+      ]
+    },
+    {
+      "id": "D",
+      "title": "Financial Logic & Valuation",
+      "required_elements": [
+        "Marginal cost of production analysis (90th percentile AISC as price floor)",
+        "Relative value vs. other metals (gold/silver ratio, gold/platinum, platinum/palladium mean-reversion analysis)",
+        "Real price (inflation-adjusted) vs. 20-year and 50-year averages",
+        "Inventory-adjusted supply/demand model with 2-year forward projection",
+        "Positioning-based analysis (CFTC COT data, net speculative positioning)"
+      ]
+    },
+    {
+      "id": "E",
+      "title": "Pattern Matching & IDP Flagging",
+      "required_elements": [
+        "ETF outflows concurrent with rising spot price (physical market tightness indicator)",
+        "COMEX inventory drawdowns with rising open interest (delivery squeeze potential)",
+        "Mine production declining while demand grows (structural deficit formation)",
+        "Metal ratio extremes (gold/silver >80 or <50, mean-reversion opportunity)",
+        "Real rates falling while metal price flat (delayed response, catch-up rally potential)",
+        "Central bank buying acceleration (monetary regime shift signal)",
+        "Industrial demand exceeding mine supply growth (structural tightening)",
+        "Futures curve backwardation signal (physical market tightness)"
+      ]
+    },
+    {
+      "id": "F",
+      "title": "Investigation Tracks",
+      "required_elements": [
+        "Physical market channel checks (dealer premiums, LBMA/COMEX inventory movements, mint production data)",
+        "Industrial demand verification (solar PV installation forecasts, automotive/electronics production data)",
+        "Macro regime positioning (CFTC COT data, ETF flows, central bank reserve disclosures, real rate modeling)"
+      ]
+    }
+  ],
+  "structural_requirements": [
+    "All sections present with markdown headings",
+    "Metal classification on monetary-industrial spectrum clearly stated with percentages",
+    "Demand profile decomposed by application (jewelry, industrial fabrication, investment, central bank) with volumes",
+    "Investment vehicle types mapped (physical, ETFs, futures, mining equities, streaming)",
+    "Mine production tonnage and YoY growth documented with supply elasticity assessment",
+    "Recycling/secondary supply percentage calculated",
+    "By-product supply dynamics explained (% of total supply, price inelasticity)",
+    "Demand decomposition by end-market with price sensitivity by segment",
+    "Central bank buying/selling tracked with policy implications",
+    "Supply/demand deficit or surplus calculated (trailing 3 years and forward 2-year estimate)",
+    "COMEX registered and eligible inventory levels tracked with trend",
+    "ETF holdings as quasi-inventory documented",
+    "Inventory-to-consumption ratio calculated and assessed",
+    "Real interest rate sensitivity quantified (correlation analysis)",
+    "Dollar strength (DXY) impact documented",
+    "Inflation expectations (breakeven inflation) impact assessed",
+    "Macro regime identified (risk-on, risk-off, stagflation, reflation)",
+    "90th percentile AISC identified as price floor",
+    "Metal ratio analysis (gold/silver, gold/platinum) with mean-reversion thresholds",
+    "Real price vs. historical averages computed",
+    "CFTC COT positioning data analyzed (extremes identified)",
+    "Investigation tracks include specific data sources (LBMA inventory filings, mint production data, IEA forecasts)"
+  ]
+}

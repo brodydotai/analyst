@@ -31,17 +31,30 @@ Assigned → In Progress → Delivered → Reviewed → Done
 
 ## Full Analysis Pipeline
 
-For a complete analysis (report + scorecard + perspectives):
+For a complete analysis (report + scorecard + perspectives + synthesis):
 
 ```
-Step 1: Equity agent → report + opinion + perspective summary          (writes to artifacts/{asset_class}/reports/)
-Step 2: Compliance agent → scorecard from sections index + report      (writes to artifacts/{asset_class}/scorecards/)
-Step 3: Bull + Bear + Macro agents → perspectives from summary         (in-memory, parallel)
-Step 4: Orchestrator → synthesis note (optional)                       (chat output or markdown artifact)
+Phase 0: Orchestrator resolves playbook from index.yaml       → auto-detection
+Phase 1: Equity agent → report + opinion + perspective summary → artifacts/{asset_class}/reports/
+Phase 2: Compliance agent → scorecard from sections index      → artifacts/{asset_class}/scorecards/
+Phase 3: Bull + Bear + Macro agents → perspectives from summary → artifacts/{asset_class}/perspectives/ (JSON)
+Phase 4: Synthesis agent → final recommendation                → artifacts/{asset_class}/synthesis/
+Phase 5: Orchestrator → delivers all artifacts to user         → chat output with links
 ```
 
-Steps 1-2 are sequential. Steps 3 can run in parallel after Step 1 completes.
-Step 4 runs after all perspectives are collected.
+Phases 1-2 are sequential. Phase 3 agents can run in parallel after Phase 1 completes.
+Phase 4 runs after Phase 3 perspectives are collected. Phase 2 can run in parallel with Phase 3.
+
+### Playbook Auto-Detection
+
+Before Phase 1, the orchestrator resolves which playbook to use:
+
+1. **Validate ticker** — confirm the ticker symbol is real via web search (e.g., `{ticker} stock price`). If the ticker doesn't resolve to a traded security, abort and inform the user.
+2. Read `.agents/playbooks/index.yaml`
+3. Match ticker directly against `tickers` arrays
+4. If no direct match, use web search to identify the company's sector
+5. Match sector against `keywords` arrays in the index
+6. Fall back to `_default/playbook.prompt.md` if no match found
 
 ### Perspective Agents
 
@@ -49,32 +62,35 @@ Bull, Bear, and Macro agents are **lightweight and stateless**. They:
 - Read `## Summary for Perspectives` and `## Opinion` from the completed report
 - Fallback to full report only if summary is missing
 - Return a structured `PerspectiveOpinion` JSON object
-- Do NOT write files to disk
+- Do NOT write files to disk — the orchestrator collects and saves the perspectives JSON
 - Are orchestrated by the parent system, not self-directed
+
+### Synthesis Agent
+
+The synthesis agent reconciles all pipeline outputs:
+- Reads: Report (Summary + Opinion only), scorecard (overall grade only), perspectives JSON
+- Produces: Final recommendation with conviction rating, position framework, monitoring triggers
+- Writes to: `artifacts/{asset_class}/synthesis/{ticker_lower}.{period}.synthesis.md`
 
 ### Compliance Input Contract
 
 Compliance should score from:
 1. `.agents/compliance/rules.json`
-2. `.agents/playbooks/{name}.sections.json` (primary)
+2. `.agents/playbooks/{name}/sections.json` (primary)
 3. `artifacts/{asset_class}/reports/{ticker_lower}.{period}.md`
 
 Fallback path:
-- If `{name}.sections.json` is missing, compliance may load full playbook (`{name}.prompt.md`) and continue.
+- If `{name}/sections.json` is missing, compliance may load full playbook (`{name}/playbook.prompt.md`) and continue.
 
 ### Playbook Index Contract
 
-Every playbook may include a sibling index file:
-- Playbook: `.agents/playbooks/{name}.prompt.md`
-- Index: `.agents/playbooks/{name}.sections.json`
+Every playbook includes a sibling index file:
+- Playbook: `.agents/playbooks/{name}/playbook.prompt.md`
+- Index: `.agents/playbooks/{name}/sections.json`
 
-The index captures only:
-- section IDs and section titles
-- required elements per section
-- global structural requirements
+The index captures only: section IDs/titles, required elements per section, and global structural requirements.
 
-Schema definition:
-- `.agents/playbooks/sections.schema.json`
+Schema definition: `.agents/playbooks/sections.schema.json`
 
 ### Crypto Experiment Overlay
 
@@ -82,19 +98,7 @@ For crypto report runs, apply the Droyd experiment layer before finalizing opini
 - Routing map: `.agents/templates/api-routing-index.yaml`
 - Experiment instructions: `.agents/templates/droyd-crypto-experiments.md`
 
-Execution expectations:
-1. Run at least 2 experiment modes from the runbook.
-2. Capture query settings and high-signal findings in operator notes.
-3. Corroborate high-impact claims before elevating confidence.
-4. If provider unavailable, continue with fallback research and mark experiment status as skipped.
-
-### Synthesis
-
-Synthesis is handled by the orchestrator using:
-- Primary opinion as the anchor view
-- Perspective confidence weighting
-- Explicit disagreement handling (rating and thesis spread)
-- A clear final recommendation with invalidation criteria
+Execution: run at least 2 experiment modes, capture high-signal findings, corroborate before elevating confidence. If provider unavailable, continue with fallback research and mark experiment as skipped.
 
 ## Agent Rules
 
@@ -113,23 +117,26 @@ Agent boot sequence should consume < 2000 tokens:
 2. Read assigned task (~20 lines)
 3. Read only required supporting artifact:
    - Equity: assigned full playbook
-   - Compliance: `{name}.sections.json` (full playbook only as fallback)
+   - Compliance: `{name}/sections.json` (full playbook only as fallback)
    - Perspectives: `## Summary for Perspectives` + `## Opinion`
+   - Synthesis: Report summary + Opinion, scorecard grade, perspectives JSON
 
 Do NOT read on boot: CLAUDE.md (orchestrator reads this), registry.md, protocol.md, unrelated reports.
 
 ## Target Token Budget Per Run
 
-Design target: reduce end-to-end run from ~150K tokens to <80K.
+Design target: < 80K tokens end-to-end for full pipeline.
 
-Approximate budget after optimization:
-- Equity agent: 28K-40K (dominant by design)
-- Compliance agent: 8K-15K (index + report pass + rules)
-- Bull + Bear + Macro combined: 12K-20K (shared compressed summary path)
-- Orchestration + synthesis overhead: 5K-10K
+| Phase | Budget | Notes |
+|-------|--------|-------|
+| Setup | < 2K | Index lookup + dir creation |
+| Equity | 28–40K | Web research + full report (largest phase) |
+| Compliance | 8–15K | Section index + report scoring |
+| Perspectives | 12–20K | Three agents, compressed input |
+| Synthesis | 5–10K | Lightweight reconciliation |
 
 Token sink controls:
-1. Avoid full playbook re-read in compliance with `{name}.sections.json`.
+1. Avoid full playbook re-read in compliance with `{name}/sections.json`.
 2. Avoid full report re-read in perspectives via `## Summary for Perspectives`.
 3. Use targeted search templates before exploratory search.
 4. Load `rules.json` once per compliance run.
@@ -139,11 +146,12 @@ Token sink controls:
 
 | Task | Agent | Output |
 |------|-------|--------|
+| Detect playbook | orchestrator | playbook filename from `index.yaml` |
 | Generate investment report | research/equity | `artifacts/{asset_class}/reports/{ticker_lower}.{period}.md` |
 | Run compliance scorecard | research/compliance | `artifacts/{asset_class}/scorecards/{ticker_lower}.{period}.scorecard.md` |
 | Bull perspective | research/bull | `PerspectiveOpinion` (in-memory) |
 | Bear perspective | research/bear | `PerspectiveOpinion` (in-memory) |
 | Macro overlay | research/macro | `PerspectiveOpinion` (in-memory) |
-| Synthesize opinions | orchestrator | recommendation + rationale |
+| Synthesize recommendation | research/synthesis | `artifacts/{asset_class}/synthesis/{ticker_lower}.{period}.synthesis.md` |
 | Architecture decision | orchestrator | `CLAUDE.md`, `.agents/` |
 | Playbook creation/edit | orchestrator | `.agents/playbooks/` |

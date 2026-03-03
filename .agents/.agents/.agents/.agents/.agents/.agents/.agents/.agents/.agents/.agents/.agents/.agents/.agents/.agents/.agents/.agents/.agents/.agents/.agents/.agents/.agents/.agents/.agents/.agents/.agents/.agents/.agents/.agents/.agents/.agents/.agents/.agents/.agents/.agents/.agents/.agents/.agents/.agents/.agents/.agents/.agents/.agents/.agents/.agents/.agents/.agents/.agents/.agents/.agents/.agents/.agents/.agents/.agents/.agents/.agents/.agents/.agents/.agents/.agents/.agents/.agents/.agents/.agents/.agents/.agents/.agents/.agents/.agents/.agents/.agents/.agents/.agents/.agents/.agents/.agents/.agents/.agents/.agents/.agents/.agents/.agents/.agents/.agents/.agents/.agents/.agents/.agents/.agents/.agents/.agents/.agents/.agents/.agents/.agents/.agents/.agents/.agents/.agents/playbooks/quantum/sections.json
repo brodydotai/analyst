@@ -1,0 +1,81 @@
+{
+  "playbook_file": "quantum.prompt.md",
+  "version": "v1",
+  "generated_at": "2026-03-03",
+  "section_count": 6,
+  "sections": [
+    {
+      "id": "A",
+      "title": "Foundational Synthesis — Technology Approach Classification",
+      "required_elements": [
+        "Quantum computing approach classification (superconducting, trapped ion, photonic, neutral atom, topological, software/algorithms)",
+        "Technology readiness level (TRL) assessment (basic research, proof of concept, prototype, commercial-ready)",
+        "Honest TRL positioning relative to industry state (acknowledge limited commercial-ready systems as of 2026)"
+      ]
+    },
+    {
+      "id": "B",
+      "title": "Technical Benchmarking — Cutting Through the Qubit Hype",
+      "required_elements": [
+        "Logical qubits demonstrated and error rate analysis (vs. physical qubits hype)",
+        "Quantum Volume / CLOPS (Circuit Layer Operations Per Second) metrics",
+        "Error rates (single-qubit gate, two-qubit gate, measurement fidelity)",
+        "Coherence time and connectivity/topology assessment (full vs. nearest-neighbor connectivity)"
+      ]
+    },
+    {
+      "id": "C",
+      "title": "Path to Commercial Value — The 'Quantum Advantage' Timeline",
+      "required_elements": [
+        "NISQ-era applications (2024-2028) timeline and commercial viability assessment",
+        "Early fault-tolerant era (2028-2032) revenue emergence probability",
+        "Full fault-tolerant era (2032+) timeline assessment",
+        "Revenue bridge assessment (government contracts, quantum-as-a-service, consulting, classical products)",
+        "Cash burn rate and runway analysis"
+      ]
+    },
+    {
+      "id": "D",
+      "title": "Financial Logic & Valuation",
+      "required_elements": [
+        "Probability-weighted scenario analysis (milestone achievement probabilities, revenue outcomes)",
+        "Cash burn runway analysis (months of cash at current burn rate)",
+        "Optionality-based valuation (company value as option premium on quantum advantage)",
+        "Implied TAM capture analysis (% of projected market embedded in current market cap)"
+      ]
+    },
+    {
+      "id": "E",
+      "title": "Pattern Matching & IDP Flagging",
+      "required_elements": [
+        "Qubit count announcements without error rate improvements (metric gaming)",
+        "Revenue guidance based on 'quantum-inspired' classical algorithms vs. actual quantum",
+        "Key scientist departures (talent moat erosion)",
+        "Government contract dependence exceeding 80% (policy risk)"
+      ]
+    },
+    {
+      "id": "F",
+      "title": "Investigation Tracks",
+      "required_elements": [
+        "Independent technical benchmarking against peer systems",
+        "Government contract pipeline analysis (DARPA/DOE/DOD quantum programs)",
+        "Customer/partner validation (pharma, financial services running production workloads)"
+      ]
+    }
+  ],
+  "structural_requirements": [
+    "All sections present with markdown headings",
+    "Technology approach clearly identified with specific implementation type",
+    "TRL explicitly stated with honest assessment of 2026 commercial-readiness landscape",
+    "Logical qubit count and error rates documented (not physical qubit marketing numbers)",
+    "Quantum Volume or CLOPS metrics compared to peer systems if available",
+    "Error rate roadmap to fault-tolerant quantum (<10^-3 two-qubit gate fidelity target) documented",
+    "Timeline for NISQ applications, early fault-tolerant, and full fault-tolerant eras specified",
+    "Revenue bridge mechanism identified (government contracts %, quantum-as-a-service, other)",
+    "Cash burn rate calculated with runway in months at current burn",
+    "Implied TAM capture quantified from current market cap",
+    "Government contract percentage calculated (if >80%, policy risk flagged)",
+    "Investigation tracks include independent NIST/DOE benchmark data, DARPA contract awards, and customer validation sources"
+  ]
+}

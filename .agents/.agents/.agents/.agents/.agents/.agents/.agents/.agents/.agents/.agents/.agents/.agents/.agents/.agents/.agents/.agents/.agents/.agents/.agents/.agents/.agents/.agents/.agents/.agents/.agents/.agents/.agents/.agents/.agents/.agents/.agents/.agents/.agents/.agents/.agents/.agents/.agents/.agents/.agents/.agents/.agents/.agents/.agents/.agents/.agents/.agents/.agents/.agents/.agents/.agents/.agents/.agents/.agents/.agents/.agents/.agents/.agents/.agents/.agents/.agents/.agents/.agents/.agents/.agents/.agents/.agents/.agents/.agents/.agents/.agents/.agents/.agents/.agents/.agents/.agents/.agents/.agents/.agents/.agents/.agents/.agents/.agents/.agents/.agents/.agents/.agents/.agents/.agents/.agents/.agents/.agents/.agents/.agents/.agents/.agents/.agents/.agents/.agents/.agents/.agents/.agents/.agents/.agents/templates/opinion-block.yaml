@@ -1,0 +1,15 @@
+```yaml
+rating: 5
+confidence: 0.50
+action: hold
+timeframe: 12M
+thesis: "State the core thesis with evidence."
+catalysts:
+  - "Catalyst 1"
+  - "Catalyst 2"
+risks:
+  - "Risk 1"
+  - "Risk 2"
+invalidation: "Define the condition that invalidates the thesis."
+data_confidence: 0.50
+```

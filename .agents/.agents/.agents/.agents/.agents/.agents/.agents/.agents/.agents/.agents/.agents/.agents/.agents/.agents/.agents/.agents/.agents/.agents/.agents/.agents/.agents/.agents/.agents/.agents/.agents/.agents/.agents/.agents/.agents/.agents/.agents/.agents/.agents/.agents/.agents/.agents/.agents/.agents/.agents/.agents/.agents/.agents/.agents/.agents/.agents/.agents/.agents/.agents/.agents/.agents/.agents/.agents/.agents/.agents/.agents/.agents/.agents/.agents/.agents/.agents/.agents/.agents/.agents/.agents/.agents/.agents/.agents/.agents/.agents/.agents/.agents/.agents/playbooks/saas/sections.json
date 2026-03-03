@@ -1,0 +1,86 @@
+{
+  "playbook_file": "saas.prompt.md",
+  "version": "v1",
+  "generated_at": "2026-03-03",
+  "section_count": 6,
+  "sections": [
+    {
+      "id": "A",
+      "title": "Foundational Synthesis — The Recurring Revenue Machine",
+      "required_elements": [
+        "SaaS value chain position (horizontal platform, vertical SaaS, infrastructure, application layer)",
+        "Product classification (system of record, system of engagement, point solution)",
+        "Founder technical depth vs. go-to-market orientation assessment",
+        "Insider ownership concentration and equity compensation burn rate tracking"
+      ]
+    },
+    {
+      "id": "B",
+      "title": "Unit Economics Deep Dive — The Metrics That Actually Matter",
+      "required_elements": [
+        "Net Revenue Retention (NRR) with decomposition (gross retention + expansion)",
+        "CAC payback period analysis (fully-loaded CAC / gross-margin-adjusted ACV)",
+        "LTV/CAC ratio calculation (gross margin × ACV × customer lifespan / CAC)",
+        "Rule of 40 decomposition (growth + FCF margin) with directional trend",
+        "Magic Number (net new ARR / prior-quarter S&M spend)",
+        "Gross margin trend analysis and comparison to sector median"
+      ]
+    },
+    {
+      "id": "C",
+      "title": "Competitive & Ecosystem Mapping",
+      "required_elements": [
+        "Competitive dynamic assessment (differentiation, price, distribution, platform ecosystem)",
+        "Vendor consolidation risk analysis (are customers reducing SaaS vendor count?)",
+        "Platform risk assessment (distribution platform disintermediation risk)",
+        "AI disruption vector analysis (which features are LLM-replaceable?)",
+        "AI value driver vs. defensive positioning assessment"
+      ]
+    },
+    {
+      "id": "D",
+      "title": "Financial Logic & Valuation",
+      "required_elements": [
+        "EV/Revenue valuation framework (high-growth, negative-earnings SaaS)",
+        "EV/Gross Profit normalization for margin differences",
+        "Growth-adjusted multiple analysis",
+        "Path to Rule of 40 optimization modeling",
+        "Transition to EV/FCF or P/E for mature SaaS (sub-25% growth)"
+      ]
+    },
+    {
+      "id": "E",
+      "title": "Pattern Matching & IDP Flagging",
+      "required_elements": [
+        "ARR growth vs. revenue recognition divergence (deferred revenue drawdown)",
+        "Billings growth decelerating faster than ARR (elongating sales cycles)",
+        "NRR expansion vs. new logo acquisition divergence (growth source shifting)",
+        "SBC as % of revenue increasing while growth decelerates (dilution signal)"
+      ]
+    },
+    {
+      "id": "F",
+      "title": "Investigation Tracks",
+      "required_elements": [
+        "SaaS-specific investigation tracks (expert network calls, customer reference checks, G2/Gartner peer reviews)",
+        "Three high-value investigation tracks with specific data sources and hypotheses"
+      ]
+    }
+  ],
+  "structural_requirements": [
+    "All sections present with markdown headings",
+    "Value chain position clearly identified (horizontal vs. vertical, layer classification)",
+    "Product classification documented (system of record/engagement/point solution)",
+    "NRR decomposed into gross retention and expansion components",
+    "CAC payback period calculated and compared to sector median (~18 months)",
+    "LTV/CAC ratio computed with health threshold (>3x healthy, <2x warning)",
+    "Rule of 40 score decomposed showing growth and margin components with trend direction",
+    "Magic Number calculated and compared to segment leaders",
+    "Gross margin calculated with peer comparison",
+    "Competitive positioning assessed across differentiation, price, distribution dimensions",
+    "Consolidation risk analyzed (are customers actively reducing vendors?)",
+    "AI disruption threats specifically enumerated (which features vulnerable to LLM replacement?)",
+    "Rule of 40 path to profitability modeled with timing and opex leverage assumptions",
+    "Investigation tracks include specific expert network focuses, customer references, and analyst coverage"
+  ]
+}

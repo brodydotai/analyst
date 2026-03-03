@@ -1,0 +1,157 @@
+{
+  "playbook_file": "specialty-and-advanced-materials.prompt.md",
+  "version": "v1",
+  "generated_at": "2026-03-03",
+  "section_count": 8,
+  "sections": [
+    {
+      "id": "A",
+      "title": "Foundational Synthesis — Material Classification & Value Chain Position",
+      "required_elements": [
+        "Material families classification (engineered alloys, advanced ceramics, electronic/optical materials, performance coatings, powder metallurgy)",
+        "Value chain layer control vs. dependency assessment",
+        "Material specificity and qualification cycle length analysis",
+        "Cost-of-failure ratio analysis (material cost % of finished product vs. failure cost multiple)",
+        "Raw material input assessment (supply concentration, price volatility, strategic stockpile status)",
+        "Leadership materials science expertise and domain continuity",
+        "Insider alignment (ownership %, compensation structure, net transaction history)"
+      ]
+    },
+    {
+      "id": "B",
+      "title": "Materials Economics — The Specification-to-Revenue Bridge",
+      "required_elements": [
+        "Key material specifications and customer qualification cycle length by market",
+        "Sole-source vs. dual-source position assessment at key customers",
+        "Industry specification and regulatory barriers (AMS, ASTM, MIL-SPEC, SEMI standards)",
+        "Material cost as % of customer's finished product cost",
+        "ASP trajectory by product family (3-5 year trend with above-input-cost pricing)",
+        "Pricing mechanism assessment (cost-plus, index-based, or value-based)",
+        "Price elasticity by end market (defense/aerospace vs. industrial elasticity)",
+        "Raw material input cost decomposition and passthrough mechanisms",
+        "Recycling/secondary recovery capabilities and cost/supply hedge benefits",
+        "Inventory strategy (strategic stockpiling, carrying costs)",
+        "Gross margin decomposition (mix shift, volume leverage, yield, raw material lag, value-add steps)"
+      ]
+    },
+    {
+      "id": "C",
+      "title": "Ecosystem & Competitive Moat Analysis",
+      "required_elements": [
+        "Qualification lock-in architecture (switching cost, re-qualification timeline, regulatory re-approval)",
+        "Application engineering assessment (embedded engineers, co-development relationships)",
+        "Proprietary IP protection (patents, trade secrets, process technology, coating technology)",
+        "Direct competitor identification with scale, cost position, geographic reach comparison",
+        "Substitution threat assessment (alternative materials, next-gen designs reducing material)",
+        "Vertical integration threat from major customers",
+        "Chinese/low-cost competitor entry risk by product family",
+        "End-market diversification (aerospace, semiconductor, energy, automotive, medical, general industrial)",
+        "End-market cyclicality assessment (secular growth vs. cyclical markets)"
+      ]
+    },
+    {
+      "id": "D",
+      "title": "Financial Logic & Valuation",
+      "required_elements": [
+        "Revenue decomposition by segment with growth rate and gross margin profile",
+        "Customer concentration (% from top 5/10 customers)",
+        "Cash generation mechanics (revenue → gross margin → R&D → SG&A → operating leverage)",
+        "R&D intensity (3-6% of revenue typical for specialty materials)",
+        "CapEx intensity (4-8% for maintenance, higher during expansion)",
+        "FCF conversion (50-70% of EBITDA typical)",
+        "Valuation framework (EV/EBITDA primary 10-14x for quality, P/E, FCF yield, PEG)",
+        "ROIC vs. WACC spread and trend",
+        "Margin expansion runway assessment",
+        "Net cash/debt position and share buyback history"
+      ]
+    },
+    {
+      "id": "E",
+      "title": "Supply Chain & Geopolitical Risk Architecture",
+      "required_elements": [
+        "USGS Critical Minerals List and EU Critical Raw Materials Act exposure",
+        "Top 3 producing countries for each critical input",
+        "Export restriction risk (China's gallium/germanium/antimony precedent)",
+        "Recycling/secondary recovery capability for critical inputs",
+        "Customer concentration in specific defense programs, aircraft platforms, semiconductor fabs",
+        "Program cancellation/delay/downrate revenue impact assessment",
+        "Backlog/order book visibility (% of next 12 months under firm orders)",
+        "Tariff exposure (Section 232, 301 coverage)",
+        "Friend-shoring/reshoring tailwind assessment",
+        "Export control exposure (EAR/ITAR restrictions)"
+      ]
+    },
+    {
+      "id": "F",
+      "title": "Product Roadmap & Innovation Pipeline",
+      "required_elements": [
+        "R&D pipeline (new alloy compositions, advanced ceramics, coatings, additive feedstock)",
+        "R&D-to-revenue cycle (3-7 years typical for specialty materials)",
+        "Investment in secular growth applications (AI/data center thermal management, EV, space, hypersonics, nuclear)",
+        "Manufacturing technology investment (additive, HIP, powder metallurgy, precision rolling)",
+        "Capacity expansion projects (timeline, cost, target end markets)",
+        "Recycling/closed-loop programs and circular economy positioning",
+        "Sustainability/ESG positioning as customer requirement"
+      ]
+    },
+    {
+      "id": "G",
+      "title": "Pattern Matching & IDP Flagging",
+      "required_elements": [
+        "Margin expansion despite flat/declining revenue (mix shift or cost reduction indicator)",
+        "Revenue growth concentrated in single end market (secular tailwind or concentration risk?)",
+        "Raw material cost increases NOT passed through (pricing power erosion)",
+        "R&D spend declining as % of revenue (mature cash cow or underinvestment?)",
+        "Customer qualification wins at new OEMs (TAM expansion or backfilling?)",
+        "Inventory build relative to revenue trajectory (demand anticipation or channel stuffing?)",
+        "Acquisition activity accelerating (platform building or masking organic weakness?)",
+        "Insider buying during downturns (conviction signal)",
+        "Competitor capacity additions (supply discipline or demand strength?)"
+      ]
+    },
+    {
+      "id": "H",
+      "title": "High-Agency Investigation Tracks",
+      "required_elements": [
+        "Track 1: specific supply chain mapping (mine-to-end-product, government stockpile policy, tech substitution)",
+        "Track 2: raw material sourcing and recycling capability assessment",
+        "Track 3: customer qualification and program pipeline verification"
+      ]
+    }
+  ],
+  "structural_requirements": [
+    "All sections present with markdown headings",
+    "Material families classified with value chain layer assessment",
+    "Qualification cycle length documented by end market (aerospace 12-36 months, semi 6-18 months, auto 6-12 months)",
+    "Sole-source vs. dual-source positions quantified at key customers",
+    "Material cost as % of finished product calculated (target <5% for specialty moat)",
+    "ASP trajectory documented over 3-5 years showing pricing above input cost inflation",
+    "Pricing mechanism identified (cost-plus, index-based, or value-based)",
+    "Price elasticity assessment by end market",
+    "Raw material input costs decomposed by key ingredients (tungsten, cobalt, beryllium, precious metals %)",
+    "Passthrough mechanism documented (surcharges, index-linking, fixed-price exposure)",
+    "Gross margin decomposed into components (mix shift, volume, yield, lag effects, value-add)",
+    "Specification and regulatory barriers documented (industry standards, military specs)",
+    "Switching cost quantification (re-qualification time, testing costs, regulatory approvals)",
+    "Proprietary IP assessed (patent count, expiry timeline, trade secret processes)",
+    "Competitor competitive positioning mapped vs. 2-3 direct competitors",
+    "Substitution risks identified (alternative materials, design-outs)",
+    "Vertical integration threat assessed (customer scale, economics justification)",
+    "Chinese competitor entry risk quantified by product family",
+    "End-market revenue decomposition with concentration assessment",
+    "End-market cyclicality mapped (secular growth vs. cyclical exposure)",
+    "R&D intensity calculated (% of revenue, pipeline assessment)",
+    "CapEx intensity documented with expansion project timelines",
+    "FCF conversion modeled from revenue through cash generation",
+    "Valuation multiple comparison to specialty materials and engineered products peers",
+    "ROIC vs. WACC spread calculated and trended",
+    "Critical mineral dependencies mapped to USGS/EU lists",
+    "Export restriction risk modeled (impact of potential bans by country/material)",
+    "Program concentration risk assessed (top 3 programs as % of revenue)",
+    "Backlog order book visibility quantified (firm orders % of next 12 months)",
+    "R&D pipeline assessed with development timelines to commercialization",
+    "Recycling/circular economy capabilities documented",
+    "ESG/sustainability positioning as competitive advantage evaluated",
+    "Investigation tracks include specific supply chain entities, recycling process capabilities, and customer qualification pipeline"
+  ]
+}

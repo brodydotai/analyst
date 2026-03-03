@@ -1,0 +1,77 @@
+{
+  "playbook_file": "defense-and-weapons.prompt.md",
+  "version": "v1",
+  "generated_at": "2026-03-03",
+  "section_count": 6,
+  "sections": [
+    {
+      "id": "A",
+      "title": "Foundational Synthesis — Prime vs. Tier 2 vs. New Entrant Positioning",
+      "required_elements": [
+        "Defense industrial base hierarchy classification (prime, tier 2/3, new entrant)",
+        "Revenue composition by customer (DoD, international FMS/DCS, commercial/adjacent)",
+        "Program concentration risk quantification (top 5 programs as % of revenue)",
+        "Board connectivity to defense appropriators and acquisition officials assessment"
+      ]
+    },
+    {
+      "id": "B",
+      "title": "Backlog & Pipeline Economics — The Revenue Visibility Framework",
+      "required_elements": [
+        "Total backlog decomposition (funded, unfunded, total potential) and book-to-bill ratio",
+        "Backlog duration (funded backlog / trailing revenue = years of visibility)",
+        "Contract mix breakdown (cost-plus-fee, fixed-price-incentive, firm-fixed-price margins)",
+        "Award pipeline mapping against DoD FYDP and congressional marks"
+      ]
+    },
+    {
+      "id": "C",
+      "title": "Geopolitical Demand Drivers & Budget Cycle Analysis",
+      "required_elements": [
+        "Macro defense spending trajectory (U.S. DoD base + OCO, NATO 2% compliance, Indo-Pacific deterrence)",
+        "Threat vector alignment analysis (China/Russia peer competition, counter-UAS, cyber, space)",
+        "Budget cycle risk scenarios (continuing resolution, sequestration, Budget Control Act)",
+        "International market dynamics (FMS pipeline, offset requirements, technology transfer restrictions)"
+      ]
+    },
+    {
+      "id": "D",
+      "title": "Financial Logic & Valuation",
+      "required_elements": [
+        "Operating margin bridge (current → target, drivers identified)",
+        "Contract mix shift analysis (cost-plus to fixed-price margin expansion pathway)",
+        "Production rate increase and operational efficiency impact on margins",
+        "Pension-related distortions and R&D accounting normalization"
+      ]
+    },
+    {
+      "id": "E",
+      "title": "Pattern Matching & IDP Flagging",
+      "required_elements": [
+        "Fixed-price program margin compression (cost overrun indicator)",
+        "EAC adjustments reducing backlog profitability",
+        "Rising contract protest rates (competitive intensity signal)",
+        "Bookings growth vs. revenue growth divergence (backlog conversion delays)"
+      ]
+    },
+    {
+      "id": "F",
+      "title": "Investigation Tracks",
+      "required_elements": [
+        "Program-of-record risk assessment for top 5 revenue contributors",
+        "FMS pipeline deep dive for 3 largest international opportunities",
+        "Workforce and supply chain bottleneck analysis (skilled labor, specialty metals)"
+      ]
+    }
+  ],
+  "structural_requirements": [
+    "All sections present with markdown headings",
+    "Backlog visibility explicitly calculated (funded backlog / revenue = years)",
+    "Book-to-bill ratio trending analysis present",
+    "Contract mix breakdown with margin percentages for each contract type",
+    "Program concentration risk quantified (single program max % of revenue)",
+    "DoD budget scenario modeling present (continuing resolution impact, sequestration risk)",
+    "Margin bridge analysis showing path from current to target operating margin",
+    "Investigation tracks include specific programs, international markets, and supply chain constraints"
+  ]
+}

@@ -1,0 +1,82 @@
+{
+  "playbook_file": "pharmaceuticals.prompt.md",
+  "version": "v1",
+  "generated_at": "2026-03-03",
+  "section_count": 6,
+  "sections": [
+    {
+      "id": "A",
+      "title": "Foundational Synthesis — Portfolio Architecture & Lifecycle Positioning",
+      "required_elements": [
+        "Business classification (large-cap diversified, specialty pharma, commercial biotech, clinical-stage, platform technology)",
+        "Revenue composition by product, therapeutic area, and geography",
+        "Patent cliff exposure analysis (products >5% of revenue with expiration dates)",
+        "LOE (loss of exclusivity) revenue at risk quantification (5-year timeline)"
+      ]
+    },
+    {
+      "id": "B",
+      "title": "Pipeline Probability-Weighted Valuation — The rNPV Framework",
+      "required_elements": [
+        "Phase-appropriate success probabilities by therapeutic area (Phase 1→2, 2→3, 3→Filing, Filing→Approval)",
+        "Peak sales estimation methodology and benchmarking against analogous products",
+        "Launch curve modeling (S-curve with year-by-year revenue assumptions)",
+        "Cost-to-develop remaining (Phase 3 trial costs, manufacturing scale-up, launch prep)",
+        "Total enterprise rNPV (pipeline NPV + commercial product NPV + cash - debt)"
+      ]
+    },
+    {
+      "id": "C",
+      "title": "Commercial Execution & Pricing Risk",
+      "required_elements": [
+        "Sales force size and reach, payer/market access expertise, launch track record",
+        "New patient starts, prescription trends (NRx, TRx) trajectory for approved products",
+        "IRA Medicare negotiation exposure (products eligible, modeled revenue impact)",
+        "PBM/GPO contracting dynamics and 340B program impact",
+        "International pricing (European reference pricing dynamics)"
+      ]
+    },
+    {
+      "id": "D",
+      "title": "M&A & Business Development Assessment",
+      "required_elements": [
+        "Balance sheet capacity (net debt/EBITDA, cash on hand, debt financing availability)",
+        "Historical deal track record (value-creative vs. value-destructive acquisitions)",
+        "Recent transaction strategic logic"
+      ]
+    },
+    {
+      "id": "E",
+      "title": "Financial Logic & Valuation",
+      "required_elements": [
+        "rNPV primary valuation framework",
+        "P/E and EV/EBITDA for commercial-stage companies",
+        "Sum-of-the-parts (commercial portfolio NPV + pipeline rNPV + cash - debt)",
+        "Binary event valuation for clinical-stage biotech",
+        "Cash runway analysis for pre-revenue companies"
+      ]
+    },
+    {
+      "id": "F",
+      "title": "Investigation Tracks",
+      "required_elements": [
+        "Key Phase 3 readout analysis (clinical design, enrollment timeline, competitive landscape)",
+        "Patent cliff mitigation assessment (lifecycle management, biosimilar competitive dynamics)",
+        "Pricing/reimbursement deep dive (IRA exposure, 340B, international reference pricing)"
+      ]
+    }
+  ],
+  "structural_requirements": [
+    "All sections present with markdown headings",
+    "Patent cliff mapped by product with expiration dates and estimated LOE revenue impact",
+    "LOE revenue quantified as percentage of current revenue with timeline (3-5 year)",
+    "Pipeline rNPV calculated for all clinical-stage assets with clear probability assumptions",
+    "Phase success probabilities documented by therapeutic area",
+    "Peak sales estimation methodology transparent with comparables identified",
+    "Commercial execution capability assessed with sales force metrics",
+    "IRA Medicare negotiation exposure listed by eligible products with modeled impact",
+    "M&A capacity quantified (net debt ratio, debt financing availability)",
+    "Deal history assessed for value creation/destruction patterns",
+    "Investigation tracks include Phase 3 design specifics, competitive landscape, and reimbursement risks"
+  ]
+}

@@ -1,0 +1,73 @@
+{
+  "playbook_file": "electric-vehicles-and-autonomous-driving.prompt.md",
+  "version": "v1",
+  "generated_at": "2026-03-03",
+  "section_count": 6,
+  "sections": [
+    {
+      "id": "A",
+      "title": "Foundational Synthesis — EV Product Portfolio & Market Positioning",
+      "required_elements": [
+        "EV production volumes and penetration as % of total sales",
+        "Vehicle portfolio by segment with ASP and pricing trends",
+        "EV market share by geography vs. competitors (Tesla, BYD, legacy OEMs)",
+        "Platform strategy (dedicated EV vs. legacy platform adaptation)"
+      ]
+    },
+    {
+      "id": "B",
+      "title": "Battery Cost & Gross Margin Trajectory",
+      "required_elements": [
+        "Battery cost per kWh and progression toward profitability target",
+        "Battery supply strategy and cost advantage/disadvantage vs. peers",
+        "Gross margin profile by model and overall trajectory to scale",
+        "Regulatory credits as revenue and sustainability"
+      ]
+    },
+    {
+      "id": "C",
+      "title": "Autonomy Stack Maturity & Technology Differentiation",
+      "required_elements": [
+        "SAE autonomy level and target capability with deployment timeline",
+        "Technology stack approach (vision-only vs. lidar) and maturity",
+        "Data advantage and AI competitive positioning",
+        "Regulatory approval path and insurance liability model"
+      ]
+    },
+    {
+      "id": "D",
+      "title": "Financial Logic & Valuation",
+      "required_elements": [
+        "EV/deliveries multiple benchmarking vs. mature and startup competitors",
+        "PEG ratio and growth trajectory sensitivity",
+        "DCF valuation with production ramp and terminal margin assumptions",
+        "Valuation collapse risk and path to profitability timeline"
+      ]
+    },
+    {
+      "id": "E",
+      "title": "Pattern Matching & IDP Flagging",
+      "required_elements": [
+        "Production and delivery guidance misses and demand signals",
+        "ASP erosion and price competition margin impact",
+        "Battery supply constraints and cost inflation risk",
+        "Autonomy technology delays and legacy OEM competitive threat"
+      ]
+    },
+    {
+      "id": "F",
+      "title": "Investigation Tracks",
+      "required_elements": [
+        "Production ramp capacity and gross margin path to profitability",
+        "ASP sustainability and model mix impact on overall margins",
+        "Autonomy roadmap execution risk and competitive positioning"
+      ]
+    }
+  ],
+  "structural_requirements": [
+    "Opinion block present",
+    "Summary for Perspectives present",
+    "All financial claims cited",
+    "Investigation tracks specified"
+  ]
+}

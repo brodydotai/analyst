@@ -1,9 +1,0 @@
-{
-  "name": "analyst",
-  "private": true,
-  "version": "1.0.0",
-  "description": "File-first agentic investment research workspace.",
-  "engines": {
-    "node": ">=18"
-  }
-}

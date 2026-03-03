@@ -1,0 +1,170 @@
+# Playbook Index — Ticker-to-Playbook Auto-Detection
+# The orchestrator reads this file to resolve which playbook applies to a given ticker.
+# If no ticker match is found, keywords are checked against company description via web search.
+# If still no match, the _default playbook is used.
+
+mappings:
+  - playbook: semiconductors-and-accelerators/playbook.prompt.md
+    asset_class: equities
+    tickers: [NVDA, AMD, INTC, AVGO, QCOM, TSM, ASML, MRVL, ARM, AMAT, LRCX, KLAC, MU, ON, MCHP, TXN, ADI, SMCI, WOLF, CRUS, SWKS, QRVO, MPWR, GFS, UMC]
+    keywords: [semiconductor, chip, foundry, fab, GPU, accelerator, HBM, wafer, EDA, OSAT, memory]
+
+  - playbook: data-centers-and-cloud-infrastructure/playbook.prompt.md
+    asset_class: equities
+    tickers: [AMZN, MSFT, GOOGL, META, EQIX, DLR, VRT, DELL, HPE, ANET, CSCO, CRWV, APP]
+    keywords: [data center, cloud, hyperscaler, colocation, networking, server, infrastructure]
+
+  - playbook: saas/playbook.prompt.md
+    asset_class: equities
+    tickers: [CRM, SNOW, PLTR, DDOG, NET, ZS, CRWD, S, PANW, NOW, WDAY, ADBE, HUBS, MDB, CFLT, ESTC, GTLB]
+    keywords: [SaaS, software, cloud software, subscription, platform, enterprise software]
+
+  - playbook: cybersecurity/playbook.prompt.md
+    asset_class: equities
+    tickers: [CRWD, PANW, ZS, FTNT, S, OKTA, CYBR, QLYS, TENB, RPD, VRNS]
+    keywords: [cybersecurity, security, endpoint, firewall, zero trust, identity, SIEM, SOC]
+
+  - playbook: social-media-and-digital-advertising/playbook.prompt.md
+    asset_class: equities
+    tickers: [SNAP, PINS, RDDT, TTD, MGNI, DV, IAS, PUBM, META, GOOGL, APPL]
+    keywords: [social media, advertising, ad tech, digital ads, programmatic, streaming]
+
+  - playbook: defense-and-weapons/playbook.prompt.md
+    asset_class: equities
+    tickers: [LMT, RTX, NOC, GD, BA, LHX, HII, LDOS, KTOS, RKLB, PLTR, AXON]
+    keywords: [defense, military, weapons, aerospace, missile, satellite, contractor, DoD]
+
+  - playbook: space/playbook.prompt.md
+    asset_class: equities
+    tickers: [RKLB, ASTS, LUNR, RDW, BKSY, MNTS, SPIR, PL, IRDM, VSAT]
+    keywords: [space, launch, satellite, orbital, rocket, LEO, constellation]
+
+  - playbook: drones/playbook.prompt.md
+    asset_class: equities
+    tickers: [AVAV, JOBY, ACHR, KTOS, RCAT, UAVS]
+    keywords: [drone, UAV, UAS, eVTOL, autonomous flight, unmanned]
+
+  - playbook: quantum/playbook.prompt.md
+    asset_class: equities
+    tickers: [IONQ, RGTI, QUBT, QBTS, ARQQ]
+    keywords: [quantum, qubit, quantum computing, quantum networking, superconducting]
+
+  - playbook: robotics-and-process-automation/playbook.prompt.md
+    asset_class: equities
+    tickers: [ISRG, RBOT, TER, CGNX, BRKS, FANUY, IRBT, AMBA, PATH, SMFL]
+    keywords: [robotics, automation, RPA, industrial automation, cobot, surgical robot]
+
+  - playbook: pharmaceuticals/playbook.prompt.md
+    asset_class: equities
+    tickers: [LLY, NVO, PFE, MRNA, BMY, ABBV, JNJ, MRK, AMGN, GILD, REGN, VRTX, BIIB, ALNY, BMRN]
+    keywords: [pharma, pharmaceutical, biotech, drug, clinical trial, FDA, pipeline, therapeutic]
+
+  - playbook: oil-and-gas/playbook.prompt.md
+    asset_class: equities
+    tickers: [XOM, CVX, COP, EOG, DVN, OXY, MPC, VLO, PSX, FANG, PXD, HES, SLB, HAL, BKR]
+    keywords: [oil, gas, petroleum, E&P, upstream, downstream, midstream, refinery, LNG, pipeline]
+
+  - playbook: utilities/playbook.prompt.md
+    asset_class: equities
+    tickers: [NEE, DUK, SO, AEP, D, EXC, SRE, ED, WEC, XEL, CEG, VST, NRG, OKLO, SMR]
+    keywords: [utility, power, electricity, grid, nuclear, solar, wind, renewable, generation, transmission]
+
+  - playbook: uranium-and-nuclear-fuel/playbook.prompt.md
+    asset_class: equities
+    tickers: [CCJ, UEC, UUUU, DNN, NXE, LEU, SMR, OKLO, BWXT, ASPI]
+    keywords: [uranium, nuclear fuel, enrichment, SMR, nuclear reactor, yellowcake, U3O8]
+
+  - playbook: precious-metal-miners/playbook.prompt.md
+    asset_class: equities
+    tickers: [NEM, GOLD, AEM, FNV, WPM, RGLD, FCX, SCCO, TECK, HBM, IVN, COPX, BHP, RIO, VALE, ERO, TGB, LUN, FM, ANTO, SFR]
+    keywords: [miner, mining company, copper miner, gold miner, silver miner, base metals]
+
+  - playbook: precious-metals-commodity/playbook.prompt.md
+    asset_class: commodities
+    tickers: [GLD, SLV, PPLT, PALL, GC, SI, PL, PA, HG]
+    keywords: [gold price, silver price, platinum price, palladium price, copper price, spot metal, bullion]
+
+  - playbook: precious-and-rare-earth-metals/playbook.prompt.md
+    asset_class: commodities
+    tickers: [MP, UUUU, REMX, LTHM, ALB, SQM, PLL, NB]
+    keywords: [rare earth, lithium, cobalt, nickel, critical mineral, REE, magnet]
+
+  - playbook: specialty-and-advanced-materials/playbook.prompt.md
+    asset_class: equities
+    tickers: [CLF, X, NUE, STLD, CMC, RS, ZEUS, ATI, HXL, CRS, HAYN, KMT, NEO, MTRN]
+    keywords: [steel, specialty steel, GOES, electrical steel, advanced materials, alloy, tungsten, carbide]
+
+  - playbook: chinese-ai-and-deep-tech/playbook.prompt.md
+    asset_class: equities
+    tickers: [BABA, BIDU, PDD, JD, NTES, TME, VNET, WB, XPEV, LI, NIO, BILI]
+    keywords: [chinese tech, china AI, chinese internet, china cloud, chinese EV]
+
+  - playbook: industrial-testing-inspection-certification/playbook.prompt.md
+    asset_class: equities
+    tickers: [BV, SGS, IEX, FTV, TDY, KEYS, A, WAT, TER, NOVT]
+    keywords: [testing, inspection, certification, TIC, quality assurance, metrology, instrumentation]
+
+  - playbook: fintech-and-payments/playbook.prompt.md
+    asset_class: equities
+    tickers: [PYPL, SQ, V, MA, COIN, AFRM, SOFI, NU, ADYEN, FI, GPN, FOUR, TOST, BILL, HOOD]
+    keywords: [fintech, payments, payment processing, BNPL, buy now pay later, interchange, digital wallet, neobank, crypto exchange]
+
+  - playbook: banking-and-financial-services/playbook.prompt.md
+    asset_class: equities
+    tickers: [JPM, GS, MS, BAC, C, WFC, SCHW, BLK, KKR, APO, ARES, BX, ICE, CME, NDAQ]
+    keywords: [bank, banking, investment bank, asset management, private equity, exchange, financial services, brokerage, wealth management]
+
+  - playbook: bitcoin-mining-and-crypto-infrastructure/playbook.prompt.md
+    asset_class: equities
+    tickers: [MARA, RIOT, CLSK, WULF, HUT, IREN, BITF, CIFR, BTBT, CORZ]
+    keywords: [bitcoin mining, crypto mining, hashrate, ASIC, proof of work, bitcoin miner, HPC pivot, digital asset infrastructure]
+
+  - playbook: consumer-and-ecommerce/playbook.prompt.md
+    asset_class: equities
+    tickers: [AMZN, WMT, COST, TGT, SHOP, MELI, ETSY, CPNG, DG, DLTR, FIVE, LULU, DECK, ONON]
+    keywords: [retail, e-commerce, consumer, marketplace, grocery, discount, apparel, DTC, same-store sales, comps]
+
+  - playbook: healthcare-equipment-and-medtech/playbook.prompt.md
+    asset_class: equities
+    tickers: [MDT, ABT, SYK, BSX, EW, ISRG, DXCM, HOLX, ALGN, PODD, INSP, GKOS, ZBH, GEHC]
+    keywords: [medtech, medical device, surgical robotics, diagnostics, implant, healthcare equipment, FDA clearance, procedure volume]
+
+  - playbook: shipping-and-maritime/playbook.prompt.md
+    asset_class: equities
+    tickers: [ZIM, GOGL, SBLK, DAC, INSW, STNG, FRO, EGLE, GNK, ASC, FLNG, TRMD]
+    keywords: [shipping, maritime, dry bulk, tanker, container, LNG carrier, day rate, fleet, Baltic index, freight]
+
+  - playbook: agriculture-and-food-systems/playbook.prompt.md
+    asset_class: equities
+    tickers: [ADM, BG, DE, CTVA, MOS, NTR, CF, FMC, AGCO, ANDE, INGR, CALM, TSN, HRL]
+    keywords: [agriculture, farming, fertilizer, crop, grain, seed, food, ethanol, precision agriculture, USDA, commodity crop]
+
+  - playbook: reits-and-real-estate/playbook.prompt.md
+    asset_class: equities
+    tickers: [O, PLD, AMT, SPG, VICI, EQIX, DLR, PSA, WELL, EXR, AVB, INVH, MPW, ARE, CCI]
+    keywords: [REIT, real estate, FFO, AFFO, cap rate, occupancy, net lease, data center REIT, industrial REIT, multifamily, self-storage]
+
+  - playbook: electric-vehicles-and-autonomous-driving/playbook.prompt.md
+    asset_class: equities
+    tickers: [TSLA, RIVN, LCID, APTV, MBLY, QS, CHPT, BLNK, PCAR, LEA, BWA, XPEV, LI, NIO, PSNY]
+    keywords: [electric vehicle, EV, autonomous driving, ADAS, battery, charging, lidar, solid state battery, EV startup, OEM]
+
+  - playbook: gaming-and-interactive-entertainment/playbook.prompt.md
+    asset_class: equities
+    tickers: [EA, TTWO, RBLX, U, NFLX, DIS, WBD, PARA, SPOT, LYV, DKNG, FLUT, CZR, MGM]
+    keywords: [gaming, video game, streaming, entertainment, esports, sports betting, iGaming, live service, GaaS, DAU, subscriber]
+
+  - playbook: _default/playbook.prompt.md
+    asset_class: equities
+    label: etfs-and-passive-vehicles
+    tickers: [ECH, EWZ, EWW, EWA, EWJ, EWT, KWEB, FXI, VWO, EEM, IEMG, INDA]
+    keywords: [country ETF, emerging market ETF, single-country fund, passive, index fund, iShares country]
+    description: "Country/regional ETFs and passive vehicles — uses default playbook with macro overlay."
+
+  # === FALLBACK ===
+  - playbook: _default/playbook.prompt.md
+    asset_class: equities
+    fallback: true
+    tickers: []
+    keywords: []
+    description: "Generic equity research framework — used when no sector-specific playbook matches the ticker."

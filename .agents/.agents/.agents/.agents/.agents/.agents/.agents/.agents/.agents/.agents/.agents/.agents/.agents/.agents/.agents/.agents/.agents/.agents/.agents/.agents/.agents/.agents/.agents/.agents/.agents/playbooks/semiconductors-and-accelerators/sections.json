@@ -1,0 +1,92 @@
+{
+  "playbook_file": "semiconductors-and-accelerators.prompt.md",
+  "version": "v1",
+  "generated_at": "2026-02-16",
+  "section_count": 8,
+  "sections": [
+    {
+      "id": "A",
+      "title": "Foundational Synthesis - Value Chain Position and Silicon Economics",
+      "required_elements": [
+        "Value chain classification and control vs dependency map",
+        "Durability of controlled layers and fragility of dependent layers",
+        "Leadership pedigree and insider alignment assessment",
+        "Board semiconductor domain expertise assessment"
+      ]
+    },
+    {
+      "id": "B",
+      "title": "Silicon Economics - Wafer-to-Revenue Bridge",
+      "required_elements": [
+        "Process node and foundry dependency by major product",
+        "Advanced packaging and HBM dependency analysis",
+        "ASP trajectory and pricing power framework",
+        "Design win momentum and revenue visibility analysis",
+        "Gross margin bridge decomposition (wafer cost, yield, mix, utilization)"
+      ]
+    },
+    {
+      "id": "C",
+      "title": "Ecosystem and Competitive Moat Analysis",
+      "required_elements": [
+        "Software ecosystem lock-in and switching cost analysis",
+        "Substitution economics by customer segment",
+        "Full-stack vs point-solution stack depth map"
+      ]
+    },
+    {
+      "id": "D",
+      "title": "Financial Logic and Valuation",
+      "required_elements": [
+        "Revenue decomposition by segment and concentration risk",
+        "Cash generation mechanics by business model",
+        "Stage-appropriate valuation framework and DCF sensitivity",
+        "Capital return and balance sheet assessment"
+      ]
+    },
+    {
+      "id": "E",
+      "title": "Supply Chain Risk Architecture",
+      "required_elements": [
+        "Foundry concentration and disruption scenario impact",
+        "Advanced packaging bottleneck assessment",
+        "HBM or memory supply risk assessment",
+        "Geopolitical and export control exposure mapping"
+      ]
+    },
+    {
+      "id": "F",
+      "title": "Product Roadmap and Technology Cadence",
+      "required_elements": [
+        "Three-generation architecture roadmap with cadence",
+        "Training vs inference product positioning and margin implications",
+        "Networking/interconnect strategy and competitive position"
+      ]
+    },
+    {
+      "id": "G",
+      "title": "Pattern Matching and IDP Flagging",
+      "required_elements": [
+        "Interesting Data Points (IDPs) callouts with explanation",
+        "Narrative vs empirical divergence checks"
+      ]
+    },
+    {
+      "id": "H",
+      "title": "High-Agency Investigation Tracks",
+      "required_elements": [
+        "Three investigation tracks with explicit hypotheses",
+        "Alpha rationale for each track",
+        "Exact data or expert inputs required to resolve each hypothesis"
+      ]
+    }
+  ],
+  "structural_requirements": [
+    "Report has markdown headings for all required sections",
+    "Interesting Data Points (IDPs) are explicitly labeled",
+    "High-Agency Investigation Tracks section present with 3 tracks",
+    "Opinion block present and parseable",
+    "Summary for Perspectives section present"
+  ],
+  "notes": "This index is a compliance-oriented extraction, not a replacement for full playbook depth in report generation."
+}

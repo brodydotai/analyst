@@ -1,0 +1,80 @@
+{
+  "playbook_file": "oil-and-gas.prompt.md",
+  "version": "v1",
+  "generated_at": "2026-03-03",
+  "section_count": 6,
+  "sections": [
+    {
+      "id": "A",
+      "title": "Foundational Synthesis — Operator Profile & Basin Positioning",
+      "required_elements": [
+        "Energy value chain classification (upstream E&P, integrated major, midstream, downstream, oilfield services)",
+        "Upstream acreage portfolio mapping by basin with percentage of production breakdown",
+        "Reserve classification (1P/2P/3P) with reserve replacement ratio (RRR) assessment",
+        "Management capital allocation philosophy and evolution across commodity cycles"
+      ]
+    },
+    {
+      "id": "B",
+      "title": "Subsurface-to-Surface Economics — The Reserves-to-Value Bridge",
+      "required_elements": [
+        "Finding & development cost (F&D) vs. commodity price economic viability analysis",
+        "Breakeven WTI/Brent price assessment (maintenance capex and dividend coverage)",
+        "Decline curve economics and base decline rate of existing production portfolio",
+        "Maintenance CapEx vs. growth CapEx split (% consumed by maintenance)",
+        "Netback analysis by basin vs. peers",
+        "Reserves life index assessment (risk of inventory exhaustion)"
+      ]
+    },
+    {
+      "id": "C",
+      "title": "Macro & Commodity Cycle Positioning",
+      "required_elements": [
+        "Commodity cycle positioning analysis (inventory/demand balance, OPEC+ spare capacity, forward curve)",
+        "Hedging book assessment (% of near-term production hedged, hedge prices, volatility vs. direction protection)",
+        "Price move impact on annual FCF (sensitivity to $10/bbl change)",
+        "Energy transition exposure (low-carbon CapEx %, reserve base duration vs. demand destruction timeline)"
+      ]
+    },
+    {
+      "id": "D",
+      "title": "Financial Logic & Valuation",
+      "required_elements": [
+        "EV/DACF, EV/2P reserves, and FCF yield valuation frameworks",
+        "Sum-of-the-parts for integrated majors",
+        "Commodity scenario modeling (FCF, dividend sustainability, debt covenant compliance at $50-90 WTI)"
+      ]
+    },
+    {
+      "id": "E",
+      "title": "Pattern Matching & IDP Flagging",
+      "required_elements": [
+        "Reserve revision tracking (downward revisions indicate overstated asset base)",
+        "SEC PV-10 vs. market cap gap analysis (value trap or hidden value indicator)",
+        "Production guidance cuts disguised as 'capital discipline'",
+        "Insider buying/selling patterns vs. commodity price movements"
+      ]
+    },
+    {
+      "id": "F",
+      "title": "Investigation Tracks",
+      "required_elements": [
+        "Well-level productivity analysis (IP30/IP90 rates by vintage)",
+        "Water disposal cost trajectory (emerging ESG and operational risk)",
+        "Midstream contract renegotiation exposure"
+      ]
+    }
+  ],
+  "structural_requirements": [
+    "All sections present with markdown headings",
+    "Reserve classification (1P/2P/3P) explicitly stated with RRR calculated over 3 years",
+    "F&D cost calculated and benchmarked against commodity price",
+    "Breakeven WTI/Brent price determined with maintenance CapEx and dividend visibility",
+    "Decline curve base decline rate documented with maintenance vs. growth CapEx split",
+    "Hedging book detailed (% of production hedged, hedge price levels, timeframe coverage)",
+    "Energy transition CapEx allocation quantified with reserve depletion vs. demand destruction timeline",
+    "Scenario analysis presents FCF, dividend sustainability, and covenant compliance at multiple WTI prices",
+    "Reserve revision history tracked (3-5 year trend)",
+    "Insider transaction patterns documented relative to commodity cycles"
+  ]
+}

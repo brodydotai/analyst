@@ -1,0 +1,73 @@
+{
+  "playbook_file": "banking-and-financial-services.prompt.md",
+  "version": "v1",
+  "generated_at": "2026-03-03",
+  "section_count": 6,
+  "sections": [
+    {
+      "id": "A",
+      "title": "Foundational Synthesis — Bank Profile & Competitive Positioning",
+      "required_elements": [
+        "Bank type classification and business line revenue mix",
+        "Asset size, deposit base composition, and rate sensitivity",
+        "Geographic and customer segment concentration analysis",
+        "Competitive tier and GSIB/systemic importance assessment"
+      ]
+    },
+    {
+      "id": "B",
+      "title": "Net Interest Income & Margin Bridge",
+      "required_elements": [
+        "NII and NIM trend analysis with 8-quarter history",
+        "Loan portfolio composition and repricing frequency",
+        "Deposit composition, beta dynamics, and cost inflation",
+        "Funding strategy and wholesale funding cost profile"
+      ]
+    },
+    {
+      "id": "C",
+      "title": "Credit Quality & Loan Loss Dynamics",
+      "required_elements": [
+        "Non-accrual loan (NPL) ratios and charge-off rate trends",
+        "Credit cycle positioning and early delinquency monitoring",
+        "Commercial real estate exposure and segment risk breakdown",
+        "Consumer credit trends and loss severity assumptions"
+      ]
+    },
+    {
+      "id": "D",
+      "title": "Capital Adequacy & Regulatory Framework",
+      "required_elements": [
+        "CET1, Tier 1, and leverage ratio vs. regulatory minimums",
+        "CCAR/DFAST stress test history and capital impact",
+        "Basel III endgame impact modeling and CET1 hit",
+        "GSIB surcharge and dividend/buyback capacity analysis"
+      ]
+    },
+    {
+      "id": "E",
+      "title": "Pattern Matching & IDP Flagging",
+      "required_elements": [
+        "Deposit outflow trends and liability management risk",
+        "NIM compression velocity and terminal NIM assumptions",
+        "Credit stress signals and provision rate benchmarking",
+        "Regulatory overhang and M&A/competitive market share impact"
+      ]
+    },
+    {
+      "id": "F",
+      "title": "Investigation Tracks",
+      "required_elements": [
+        "NIM sustainability under multiple rate scenarios and deposit repricing lag",
+        "Capital generation, CCAR resilience, and dividend coverage modeling",
+        "Credit cycle positioning and loan loss reserve adequacy assessment"
+      ]
+    }
+  ],
+  "structural_requirements": [
+    "Opinion block present",
+    "Summary for Perspectives present",
+    "All financial claims cited",
+    "Investigation tracks specified"
+  ]
+}

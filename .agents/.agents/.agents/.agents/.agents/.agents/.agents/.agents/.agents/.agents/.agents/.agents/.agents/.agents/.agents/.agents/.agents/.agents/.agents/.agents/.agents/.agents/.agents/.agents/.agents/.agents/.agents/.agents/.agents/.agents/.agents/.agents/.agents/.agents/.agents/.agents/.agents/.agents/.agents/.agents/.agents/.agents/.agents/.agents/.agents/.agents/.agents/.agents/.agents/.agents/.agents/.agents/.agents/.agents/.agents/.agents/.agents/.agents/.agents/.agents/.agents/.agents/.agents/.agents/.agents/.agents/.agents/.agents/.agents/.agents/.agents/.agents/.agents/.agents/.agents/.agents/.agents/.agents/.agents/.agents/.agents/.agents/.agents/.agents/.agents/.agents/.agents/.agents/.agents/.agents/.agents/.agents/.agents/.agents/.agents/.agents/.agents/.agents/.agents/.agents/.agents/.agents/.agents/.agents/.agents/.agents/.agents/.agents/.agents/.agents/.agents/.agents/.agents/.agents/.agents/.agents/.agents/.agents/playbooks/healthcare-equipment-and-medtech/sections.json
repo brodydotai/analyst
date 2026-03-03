@@ -1,0 +1,73 @@
+{
+  "playbook_file": "healthcare-equipment-and-medtech.prompt.md",
+  "version": "v1",
+  "generated_at": "2026-03-03",
+  "section_count": 6,
+  "sections": [
+    {
+      "id": "A",
+      "title": "Foundational Synthesis — Product Portfolio & Market Dynamics",
+      "required_elements": [
+        "Therapeutic area focus and revenue concentration across top products",
+        "FDA pathway classification and regulatory status (510(k) vs. PMA)",
+        "Procedure volume and clinical adoption curves by indication",
+        "Competitive landscape and threat of procedural displacement"
+      ]
+    },
+    {
+      "id": "B",
+      "title": "Reimbursement & Pricing Economics",
+      "required_elements": [
+        "Reimbursement coverage policies and CPT code rates",
+        "Health economics value proposition to payers (cost per QALY)",
+        "Average Selling Price (ASP) trends and erosion trajectory",
+        "CMS policy and regulatory pricing pressure risk quantification"
+      ]
+    },
+    {
+      "id": "C",
+      "title": "Installed Base & Recurring Revenue Economics",
+      "required_elements": [
+        "Installed base size and annual installation rate with replacement cycle",
+        "Consumables/disposables pull-through revenue per installed unit",
+        "Service and maintenance revenue as % of total and gross margin",
+        "Subscription/software recurring revenue and % of total revenue"
+      ]
+    },
+    {
+      "id": "D",
+      "title": "Financial Logic & Valuation",
+      "required_elements": [
+        "EV/Revenue multiples by product development stage",
+        "Recurring revenue multiple premium for consumables and services",
+        "Adjusted EBITDA and FCF margin projections",
+        "Pipeline-adjusted NPV with FDA approval and adoption probabilities"
+      ]
+    },
+    {
+      "id": "E",
+      "title": "Pattern Matching & IDP Flagging",
+      "required_elements": [
+        "Procedure volume trend deceleration and market saturation signals",
+        "Reimbursement cuts or coverage denial tracking",
+        "FDA safety/efficacy signals and adverse event monitoring",
+        "Competitive entry and market share loss assessment"
+      ]
+    },
+    {
+      "id": "F",
+      "title": "Investigation Tracks",
+      "required_elements": [
+        "Procedure volume sustainability and market saturation analysis",
+        "Reimbursement stability and ASP erosion sensitivity modeling",
+        "Installed base growth and consumables revenue expansion visibility"
+      ]
+    }
+  ],
+  "structural_requirements": [
+    "Opinion block present",
+    "Summary for Perspectives present",
+    "All financial claims cited",
+    "Investigation tracks specified"
+  ]
+}

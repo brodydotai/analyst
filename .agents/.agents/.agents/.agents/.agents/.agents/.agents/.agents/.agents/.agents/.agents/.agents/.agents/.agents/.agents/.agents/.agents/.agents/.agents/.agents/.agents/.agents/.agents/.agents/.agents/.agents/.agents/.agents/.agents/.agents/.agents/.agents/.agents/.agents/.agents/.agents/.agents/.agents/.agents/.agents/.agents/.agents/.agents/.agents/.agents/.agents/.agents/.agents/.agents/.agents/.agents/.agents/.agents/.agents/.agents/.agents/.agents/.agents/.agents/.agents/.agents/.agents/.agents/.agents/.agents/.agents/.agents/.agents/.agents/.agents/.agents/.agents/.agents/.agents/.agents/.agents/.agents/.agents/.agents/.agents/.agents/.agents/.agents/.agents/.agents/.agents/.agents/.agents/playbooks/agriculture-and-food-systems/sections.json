@@ -1,0 +1,73 @@
+{
+  "playbook_file": "agriculture-and-food-systems.prompt.md",
+  "version": "v1",
+  "generated_at": "2026-03-03",
+  "section_count": 6,
+  "sections": [
+    {
+      "id": "A",
+      "title": "Foundational Synthesis — Business Mix & Commodity Exposure",
+      "required_elements": [
+        "Revenue segment breakdown (trading, processing, inputs, equipment)",
+        "Commodity price exposure and sensitivity quantification",
+        "Geographic and crop mix concentration analysis",
+        "Value chain positioning (upstream, midstream, downstream)"
+      ]
+    },
+    {
+      "id": "B",
+      "title": "Input Cost & Margin Economics",
+      "required_elements": [
+        "Input cost structure and production cost drivers (feedstock, labor, capital)",
+        "Gross margin bridge and commodity price pass-through lag",
+        "EBITDA margin and operating leverage analysis",
+        "Working capital cycling and seasonal cash flow timing"
+      ]
+    },
+    {
+      "id": "C",
+      "title": "Crop Cycle Positioning & Demand Drivers",
+      "required_elements": [
+        "USDA WASDE forecasts and global carryover stock analysis",
+        "Acreage and yield trends with farmer economics assessment",
+        "Ethanol and feed demand linkage to commodity demand",
+        "Weather patterns and geopolitical disruption exposure"
+      ]
+    },
+    {
+      "id": "D",
+      "title": "Financial Logic & Valuation",
+      "required_elements": [
+        "EV/EBITDA multiple by commodity exposure and earnings cyclicality",
+        "Normalized through-cycle EBITDA calculation",
+        "FCF generation with working capital adjustment",
+        "Segment-level valuation for multi-line businesses"
+      ]
+    },
+    {
+      "id": "E",
+      "title": "Pattern Matching & IDP Flagging",
+      "required_elements": [
+        "Commodity price weakness and demand destruction risk",
+        "Input cost inflation and margin squeeze dynamics",
+        "Farmer balance sheet stress and purchasing behavior",
+        "Supply chain disruption and regulatory/ESG pressure"
+      ]
+    },
+    {
+      "id": "F",
+      "title": "Investigation Tracks",
+      "required_elements": [
+        "Margin resilience through commodity price cycle and hedging effectiveness",
+        "Farmer demand sustainability and input volume elasticity",
+        "Commodity price cycle positioning and forward curve analysis"
+      ]
+    }
+  ],
+  "structural_requirements": [
+    "Opinion block present",
+    "Summary for Perspectives present",
+    "All financial claims cited",
+    "Investigation tracks specified"
+  ]
+}

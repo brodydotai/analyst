@@ -1,0 +1,100 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://analyst.local/.agents/playbooks/sections.schema.json",
+  "title": "Playbook Sections Index",
+  "description": "Companion index for {name}.prompt.md used by compliance and orchestration to avoid loading full playbook text.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "playbook_file",
+    "version",
+    "generated_at",
+    "section_count",
+    "sections",
+    "structural_requirements"
+  ],
+  "properties": {
+    "playbook_file": {
+      "type": "string",
+      "description": "Exact filename of source playbook prompt.",
+      "pattern": "^[a-z0-9-]+\\.prompt\\.md$"
+    },
+    "version": {
+      "type": "string",
+      "description": "Index version tag.",
+      "examples": [
+        "v1"
+      ]
+    },
+    "generated_at": {
+      "type": "string",
+      "description": "ISO-8601 timestamp or date for index creation.",
+      "examples": [
+        "2026-02-16"
+      ]
+    },
+    "section_count": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "sections": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "title",
+          "required_elements"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Section ID, usually letter-based (A, B, C...) or subsection (A1, B3...).",
+            "pattern": "^[A-Z][0-9]?$"
+          },
+          "title": {
+            "type": "string",
+            "minLength": 1
+          },
+          "required_elements": {
+            "type": "array",
+            "minItems": 1,
+            "description": "Concise checklist of required content for compliance scoring.",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "optional_elements": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        }
+      }
+    },
+    "structural_requirements": {
+      "type": "array",
+      "description": "Cross-section requirements not tied to one section.",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "examples": [
+        [
+          "Interesting Data Points (IDPs) present",
+          "High-Agency Investigation Tracks present",
+          "Opinion block present",
+          "Summary for Perspectives present"
+        ]
+      ]
+    },
+    "notes": {
+      "type": "string"
+    }
+  }
+}

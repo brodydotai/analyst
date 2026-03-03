@@ -1,0 +1,106 @@
+{
+  "playbook_file": "social-media-and-digital-advertising.prompt.md",
+  "version": "v1",
+  "generated_at": "2026-03-03",
+  "section_count": 6,
+  "sections": [
+    {
+      "id": "A",
+      "title": "Foundational Synthesis — Platform Classification & Attention Economics",
+      "required_elements": [
+        "Platform model classification (social graph, interest graph, messaging, visual/ephemeral, creator economy)",
+        "Business model positioning and platform transition dynamics",
+        "Leadership credibility assessment (founder product vision, platform pivot track record)",
+        "Insider alignment analysis (share ownership %, dual-class voting, insider transactions)",
+        "Governance risk assessment (dual-class share structure, voting power concentration)"
+      ]
+    },
+    {
+      "id": "B",
+      "title": "Engagement Economics — The Attention-to-Revenue Bridge",
+      "required_elements": [
+        "DAU/MAU ratio with stickiness assessment (>60% = habitual, <50% = casual)",
+        "Time spent per user per day tracking and peer comparison",
+        "Sessions per day frequency analysis",
+        "Content production vs. consumption ratio (creator ratio trend)",
+        "Geographic user mix decomposition (North America, Europe, ROW ARPU variations)",
+        "ARPU decomposition by geography and product surface (feed, stories, messaging, video)",
+        "Ad load assessment and remaining capacity for incremental density",
+        "Ad pricing (CPM/CPE) trends and comparison to peers (demand vs. supply)",
+        "Click-through rate, conversion rate, and ROAS benchmarking",
+        "Revenue bridge model (impression volume × CPM × fill rate = revenue)"
+      ]
+    },
+    {
+      "id": "C",
+      "title": "Competitive & Ecosystem Mapping",
+      "required_elements": [
+        "Attention competition mapping (all screen-based attention competitors, not just social)",
+        "Share of total mobile screen time vs. 2 years ago (gaining or losing?)",
+        "App store dependency (iOS/Android distribution, ATT impact quantification)",
+        "Regulatory risk exposure (Section 230, DSA/DMA, age verification, data privacy)",
+        "Youth safety and reputation risk quantification (litigation reserves, settlement exposure)",
+        "AI deployment assessment (content recommendation, ad targeting, content moderation, generative features)",
+        "AI as revenue driver vs. cost optimizer distinction"
+      ]
+    },
+    {
+      "id": "D",
+      "title": "Financial Logic & Valuation",
+      "required_elements": [
+        "Valuation framework by growth stage (high-growth: EV/Revenue, EV/DAU; mature: EV/EBITDA, P/E, FCF yield)",
+        "Margin expansion path modeling (theoretical steady-state margins vs. peers)",
+        "Price-per-DAU calculation and comparison (Meta $250+, Pinterest ~$50, Snap $30-50)",
+        "Growth-adjusted metrics (PEG, EV/Revenue/Growth)"
+      ]
+    },
+    {
+      "id": "E",
+      "title": "Pattern Matching & IDP Flagging",
+      "required_elements": [
+        "DAU growth vs. time spent divergence (hollow growth indicator)",
+        "Revenue growth vs. DAU growth divergence (monetization improvement or compression)",
+        "Ad load increasing while CPM flat/declining (demand not keeping pace)",
+        "North America ARPU vs. global ARPU trend divergence (geographic mix shift masking core saturation)",
+        "SBC as % of revenue trending (dilution assessment)",
+        "Capex intensity increasing (AI infrastructure spend without engagement/revenue improvement)"
+      ]
+    },
+    {
+      "id": "F",
+      "title": "Investigation Tracks",
+      "required_elements": [
+        "Advertiser surveys and channel checks (Cowen, Piper Sandler, IAB spend reports) for budget allocation trends",
+        "Engagement data validation (Sensor Tower, Data.ai, SimilarWeb for user metrics verification)",
+        "Regulatory tracking (Congressional hearings, EU enforcement actions, state AG investigations)"
+      ]
+    }
+  ],
+  "structural_requirements": [
+    "All sections present with markdown headings",
+    "Platform model clearly identified (social graph, interest graph, messaging, visual, creator economy)",
+    "Platform transition dynamics documented (e.g., feed → stories → reels migration)",
+    "Founder credibility and platform pivot track record assessed",
+    "Insider ownership % documented with dual-class voting structure explained",
+    "DAU/MAU ratio calculated and stickiness trend tracked",
+    "Time spent per user per day documented with 8-quarter trend",
+    "Sessions per day frequency analyzed",
+    "Content creator ratio tracked with decline signal monitoring",
+    "Geographic user mix decomposed with North America and international ARPU calculated",
+    "ARPU decomposed by surface (feed, stories, messaging, video) with growth rates",
+    "Ad load current level documented with remaining capacity estimation",
+    "CPM/CPE trending documented (rising = demand, falling = oversupply/quality issues)",
+    "Click-through rate and conversion rate documented vs. Meta/Google/TikTok benchmarks",
+    "Revenue bridge explicit (impression volume × CPM × fill rate calculation)",
+    "Attention competition mapped (YouTube, TikTok, gaming, streaming, other screens)",
+    "Mobile screen time share calculated vs. 2 years prior (gaining or losing trend)",
+    "App store dependency assessed with ATT impact on targeting and measurement quantified",
+    "Regulatory risk mapped (Section 230, DSA, DMA, age verification, GDPR state laws)",
+    "Youth mental health litigation risk and settlement exposure estimated",
+    "AI deployment assessed by use case (recommendation, targeting, moderation, generation)",
+    "Valuation framework applied appropriate to growth stage",
+    "Price-per-DAU calculated and compared to peers",
+    "Margin expansion path modeled to steady-state (target % range for business model)",
+    "Investigation tracks include specific advertiser survey sources, engagement data platform references, and regulatory timeline sources"
+  ]
+}

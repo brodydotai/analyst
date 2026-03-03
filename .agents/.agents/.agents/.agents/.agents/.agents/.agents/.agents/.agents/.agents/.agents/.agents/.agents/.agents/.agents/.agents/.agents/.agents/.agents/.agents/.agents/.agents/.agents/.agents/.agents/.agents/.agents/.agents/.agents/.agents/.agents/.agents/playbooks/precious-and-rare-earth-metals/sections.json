@@ -1,0 +1,81 @@
+{
+  "playbook_file": "precious-and-rare-earth-metals.prompt.md",
+  "version": "v1",
+  "generated_at": "2026-03-03",
+  "section_count": 6,
+  "sections": [
+    {
+      "id": "A",
+      "title": "Foundational Synthesis — Commodity Classification & Strategic Importance",
+      "required_elements": [
+        "Commodity classification (REE light vs. heavy, PGMs, lithium, cobalt, other critical minerals)",
+        "End-market demand composition and growth trajectory",
+        "Material intensity trend analysis (next-gen products using more or less per unit)"
+      ]
+    },
+    {
+      "id": "B",
+      "title": "Supply Chain Geopolitics — The Chokepoint Analysis",
+      "required_elements": [
+        "Mining concentration by country (% of raw extraction)",
+        "Processing/refining bottleneck mapping and mid-stream concentration",
+        "Policy exposure (export controls, strategic stockpile policies, friend-shoring initiatives)",
+        "Recycling/secondary supply percentage and economics (primary vs. secondary positioning)"
+      ]
+    },
+    {
+      "id": "C",
+      "title": "Project-Level Economics",
+      "required_elements": [
+        "AISC vs. spot price analysis for mining/processing assets",
+        "Capex-to-production timeline and execution status",
+        "Permitting and environmental approval status",
+        "Jurisdiction risk assessment (resource nationalism, taxation, expropriation history)",
+        "Offtake agreement coverage (% of planned production contracted)"
+      ]
+    },
+    {
+      "id": "D",
+      "title": "Financial Logic & Valuation",
+      "required_elements": [
+        "NAV (net asset value) based on in-situ resource value discounted for extraction economics",
+        "EV/Resource per-tonne or per-pound valuation",
+        "Commodity-price-scenario DCF analysis",
+        "Milestone-based probability-weighted NAV for pre-revenue development-stage companies"
+      ]
+    },
+    {
+      "id": "E",
+      "title": "Pattern Matching & IDP Flagging",
+      "required_elements": [
+        "Resource estimate upgrades without feasibility study improvements (promotional risk)",
+        "Projects in jurisdictions with recent resource nationalism developments",
+        "Supply disruption catalysts (mine closures, export bans, processing facility outages)",
+        "Material substitution risks (ferrite magnets replacing NdFeB in EV motors)"
+      ]
+    },
+    {
+      "id": "F",
+      "title": "Investigation Tracks",
+      "required_elements": [
+        "Supply chain mapping for primary commodity (mine-to-end-product)",
+        "Government stockpile policy analysis",
+        "Technology substitution risk assessment"
+      ]
+    }
+  ],
+  "structural_requirements": [
+    "All sections present with markdown headings",
+    "Commodity classification clearly stated (REE subtype, PGM type, or other critical mineral)",
+    "End-market demand composition broken down by application with growth rates",
+    "Mining concentration quantified by top 3-5 countries as % of global extraction",
+    "Processing/refining concentration mapped with specific identification of bottlenecks",
+    "Policy exposure explicitly listed (export controls, sanctions, stockpile policies)",
+    "AISC calculated and compared to current spot price with price floor implications",
+    "Capex-to-production timeline documented with permitting status",
+    "Offtake agreement coverage percentage specified",
+    "NAV or EV/Resource valuation calculated with commodity price sensitivity",
+    "Resource nationalism risk in specific jurisdictions quantified",
+    "Investigation tracks include specific supply chain entities, government stockpile policy documents, and substitution technology risks"
+  ]
+}

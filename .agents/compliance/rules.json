@@ -1,8 +1,10 @@
 {
   "weights": {
-    "section_coverage": 0.4,
-    "element_coverage": 0.4,
-    "structural": 0.2
+    "section_coverage": 0.30,
+    "element_coverage": 0.30,
+    "citation_quality": 0.15,
+    "data_recency": 0.10,
+    "structural": 0.15
   },
   "thresholds": {
     "a": 90,
@@ -11,10 +13,30 @@
     "d": 60
   },
   "structural": {
-    "min_words": 500,
+    "min_words": 1500,
     "require_h1": true,
     "require_section_headers": true,
     "require_lists": true,
-    "require_opinion_block": true
+    "require_opinion_block": true,
+    "require_perspective_summary": true,
+    "require_trade_ideas": true,
+    "require_bull_bear_thesis": true
+  },
+  "citation_quality": {
+    "min_citations": 5,
+    "require_url_or_filing": true,
+    "require_dated_metrics": true,
+    "penalize_undated_claims": true
+  },
+  "data_recency": {
+    "max_data_age_months": 6,
+    "prefer_current_quarter": true,
+    "flag_stale_metrics": true
+  },
+  "element_scoring": {
+    "required_hit": 1.0,
+    "optional_hit": 0.5,
+    "missing_required": 0.0,
+    "missing_optional": "no_penalty"
   }
 }
