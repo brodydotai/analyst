@@ -12,11 +12,12 @@ Run this play when:
 Required references:
 - `.agents/templates/api-routing-index.yaml`
 - local env var `DROYD_API_KEY`
+- Droyd MCP server: `@droyd/mcp-server`
 - Droyd docs: `https://api.droyd.ai/`
 
 ## Core Hypothesis
 
-Using Droyd `POST /api/v1/search` as first-pass intelligence should:
+Using Droyd MCP tools as first-pass intelligence should:
 1. improve catalyst/risk narrative quality,
 2. reduce exploratory web-search noise,
 3. increase actionable IDP quality in crypto reports.
@@ -70,6 +71,30 @@ Replace `{token}` and `{ecosystem}`.
 5. `{token} regulation SEC CFTC enforcement jurisdiction AML KYC`
 6. `{token} sentiment crowd positioning social narrative rotation`
 7. `{token} {ecosystem} developer growth TVL activity retention`
+
+MCP invocation format:
+
+- `droyd.content_search` for narrative and event retrieval
+- `droyd.project_discovery` for project/name/symbol/address lookup
+- `droyd.market_screening` for market-criteria filtering
+- `droyd.agent_chat` for multi-turn synthesis
+
+Example invocation pattern (tool-level, not raw HTTP):
+
+```text
+Tool: droyd.content_search
+Input:
+  query: "{token} governance proposal vote treasury unlock emissions dilution"
+  search_mode: "semantic"
+  content_types: ["posts", "news"]
+  days_back: 7
+  sort_by: "relevance"
+  minimum_relevance_score: 0.55
+  ecosystems: ["{ecosystem}"]
+  include_analysis: true
+  snippet_limit: 3
+  limit: 20
+```
 
 Use `ecosystems` and `categories` filters when available to reduce noise.
 

@@ -98,6 +98,16 @@ Purpose: reduce exploratory search noise and token waste. Use these templates be
 4. `{company} AI recommendation monetization efficiency`
 5. `{company} valuation EV/EBITDA P/E internet ad peers`
 
+## Specialty and Advanced Materials
+
+1. `{company} investor relations quarterly results revenue segment margin gross margin`
+2. `{company} 10-K end market exposure aerospace defense semiconductor automotive`
+3. `{company} raw material sourcing tungsten cobalt beryllium supply chain`
+4. `{company} product qualification sole-source customer concentration`
+5. `{company} valuation EV/EBITDA P/E specialty materials peers`
+6. `{company} capacity expansion capex new product R&D pipeline`
+7. `{company} critical minerals USGS supply chain reshoring`
+
 ## Commodity and Metals Playbooks
 
 1. `{commodity} spot price curve inventory stocks exchange`

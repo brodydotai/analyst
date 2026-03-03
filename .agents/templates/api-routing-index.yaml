@@ -11,6 +11,8 @@ categories:
     providers:
       - provider_id: "droyd"
         label: "Droyd Crypto Intelligence"
+        integration_type: "mcp"
+        mcp_server: "@droyd/mcp-server"
         use_cases:
           - "protocol market share and volume diagnostics"
           - "tokenomics and unlock tracking"
@@ -21,6 +23,7 @@ categories:
           required: true
         status: "active"
         priority: 1
+        rate_limit: "10 requests per 15 minutes per endpoint"
 
   equity_market_research:
     description: "Traditional equity fundamentals, filings, estimates, and market data."

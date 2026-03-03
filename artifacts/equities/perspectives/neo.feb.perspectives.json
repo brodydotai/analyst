@@ -1,0 +1,78 @@
+{
+  "ticker": "NEO",
+  "period": "feb-2026",
+  "report": "artifacts/equities/reports/neo.feb.md",
+  "scorecard": "artifacts/equities/scorecards/neo.feb.scorecard.md",
+  "primary_opinion": {
+    "rating": 7,
+    "confidence": 0.60,
+    "action": "accumulate",
+    "timeframe": "12-18M"
+  },
+  "perspectives": [
+    {
+      "perspective": "bull",
+      "ticker": "NEO",
+      "period": "feb-2026",
+      "rating": 8,
+      "confidence": 0.65,
+      "argument": "Neo is one of fewer than five companies globally capable of producing rare earth permanent magnets outside China's supply chain at industrial scale. Magnequench's bonded NdFeB powder franchise — with more capacity than all competitors combined and the only heavy-rare-earth-free traction motor powder — is a monopoly-grade asset in a market growing 20%+ annually. The Narva facility, backed by a Bosch MOU and EU funding, positions Neo to capture 15% of European magnet demand at premium pricing ($10-30/kg above Chinese alternatives). Three consecutive EBITDA guidance raises in 2025 demonstrate operational momentum, while the stock still trades at a deep discount to pure-play rare earth peers (12x vs 20-30x EV/EBITDA). If Narva Phase 1A ramps successfully and China reinstates export controls in November 2026, a re-rating to 18-22x forward EBITDA on $90M+ EBITDA would imply CAD $35-45 per share — 50-100% upside from current levels.",
+      "key_factors": [
+        "Magnequench monopoly in heavy-RE-free bonded powder for EV traction motors",
+        "Narva Phase 1A production start mid-2026 with Bosch anchor demand",
+        "Western magnet pricing premium of $10-30/kg is policy-driven and durable",
+        "12x EV/EBITDA vs 20-30x rare earth peer multiples implies re-rating potential",
+        "Only gallium recycler in North America during Chinese export controls"
+      ],
+      "timeframe": "12-18M",
+      "invalidation": "If Narva production start delays beyond Q4 2026 AND China permanently extends export control suspension, the dual catalysts that underpin the re-rating thesis are removed."
+    },
+    {
+      "perspective": "bear",
+      "ticker": "NEO",
+      "period": "feb-2026",
+      "rating": 4,
+      "confidence": 0.60,
+      "argument": "Neo's stock has risen 183% in 52 weeks on a geopolitical narrative, not earnings. Trailing twelve-month GAAP net income is negative (-$6.4M), and the company has zero track record manufacturing sintered magnets at scale — the core growth asset. The Narva facility is a first-of-kind greenfield in Europe where sintered NdFeB yield management typically requires years of process optimization; early scrap rates of 30-50% could make unit economics uncompetitive even at premium pricing. The Bosch MOU is non-binding, and Bosch's own EV strategy has faced headwinds as European EV adoption has underwhelmed. Meanwhile, the Russian feedstock dependency at Silmet — Neo's upstream rare earth separator — is an unresolved structural vulnerability that directly contradicts the Western supply chain sovereignty narrative the market is paying a premium for. If China extends the export control suspension past November 2026, the urgency premium evaporates, and Neo is left as a mid-cap specialty materials company trading at elevated multiples on unproven manufacturing capabilities.",
+      "key_factors": [
+        "183% stock appreciation front-runs unproven sintered magnet execution",
+        "Negative GAAP net income despite EBITDA growth — quality of earnings concern",
+        "Narva yield risk: greenfield sintered magnet manufacturing is technically complex",
+        "Russian feedstock dependency undermines Western supply chain narrative",
+        "China export control suspension extension would compress Western pricing premium"
+      ],
+      "timeframe": "6-12M",
+      "invalidation": "If Narva achieves >70% yield within 6 months of production start AND Bosch converts MOU to a binding multi-year offtake contract with minimum volume commitments, the execution risk diminishes materially."
+    },
+    {
+      "perspective": "macro",
+      "ticker": "NEO",
+      "period": "feb-2026",
+      "rating": 7,
+      "confidence": 0.60,
+      "argument": "The macro regime is broadly supportive for Neo across multiple dimensions. The Fed is on hold at 3.50-3.75% with expectations for further cuts to 3-3.25% in H2 2026, creating a constructive backdrop for capital-intensive industrial growth stories. The sector rotation out of mega-cap tech into materials and value stocks (+9.05% YTD for Basic Materials vs negative for Technology) is directly favorable for a specialty materials company with a compelling narrative. Industrial metals are benefiting from electrification trends, onshoring, and institutional demand for tangible assets. The critical macro factor specific to Neo is the geopolitical regime: US-China technology decoupling, EU CRMA implementation, and the November 2026 export control cliff create policy-driven demand that is independent of economic cycles. However, if European EV adoption decelerates due to tariff uncertainty, subsidy changes, or consumer hesitation, the demand-side thesis for Narva weakens regardless of macro conditions.",
+      "key_factors": [
+        "Basic Materials sector outperforming +9.05% YTD — sector rotation tailwind",
+        "Fed easing trajectory supportive for industrial capex and growth stories",
+        "US-China decoupling and EU CRMA create policy-driven structural demand",
+        "Weaker dollar favors international revenue and commodity-linked businesses",
+        "European EV adoption pace is the key cyclical risk to monitor"
+      ],
+      "timeframe": "6-12M",
+      "invalidation": "If the Fed reverses course and tightens monetary policy due to sticky inflation, risk appetite contracts broadly, and capital-intensive growth stories like Neo's Estonia expansion face higher discount rates and reduced investor appetite."
+    }
+  ],
+  "synthesis": {
+    "final_rating": 7,
+    "final_confidence": 0.60,
+    "final_action": "accumulate",
+    "rationale": "The bull, bear, and macro perspectives converge on a 7/10 accumulate rating, acknowledging both the exceptional strategic positioning and the significant execution risk. The bull case is grounded in verifiable competitive advantages (Magnequench monopoly, Bosch MOU, EU policy support) and identifiable catalysts (Narva ramp, export control expiry). The bear case correctly identifies that the stock has front-run fundamentals and that sintered magnet manufacturing execution is the critical unknown. The macro overlay is supportive, with sector rotation into materials and a constructive rate environment. The balanced recommendation is to accumulate on pullbacks with position sizing that reflects the binary nature of the Estonia ramp and November 2026 export control outcomes. Full position building should await either Narva Phase 1A production confirmation or a pullback to <10x forward EV/EBITDA that provides greater margin of safety.",
+    "key_monitoring_items": [
+      "Narva production start confirmation and initial yield data (mid-2026)",
+      "Bosch MOU to definitive contract conversion (expected within 6-12 months)",
+      "China export control policy post-November 2026 suspension",
+      "European EV sales trajectory and CRMA implementation progress",
+      "Silmet feedstock diversification away from Russian sources"
+    ]
+  }
+}

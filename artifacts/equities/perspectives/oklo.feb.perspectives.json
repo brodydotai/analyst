@@ -1,0 +1,79 @@
+{
+  "ticker": "OKLO",
+  "period": "feb-2026",
+  "report": "artifacts/equities/reports/oklo.feb.md",
+  "scorecard": "artifacts/equities/scorecards/oklo.feb.scorecard.md",
+  "primary_opinion": {
+    "rating": 5,
+    "confidence": 0.45,
+    "action": "hold",
+    "timeframe": "18-24M"
+  },
+  "perspectives": [
+    {
+      "perspective": "bull",
+      "ticker": "OKLO",
+      "period": "feb-2026",
+      "rating": 7,
+      "confidence": 0.50,
+      "argument": "Oklo is the only advanced nuclear company pursuing full vertical integration from fuel fabrication through reactor deployment to spent fuel recycling — a strategy that, if executed, creates a self-reinforcing competitive moat that no competitor can replicate within a decade. The 14+ GW customer pipeline from Switch, Meta, and Equinix reflects genuine hyperscaler urgency for firm, 24/7, zero-carbon baseload power that solar+storage and gas cannot reliably provide at data center scale. The DOE Reactor Pilot Program provides a parallel authorization pathway that could put Aurora online at INL by late 2027-2028 — potentially years ahead of NRC commercial licensing — generating operational data that transforms the NRC COLA from a design review into a demonstrated technology assessment. At $65, the stock is 67% below its peak, pricing in significant skepticism despite $1.2B in cash (12+ years of runway), successful NRC readiness assessment completion, and the first end-to-end fuel recycling demonstration. If INL operations succeed and a single major binding PPA converts, the stock re-rates toward the $115 analyst consensus — 77% upside.",
+      "key_factors": [
+        "DOE parallel pathway enables INL operations potentially by 2028 — ahead of NRC timeline",
+        "Only company pursuing integrated reactor + fuel fabrication + fuel recycling",
+        "14+ GW pipeline from blue-chip hyperscalers reflects genuine demand urgency",
+        "$1.2B cash provides 12+ year runway without dilution at current burn rates",
+        "67% decline from $193 peak means significant skepticism already priced in"
+      ],
+      "timeframe": "18-24M",
+      "invalidation": "If Aurora-INL fails to achieve DOE-authorized operations by 2029 or the NRC issues a second COLA denial, the technology validation pathway is broken and the timeline extends beyond customer patience."
+    },
+    {
+      "perspective": "bear",
+      "ticker": "OKLO",
+      "period": "feb-2026",
+      "rating": 3,
+      "confidence": 0.55,
+      "argument": "Oklo is a $10B market cap company with zero revenue, zero operating reactors, a prior NRC denial, and a customer pipeline that is 85% one non-binding framework agreement with Switch. The valuation is 2.35x NuScale's — a company that actually has NRC design certification. No sodium-cooled fast reactor has ever operated commercially in the US, making Aurora a first-of-a-kind technology bet with unquantifiable execution risk. The build-own-operate model requires ~$42B to deploy the 14 GW pipeline — roughly 35x Oklo's current cash position — meaning massive dilution or project financing is unavoidable. The stock's round-trip from $193 to $65 has already destroyed significant retail capital, creating an overhang of trapped sellers. And the entire thesis rests on AI data center capex maintaining current growth rates for 10-20 years — a highly uncertain assumption. At $65, cash per share is ~$7.70, meaning 92% of the stock price is pure optionality on events that haven't happened and may not happen for 3-5+ years. The risk-reward is asymmetric to the downside.",
+      "key_factors": [
+        "$10B valuation on $0 revenue — 92% of stock price is pure optionality",
+        "Prior NRC COLA denial in 2022 proves regulatory risk is not theoretical",
+        "14 GW pipeline is 85% one non-binding Switch deal — pipeline quality is poor",
+        "Build-own-operate requires ~$42B for full pipeline — massive dilution ahead",
+        "No sodium-cooled fast reactor has ever operated commercially in the US"
+      ],
+      "timeframe": "12M",
+      "invalidation": "If Aurora-INL achieves DOE-authorized operation on schedule AND the NRC accepts the COLA without requesting fundamental design changes, the technology and regulatory risk diminishes materially and the bear case weakens significantly."
+    },
+    {
+      "perspective": "macro",
+      "ticker": "OKLO",
+      "period": "feb-2026",
+      "rating": 6,
+      "confidence": 0.55,
+      "argument": "The macro environment is mixed for Oklo. On the positive side, the nuclear renaissance narrative has bipartisan policy support (ADVANCE Act, DOE programs, HALEU funding), Big Tech's collective commitment to nuclear power is unprecedented (Meta, Google, Microsoft, Amazon have committed tens of GW), and the Fed's easing trajectory (3.50-3.75% heading toward 3-3.25%) reduces discount rates for long-duration assets like pre-revenue nuclear development companies. The sector rotation from mega-cap tech into materials and value stocks provides a constructive backdrop. However, Oklo is uniquely vulnerable to the AI capex cycle — if hyperscaler spending decelerates due to model efficiency gains, recession, or investor pressure on capital returns, the data center power demand narrative softens and non-binding agreements lose urgency. The stock's 67% decline from peak already reflects some macro repricing of long-duration nuclear optionality. The November 2025 US-China trade deal and associated easing of rare materials tensions is neutral-to-slightly-negative for nuclear urgency, as it reduces the energy security narrative premium. Net: macro is modestly supportive but not strongly directional.",
+      "key_factors": [
+        "Bipartisan nuclear policy support provides durable political tailwind",
+        "Fed easing trajectory reduces discount rate for pre-revenue long-duration assets",
+        "Big Tech nuclear commitments (Meta, Google, Microsoft) validate demand thesis",
+        "AI capex cycle deceleration risk is the key macro vulnerability",
+        "67% peak-to-trough decline suggests macro repricing of long-duration nuclear already underway"
+      ],
+      "timeframe": "12M",
+      "invalidation": "If the Fed reverses to tightening due to sticky inflation AND AI capex growth decelerates below 15% YoY, long-duration pre-revenue companies like Oklo face a severe double compression of both discount rates and demand expectations."
+    }
+  ],
+  "synthesis": {
+    "final_rating": 5,
+    "final_confidence": 0.45,
+    "final_action": "hold",
+    "rationale": "The perspectives converge on a hold rating that reflects the fundamental tension in Oklo's investment case: a compelling long-term thesis meets an extreme near-term valuation disconnect. The bull case correctly identifies Oklo's unique vertical integration and the DOE parallel pathway as genuine differentiators. The bear case correctly identifies that $10B on $0 revenue with a prior NRC denial and an 85% non-binding pipeline is aggressive pricing. The macro overlay is modestly supportive but introduces AI capex cyclicality as a thesis-level risk. The synthesis: Oklo is a high-quality option on the nuclear renaissance, but the option premium at $65 ($10B market cap) is too expensive given the execution risk timeline. The appropriate strategy is to hold for existing positions and establish accumulation targets at $30-40 (where the option premium more reasonably reflects technology and regulatory risk), with full position building contingent on Aurora-INL operational success.",
+    "key_monitoring_items": [
+      "Aurora-INL construction progress and DOE authorization milestones",
+      "NRC COLA Phase 1 submission and acceptance decision",
+      "Pipeline conversion — any binding PPA announcement from Switch, Meta, or Equinix",
+      "Quarterly cash burn trajectory as construction costs accelerate",
+      "HALEU supply chain developments (Centrus scaling, DOE allocations)",
+      "AI data center capex growth rates as a demand leading indicator"
+    ]
+  }
+}
