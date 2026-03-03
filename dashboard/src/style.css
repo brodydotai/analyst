@@ -215,6 +215,7 @@ input {
   width: 100%;
   margin-bottom: 8px;
   padding: 12px 13px;
+  min-height: 86px;
   border-radius: 12px;
   border: 1px solid transparent;
   background: transparent;
@@ -327,6 +328,11 @@ input {
 .topbar-company {
   color: var(--text-soft);
   font-size: 0.9rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
+  max-width: 55vw;
 }
 
 .topbar-file {
@@ -399,13 +405,18 @@ input {
   color: var(--text-muted);
 }
 
+.meta-stack strong {
+  color: #d6def0;
+  font-weight: 600;
+}
+
 .mono {
   font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
 }
 
 .header-grid {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
   gap: 14px;
   margin-top: 14px;
   padding-top: 14px;
@@ -430,6 +441,25 @@ input {
   font-size: 0.87rem;
   line-height: 1.6;
   font-style: italic;
+}
+
+.facts-wrap {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.fact-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  max-width: 100%;
+  border-radius: 999px;
+  padding: 6px 10px;
+  border: 1px solid var(--line);
+  background: rgba(94, 166, 255, 0.1);
+  color: #d4e3fc;
+  font-size: 0.74rem;
 }
 
 .confidence-wrap {
@@ -873,9 +903,23 @@ input {
     display: none;
   }
 
+  .topbar {
+    padding-left: max(14px, env(safe-area-inset-left));
+    padding-right: max(14px, env(safe-area-inset-right));
+  }
+
+  .topbar-company {
+    max-width: 48vw;
+    font-size: 0.84rem;
+  }
+
+  .topbar-ticker {
+    font-size: 0.84rem;
+  }
+
   .content-layout,
   .loading-content {
-    padding: 18px 14px 20px;
+    padding: 16px 12px 18px;
   }
 
   .header-grid {
@@ -889,5 +933,24 @@ input {
 
   .meta-stack {
     text-align: left;
+  }
+
+  .header-card {
+    padding: 14px;
+  }
+
+  .rating-summary {
+    padding: 10px 12px;
+  }
+
+  .report-card {
+    padding: 11px 12px;
+  }
+
+  .footer {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+    padding-bottom: 24px;
   }
 }

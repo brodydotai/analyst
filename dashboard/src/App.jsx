@@ -44,12 +44,30 @@ function getRatingTone(level) {
 }
 
 function cleanReportContent(content) {
-  return content
-    .replace(
-      /^# .+\n(?:\n)?(?:\*\*[^*\n]+:\*\*.*\n)+\n---\n/m,
-      (match) => match.split("\n")[0] + "\n\n"
-    )
-    .replace(/---\s*\n## Opinion\s*\n```yaml[\s\S]*?```\s*\n---/m, "---");
+  if (!content) return "";
+  const lines = content.split("\n");
+  const titleIndex = lines.findIndex((line) => /^#\s+/.test(line));
+  if (titleIndex < 0) return content;
+
+  let i = titleIndex + 1;
+  while (i < lines.length && lines[i].trim() === "") i += 1;
+
+  let sawMetadata = false;
+  while (i < lines.length) {
+    const line = lines[i];
+    const isMetadataLine =
+      /^\*\*[^*\n]+:\*\*\s*.+$/.test(line) ||
+      /^[A-Za-z][\w /()%-]+:\s*.+$/.test(line);
+    if (!isMetadataLine) break;
+    sawMetadata = true;
+    i += 1;
+  }
+
+  while (i < lines.length && lines[i].trim() === "") i += 1;
+  if (sawMetadata && lines[i]?.trim() === "---") i += 1;
+
+  const cleaned = [lines[titleIndex], "", ...lines.slice(i)].join("\n");
+  return cleaned.replace(/---\s*\n## Opinion\s*\n```yaml[\s\S]*?```\s*\n---/m, "---");
 }
 
 function extractHeadings(content) {
@@ -67,51 +85,142 @@ function extractHeadings(content) {
   return headings;
 }
 
+function normalizeMetaKey(key) {
+  return key
+    .toLowerCase()
+    .trim()
+    .replace(/[^\w\s-]/g, "")
+    .replace(/_/g, " ")
+    .replace(/\s+/g, " ");
+}
+
+function toTitleCase(value) {
+  return value
+    .split(" ")
+    .filter(Boolean)
+    .map((part) => part[0].toUpperCase() + part.slice(1))
+    .join(" ");
+}
+
+function parseMetadataBlock(content) {
+  const lines = content.split("\n");
+  const titleIndex = lines.findIndex((line) => /^#\s+/.test(line));
+  if (titleIndex < 0) return [];
+
+  const metadata = [];
+  let i = titleIndex + 1;
+  while (i < lines.length && lines[i].trim() === "") i += 1;
+
+  while (i < lines.length) {
+    const line = lines[i].trim();
+    if (!line || /^---+$/.test(line) || /^##\s+/.test(line)) break;
+
+    let match = line.match(/^\*\*([^*]+):\*\*\s*(.+)$/);
+    if (!match) {
+      match = line.match(/^([A-Za-z][\w /()%-]+):\s*(.+)$/);
+    }
+
+    if (!match) break;
+
+    metadata.push({
+      key: match[1].trim(),
+      normalizedKey: normalizeMetaKey(match[1]),
+      value: match[2].trim(),
+    });
+    i += 1;
+  }
+
+  return metadata;
+}
+
+function parseOpinionBlock(content) {
+  const block = content.match(/##\s+Opinion[\s\S]*?```yaml\s*([\s\S]*?)```/i)?.[1];
+  if (!block) return {};
+
+  const result = {};
+  block.split("\n").forEach((line) => {
+    const match = line.match(/^\s*([a-zA-Z0-9_]+)\s*:\s*(.+)\s*$/);
+    if (!match) return;
+    const key = normalizeMetaKey(match[1]);
+    const value = match[2].replace(/^["']|["']$/g, "").trim();
+    result[key] = value;
+  });
+  return result;
+}
+
+function lookupMeta(metadata, ...keys) {
+  for (const key of keys) {
+    const normalized = normalizeMetaKey(key);
+    const found = metadata.find((item) => item.normalizedKey === normalized);
+    if (found?.value) return found.value;
+  }
+  return "";
+}
+
 function parseReportMeta(content, filename) {
-  const ticker = filename.replace(".md", "").toUpperCase();
   const titleMatch = content.match(/^#\s+(.+)/m);
-  const dateMatch = content.match(/\*\*Date:\*\*\s*(\S+)/);
-  const sectorMatch = content.match(/\*\*Sector:\*\*\s*(.+)/);
-  const playbookMatch = content.match(/\*\*Playbook:\*\*\s*(.+)/);
-
-  const actionMatch = content.match(/action:\s*["']?([^"'\n]+)/);
-  const confidenceMatch = content.match(/confidence:\s*["']?([^"'\n]+)/);
-  const ratingMatch = content.match(/rating:\s*["']?([^"'\n]+)/);
-  const thesisMatch = content.match(/thesis:\s*["']([^"']+)["']/);
-  const targetTimeframeMatch = content.match(/target_timeframe:\s*["']([^"']+)["']/);
-  const keyCatalystMatch = content.match(/key_catalyst:\s*["']([^"']+)["']/);
-  const invalidationMatch = content.match(/invalidation:\s*["']([^"']+)["']/);
-
-  const entryMatch = content.match(/\*\*Entry:\*\*\s*(.+)/);
-  const riskRewardMatch = content.match(/\*\*Risk\/Reward:\*\*\s*(.+)/);
+  const metadata = parseMetadataBlock(content);
+  const opinion = parseOpinionBlock(content);
   const companyMatch = titleMatch?.[1]?.match(/^(.+?)\s*\(/);
 
-  let dateStr = dateMatch?.[1] || "—";
+  const tickerFromTitle = titleMatch?.[1]?.match(/\(([^)]+)\)/)?.[1]?.trim();
+  const tickerFromMeta = lookupMeta(metadata, "ticker");
+  const ticker = (tickerFromTitle || tickerFromMeta || filename.replace(".md", "")).toUpperCase();
+
+  let dateStr = lookupMeta(metadata, "date") || "—";
   if (dateStr.match(/^\d{4}-\d{2}-\d{2}$/)) {
     const [y, m, d] = dateStr.split("-");
     dateStr = `${m}/${d}/${y}`;
   }
 
-  const action = actionMatch?.[1]?.trim() || "";
-  const rawRating = ratingMatch?.[1]?.trim() || "";
+  const action = opinion.action || lookupMeta(metadata, "action");
+  const rawRating = opinion.rating || lookupMeta(metadata, "rating");
   const ratingLevel = classifyRating(action, rawRating);
+
+  const sector = lookupMeta(metadata, "sector", "industry");
+  const playbook = lookupMeta(metadata, "playbook", "template");
+  const confidence = opinion.confidence || lookupMeta(metadata, "confidence");
+  const timeframe = opinion.timeframe || opinion["target timeframe"] || opinion.target_timeframe || lookupMeta(metadata, "timeframe");
+  const thesis = opinion.thesis || lookupMeta(metadata, "thesis");
+  const entryMatch = content.match(/\*\*Entry:\*\*\s*(.+)/);
+  const riskRewardMatch = content.match(/\*\*Risk\/Reward:\*\*\s*(.+)/);
+
+  const keyFactPairs = metadata
+    .filter((item) => !["date", "playbook", "sector", "ticker", "rating", "action", "confidence", "timeframe", "thesis"].includes(item.normalizedKey))
+    .slice(0, 8)
+    .map((item) => ({ label: item.key, value: item.value }));
+
+  const searchText = [
+    ticker,
+    companyMatch?.[1]?.trim(),
+    sector,
+    playbook,
+    ...metadata.map((item) => item.value),
+  ]
+    .filter(Boolean)
+    .join(" ")
+    .toLowerCase();
 
   return {
     ticker,
     title: titleMatch?.[1] || `${ticker} Report`,
     company: companyMatch?.[1]?.trim() || ticker,
     date: dateStr,
-    sector: sectorMatch?.[1]?.trim() || "—",
-    playbook: playbookMatch?.[1]?.trim() || "—",
+    sector: sector || "—",
+    playbook: playbook || "—",
     ratingLevel,
     action: action || "—",
-    confidence: confidenceMatch?.[1]?.trim() || "—",
-    thesis: thesisMatch?.[1]?.trim() || "—",
-    targetTimeframe: targetTimeframeMatch?.[1]?.trim() || "—",
-    keyCatalyst: keyCatalystMatch?.[1]?.trim() || "—",
-    invalidation: invalidationMatch?.[1]?.trim() || "—",
+    confidence: confidence || "—",
+    thesis: thesis || "—",
+    targetTimeframe: timeframe || "—",
+    keyCatalyst: opinion["key catalyst"] || opinion.catalyst || lookupMeta(metadata, "key catalyst") || "—",
+    invalidation: opinion.invalidation || lookupMeta(metadata, "invalidation") || "—",
     entry: entryMatch?.[1]?.trim() || "—",
     riskReward: riskRewardMatch?.[1]?.trim() || "—",
+    keyFactPairs,
+    metadata,
+    searchText,
+    hasOpinion: Boolean(Object.keys(opinion).length),
   };
 }
 
@@ -219,6 +328,7 @@ function ConfidenceBar({ value }) {
 
 function ReportCard({ report, isActive, onClick }) {
   const tone = getRatingTone(report.meta.ratingLevel);
+  const subtitle = report.meta.sector !== "—" ? report.meta.sector : report.meta.playbook;
   return (
     <button
       type="button"
@@ -231,13 +341,28 @@ function ReportCard({ report, isActive, onClick }) {
         <span className={`rating-pill tone-${tone}`}>{report.meta.ratingLevel}</span>
       </div>
       <div className="company-name">{report.meta.company}</div>
-      <div className="sector-name">{report.meta.sector}</div>
+      <div className="sector-name">{subtitle || "General"}</div>
     </button>
   );
 }
 
 function ReportHeader({ meta }) {
   const tone = getRatingTone(meta.ratingLevel);
+  const primaryCards = [
+    { label: "Action", value: meta.action },
+    { label: "Confidence", value: meta.confidence, isConfidence: true },
+    { label: "Timeframe", value: meta.targetTimeframe },
+    { label: "Entry", value: meta.entry },
+    { label: "Risk / Reward", value: meta.riskReward },
+    { label: "Key Catalyst", value: meta.keyCatalyst },
+  ].filter((item) => item.value && item.value !== "—");
+
+  const metaStack = [
+    { label: "Date", value: meta.date },
+    { label: "Sector", value: meta.sector },
+    { label: "Playbook", value: meta.playbook },
+  ].filter((item) => item.value && item.value !== "—");
+
   return (
     <section className="header-card">
       <div className="header-top">
@@ -246,46 +371,44 @@ function ReportHeader({ meta }) {
           <div className={`rating-chip tone-${tone}`}>{meta.ratingLevel}</div>
         </div>
         <div className="meta-stack">
-          <span>{meta.date}</span>
-          <span>{meta.sector}</span>
-          <span className="mono">{meta.playbook}</span>
+          {metaStack.map((item) => (
+            <span key={item.label}>
+              <strong>{item.label}:</strong> <span className={item.label === "Playbook" ? "mono" : ""}>{item.value}</span>
+            </span>
+          ))}
         </div>
       </div>
 
-      <div className="header-grid">
-        <div>
-          <div className="meta-label">Action</div>
-          <div className="meta-value">{meta.action}</div>
+      {primaryCards.length > 0 && (
+        <div className="header-grid">
+          {primaryCards.map((item) => (
+            <div key={item.label}>
+              <div className="meta-label">{item.label}</div>
+              {item.isConfidence ? <ConfidenceBar value={item.value} /> : <div className="meta-value">{item.value}</div>}
+            </div>
+          ))}
         </div>
-        <div>
-          <div className="meta-label">Confidence</div>
-          <ConfidenceBar value={meta.confidence} />
-        </div>
-        <div>
-          <div className="meta-label">Timeframe</div>
-          <div className="meta-value">{meta.targetTimeframe}</div>
-        </div>
-      </div>
+      )}
 
-      <div className="header-grid">
-        <div>
-          <div className="meta-label">Entry</div>
-          <div className="meta-value">{meta.entry}</div>
+      {meta.keyFactPairs?.length > 0 && (
+        <div className="thesis-row">
+          <div className="meta-label">Key Facts</div>
+          <div className="facts-wrap">
+            {meta.keyFactPairs.map((fact) => (
+              <span key={`${fact.label}-${fact.value}`} className="fact-pill">
+                <strong>{toTitleCase(fact.label)}:</strong> {fact.value}
+              </span>
+            ))}
+          </div>
         </div>
-        <div>
-          <div className="meta-label">Risk / Reward</div>
-          <div className="meta-value">{meta.riskReward}</div>
-        </div>
-        <div>
-          <div className="meta-label">Key Catalyst</div>
-          <div className="meta-value">{meta.keyCatalyst}</div>
-        </div>
-      </div>
+      )}
 
-      <div className="thesis-row">
-        <div className="meta-label">Thesis</div>
-        <p>{meta.thesis}</p>
-      </div>
+      {meta.thesis !== "—" && (
+        <div className="thesis-row">
+          <div className="meta-label">Thesis</div>
+          <p>{meta.thesis}</p>
+        </div>
+      )}
     </section>
   );
 }
@@ -428,12 +551,7 @@ export default function Dashboard() {
   const filteredReports = useMemo(() => {
     if (!search.trim()) return reports;
     const q = search.toLowerCase();
-    return reports.filter(
-      (r) =>
-        r.meta.ticker.toLowerCase().includes(q) ||
-        r.meta.company.toLowerCase().includes(q) ||
-        r.meta.sector.toLowerCase().includes(q)
-    );
+    return reports.filter((r) => r.meta.searchText.includes(q));
   }, [reports, search]);
 
   useEffect(() => {
