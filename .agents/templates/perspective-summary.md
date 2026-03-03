@@ -1,21 +1,22 @@
 ## Summary for Perspectives
 
 Use this section as a compressed handoff for `research/bull`, `research/bear`, and `research/macro`.
+Target 250-450 words in lean mode (hard cap 700 words in all modes).
 
 ### Thesis Snapshot
-- Core thesis (2-3 sentences)
-- Why now (1-2 sentences)
+- Core thesis (1-2 sentences)
+- Why now (1 sentence)
 
 ### What Matters Most (Next 6-18M)
-- 3-5 highest impact drivers
+- 3-4 highest impact drivers
 - Include probability and impact direction where possible
 
 ### Bull Evidence
-- 3-5 strongest upside datapoints
+- 3 strongest upside datapoints
 - Keep each item short and evidence-based
 
 ### Bear Evidence
-- 3-5 strongest downside datapoints
+- 3 strongest downside datapoints
 - Keep each item short and evidence-based
 
 ### Catalyst Timeline
@@ -34,3 +35,7 @@ Use this section as a compressed handoff for `research/bull`, `research/bear`, a
 ### Data Quality Notes
 - Confidence level and key blind spots
 - Conflicting signals that could flip the view
+
+### Provider/Fallback Note
+- APIs used (e.g., FRED, Findatasets, yfinance)
+- Any fallback to web search and why

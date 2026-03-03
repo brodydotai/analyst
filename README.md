@@ -112,7 +112,24 @@ When you say `research NVDA`, the orchestrator:
 
 ### Token Efficiency
 
-The framework is designed to run a full pipeline in under 80K tokens through compressed handoffs between agents, section indexes (instead of full playbook reads) for compliance scoring, and targeted search templates for web research.
+The framework now defaults to a lean mode designed for <35K tokens per full run via:
+- compressed handoffs (`Summary for Perspectives` + `Opinion`)
+- section index scoring (instead of full playbook reads)
+- API-first evidence retrieval before web search
+
+## API Configuration
+
+Configure provider keys in local environment variables (copy `.env.example` to `.env`):
+
+- `FRED_API_KEY` (macro series)
+- `FINDATASETS_API_KEY` (SEC filings)
+- optional: `DROYD_API_KEY` (crypto overlay)
+
+For market pricing context, install yfinance:
+
+`pip install yfinance`
+
+Routing and provider policy live in `.agents/templates/api-routing-index.yaml`.
 
 ## Adding a New Playbook
 

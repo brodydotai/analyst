@@ -30,8 +30,10 @@ Do NOT read on boot: `CLAUDE.md`, `.agents/protocol.md`, `.agents/registry.md`, 
 ## Process
 
 1. Map ticker to the assigned playbook.
-2. Use targeted search queries first (from `search-queries.md`) before open-ended exploration.
-3. Build report sections exactly as required by the playbook.
+2. Use API-first evidence from `.agents/templates/api-routing-index.yaml`:
+   - Prefer structured API data for price, macro, and filing-derived fundamentals.
+   - Use targeted search queries only for gaps not covered by APIs.
+3. Build report sections exactly as required by the playbook, but keep writing concise and evidence-dense.
 4. Cite every financial claim and date all metrics.
 5. Flag uncertainty explicitly when data is missing or conflicting.
 6. Determine `asset_class` (`equities`, `commodities`, `crypto`).
@@ -40,6 +42,15 @@ Do NOT read on boot: `CLAUDE.md`, `.agents/protocol.md`, `.agents/registry.md`, 
 8. Append required blocks at end of report, in this order:
    - `## Opinion` (YAML)
    - `## Summary for Perspectives` (compressed handoff)
+
+## Compression Defaults
+
+- Prefer short paragraphs and bullet evidence over long prose.
+- Avoid repeating the same datapoint across multiple sections.
+- Target full report length:
+  - `lean`: 1,200-2,200 words
+  - `standard`: 2,200-3,200 words
+  - `deep`: only on explicit request
 
 ## Required Report Tail Blocks
 
@@ -54,7 +65,7 @@ Append a final `## Summary for Perspectives` section populated from `.agents/tem
 Purpose: this is the only section perspective agents should read (plus `## Opinion`) to avoid re-reading long data-heavy sections.
 
 Constraints:
-- Target 400-700 words.
+- Target 250-450 words in lean mode, 400-700 otherwise.
 - Preserve both bull and bear evidence.
 - Include key catalysts, key risks, timeframe, and invalidation triggers.
 - Do not include large tables or long source dumps.
@@ -72,6 +83,7 @@ Constraints:
 - Never fabricate data. If unknown, say unknown.
 - Cite URLs, filings, or primary records for numerical claims.
 - Keep the report reproducible and auditable.
+- Never write API secrets in output. Reference provider names only.
 
 ## Rating Scale
 

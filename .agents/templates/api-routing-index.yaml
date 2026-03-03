@@ -3,7 +3,7 @@
 # Secrets are stored in .env only. This index stores references only.
 
 version: 1
-last_updated: "2026-02-16"
+last_updated: "2026-03-03"
 
 categories:
   crypto_market_research:
@@ -27,15 +27,69 @@ categories:
 
   equity_market_research:
     description: "Traditional equity fundamentals, filings, estimates, and market data."
-    providers: []
+    providers:
+      - provider_id: "findatasets-sec"
+        label: "Findatasets SEC Filings"
+        integration_type: "api"
+        use_cases:
+          - "10-K / 10-Q retrieval"
+          - "financial statement extraction"
+          - "segment and risk factor evidence"
+          - "filing recency checks"
+        credentials:
+          env_var: "FINDATASETS_API_KEY"
+          required: true
+        status: "active"
+        priority: 1
+        notes: "Primary source for filing-backed fundamentals."
+
+      - provider_id: "yfinance"
+        label: "Yahoo Finance via yfinance"
+        integration_type: "python-package"
+        install: "pip install yfinance"
+        use_cases:
+          - "current price and market cap"
+          - "historical pricing windows"
+          - "volume and volatility context"
+          - "basic company stats"
+        credentials:
+          env_var: null
+          required: false
+        status: "active"
+        priority: 2
+        notes: "Fast market context; validate key figures against filings for critical claims."
 
   commodities_market_research:
     description: "Commodity pricing, supply-demand balances, inventories, and macro linkages."
-    providers: []
+    providers:
+      - provider_id: "fred"
+        label: "FRED Economic Data"
+        integration_type: "api"
+        use_cases:
+          - "inflation and rates backdrop"
+          - "industrial cycle and recession indicators"
+          - "yield curve and dollar regime checks"
+        credentials:
+          env_var: "FRED_API_KEY"
+          required: true
+        status: "active"
+        priority: 1
 
   macro_market_research:
     description: "Rates, liquidity, FX, and cross-asset macro regime indicators."
-    providers: []
+    providers:
+      - provider_id: "fred"
+        label: "FRED Economic Data"
+        integration_type: "api"
+        use_cases:
+          - "policy rates and inflation series"
+          - "labor and growth regime checks"
+          - "credit and spread context"
+        credentials:
+          env_var: "FRED_API_KEY"
+          required: true
+        status: "active"
+        priority: 1
 
 routing_rules:
   - when_asset_class: "crypto"
@@ -50,4 +104,14 @@ routing_rules:
     preferred_categories:
       - "commodities_market_research"
       - "macro_market_research"
+
+provider_selection_policy:
+  default_order:
+    - "structured_api"
+    - "targeted_web_search"
+    - "broad_exploratory_search"
+  hard_rules:
+    - "Never store API keys in reports, prompts, or committed files."
+    - "Use env vars only for credentials."
+    - "If provider fails, log fallback path in metadata."
 

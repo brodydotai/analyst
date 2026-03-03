@@ -1,6 +1,6 @@
-# Streamlined Report Structure — Watchlist Mode
+# Condensed Report Structure — Watchlist Mode
 
-This template defines the output format for watchlist batch runs. It produces a single self-contained document per ticker that combines the bull/bear thesis, full research, and data enrichment suggestions.
+This template is optimized for fast, token-efficient batch coverage. It favors decision quality over verbose narrative.
 
 ---
 
@@ -18,20 +18,18 @@ This template defines the output format for watchlist batch runs. It produces a 
 ## Thesis At a Glance
 
 ### Bull Case
-- {Strongest bull argument — one sentence with a specific data point}
-- {Second bull argument — one sentence with a specific data point}
-- {Third bull argument — one sentence with a specific data point}
+- {Strongest bull argument with one concrete datapoint}
+- {Second bull argument with one concrete datapoint}
 
 ### Bear Case
-- {Strongest bear argument — one sentence with a specific data point}
-- {Second bear argument — one sentence with a specific data point}
-- {Third bear argument — one sentence with a specific data point}
+- {Strongest bear argument with one concrete datapoint}
+- {Second bear argument with one concrete datapoint}
 
 ---
 
 ## Trade Ideas
 
-{Synthesize the bull/bear thesis, current macro regime, broad market conditions, and sector performance into 1-3 actionable trade ideas for this ticker at the time of writing. Each trade idea should be specific and time-aware.}
+{Synthesize bull/bear + macro into 1-2 actionable trade ideas. Keep it concise and time-aware.}
 
 ### Primary Trade
 - **Setup:** {What the trade is — long equity, pair trade, options structure, etc.}
@@ -42,8 +40,8 @@ This template defines the output format for watchlist batch runs. It produces a 
 - **Invalidation:** {What kills this trade — be specific}
 
 ### Alternative Trade (if applicable)
-- **Setup:** {A different way to express the same thesis — e.g., selling puts instead of buying shares, or a sector ETF proxy if single-stock risk is too high}
-- **Why This Instead:** {When would the alternative be better than the primary}
+- **Setup:** {Alternative expression of thesis}
+- **Why This Instead:** {When it is superior to primary}
 
 ### Macro Context
 {2-3 sentences on the current macro regime (Fed policy, yield curve, dollar strength, risk appetite) and how it specifically affects this ticker's sector. Reference real current conditions — rates, spreads, VIX level, sector rotation trends. This should feel like a point-in-time snapshot that anchors the trade ideas.}
@@ -52,40 +50,9 @@ This template defines the output format for watchlist batch runs. It produces a 
 
 ## Research
 
-{Full playbook sections 1 through 6 here. Follow the assigned playbook exactly.
-Each section should use numbered ### headings:
-### 1. {Section Title}, ### 2. {Section Title}, etc.
-Include all required elements per the playbook.
-Cite every financial claim. Date all metrics.
-Add extra spacing between subsections for readability.}
-
----
-
-## Data Enrichment Suggestions
-
-> The following data sources would improve this analysis if available. These are not report failures — they represent opportunities to deepen the research with additional access.
-
-{List each missing data dimension as a compact bullet. Group by category.}
-
-**Financials:**
-- {e.g., "Granular segment-level margins from 10-K (SEC EDGAR access would enable this)"}
-- {e.g., "Consensus EPS estimates from sell-side (requires terminal access)"}
-
-**Market Data:**
-- {e.g., "Options flow and implied volatility skew (requires real-time options data)"}
-- {e.g., "Institutional ownership changes from latest 13F filings"}
-
-**Alternative Data:**
-- {e.g., "Web traffic trends via SimilarWeb or Semrush"}
-- {e.g., "Patent filing analysis from USPTO"}
-- {e.g., "Satellite imagery for supply chain monitoring"}
-
-**Industry-Specific:**
-- {e.g., "Rig count data from Baker Hughes (for O&G)"}
-- {e.g., "Fab utilization rates from SEMI (for semiconductors)"}
-
-{Only include categories that are relevant. Typically 4-8 bullets total.
-Do NOT list things the report already covers. Only list what would ADD value.}
+{Follow assigned playbook exactly, but keep each section concise.
+Use numbered headings: ### 1. {Section Title}, ### 2. {Section Title}, etc.
+Include required elements only. Cite every numerical claim. Date all metrics.}
 
 ---
 
@@ -115,19 +82,17 @@ deep_dive_recommended: {true/false}
 
 ## Summary for Perspectives
 
-{400-700 word compressed handoff for perspective agents. Follow the template at `.agents/templates/perspective-summary.md`. Must be self-contained and decision-ready. Include: thesis snapshot, key drivers, bull evidence, bear evidence, catalyst timeline, risk triggers, valuation context, data quality notes.}
+{250-450 word compressed handoff for perspective agents. Follow `.agents/templates/perspective-summary.md`. Keep self-contained and decision-ready.}
 ```
 
 ---
 
 ## Rules
 
-1. **Thesis At a Glance comes first.** The user should know the bull and bear case within 10 seconds of opening the document.
-2. **Each bullet must contain a specific data point.** Not "strong revenue growth" but "revenue grew 34% YoY to $2.1B in Q3 2025."
-3. **Trade Ideas must be time-anchored.** Reference the actual macro conditions, Fed posture, sector performance, and market regime at the time of the query. These should read as "here's what I'd do right now" not generic strategy.
-4. **Trade Ideas come from the research, not from thin air.** The primary trade should flow directly from the strongest bull or bear argument. Don't invent setups that aren't supported by the analysis.
-5. **The research body follows the playbook exactly.** Don't skip sections or merge them.
-6. **Data Enrichment Suggestions are constructive, not critical.** Frame them as "what would make this even better" not "what's missing."
-7. **Keep each report under 3,500 words.** Watchlist mode favors breadth over depth. If a ticker warrants a deeper dive, note it in the opinion block with a flag: `deep_dive_recommended: true`.
-8. **Opinion and Summary for Perspectives are mandatory tail blocks.** Every report must end with these two sections. The Opinion YAML is parsed by the dashboard and downstream agents. The Summary for Perspectives is the compressed handoff read by bull/bear/macro perspective agents.
-9. **Opinion YAML must include all fields.** Required: ticker, rating, action, confidence, data_confidence, timeframe, thesis, catalysts (array), risks (array), invalidation.
+1. **Thesis At a Glance comes first.** Users should understand direction in <10 seconds.
+2. **Every bullet must include evidence.** Use concrete datapoints.
+3. **Trade ideas must be time-anchored and evidence-backed.**
+4. **Follow playbook sections, but stay concise.**
+5. **Keep report under 2,500 words in watchlist mode.**
+6. **Opinion and Summary tail blocks are mandatory.**
+7. **Opinion YAML must include all required fields.**

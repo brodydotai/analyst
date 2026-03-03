@@ -1,6 +1,6 @@
-# Analyst — Agent Communication Protocol
+# Analyst — Agent Communication Protocol (Lean)
 
-How agents coordinate work and hand off tasks.
+How agents coordinate with minimal token overhead and minimal context drift.
 
 ---
 
@@ -29,21 +29,27 @@ Assigned → In Progress → Delivered → Reviewed → Done
 | **Reviewed** | Orchestrator | Audits against playbook, checks scorecard |
 | **Done** | Orchestrator | Accepts or requests revision |
 
-## Full Analysis Pipeline
+## Full Analysis Pipeline (Lean by Default)
 
 For a complete analysis (report + scorecard + perspectives + synthesis):
 
 ```
 Phase 0: Orchestrator resolves playbook from index.yaml       → auto-detection
-Phase 1: Equity agent → report + opinion + perspective summary → artifacts/{asset_class}/reports/
-Phase 2: Compliance agent → scorecard from sections index      → artifacts/{asset_class}/scorecards/
-Phase 3: Bull + Bear + Macro agents → perspectives from summary → artifacts/{asset_class}/perspectives/ (JSON)
-Phase 4: Synthesis agent → final recommendation                → artifacts/{asset_class}/synthesis/
+Phase 1: Equity agent (API-first) → concise report + opinion + perspective summary
+Phase 2: Compliance agent (single-pass) → scorecard from sections index
+Phase 3: Bull + Bear + Macro agents → perspectives from summary/opinion only
+Phase 4: Synthesis agent → final recommendation from compressed inputs
 Phase 5: Orchestrator → delivers all artifacts to user         → chat output with links
 ```
 
 Phases 1-2 are sequential. Phase 3 agents can run in parallel after Phase 1 completes.
 Phase 4 runs after Phase 3 perspectives are collected. Phase 2 can run in parallel with Phase 3.
+
+### Depth Modes
+
+- `lean` (default): lowest token usage, compressed outputs
+- `standard`: balanced detail
+- `deep`: explicit user request only
 
 ### Playbook Auto-Detection
 
@@ -108,6 +114,8 @@ Execution: run at least 2 experiment modes, capture high-signal findings, corrob
 4. **Save work frequently.** Don't risk losing output to context limits.
 5. **Keep it lean.** Minimize files read on boot. Only load what you need for the current task.
 6. **Use compressed handoffs first.** Prefer section indexes and perspective summaries over full artifacts.
+7. **API-first evidence.** Pull structured data from configured APIs before broad web search.
+8. **Never expose API secrets in files or output.** Use env vars only.
 
 ## Context Window Optimization
 
@@ -115,7 +123,7 @@ Agent boot sequence should consume < 2000 tokens:
 
 1. Read `INSTRUCTIONS.md` (~80 lines)
 2. Read assigned task (~20 lines)
-3. Read only required supporting artifact:
+3. Read only required supporting artifacts:
    - Equity: assigned full playbook
    - Compliance: `{name}/sections.json` (full playbook only as fallback)
    - Perspectives: `## Summary for Perspectives` + `## Opinion`
@@ -125,15 +133,18 @@ Do NOT read on boot: CLAUDE.md (orchestrator reads this), registry.md, protocol.
 
 ## Target Token Budget Per Run
 
-Design target: < 80K tokens end-to-end for full pipeline.
+Design targets:
+- `lean`: < 35K tokens full pipeline
+- `standard`: < 55K tokens full pipeline
+- `deep`: < 80K tokens full pipeline
 
 | Phase | Budget | Notes |
 |-------|--------|-------|
 | Setup | < 2K | Index lookup + dir creation |
-| Equity | 28–40K | Web research + full report (largest phase) |
-| Compliance | 8–15K | Section index + report scoring |
-| Perspectives | 12–20K | Three agents, compressed input |
-| Synthesis | 5–10K | Lightweight reconciliation |
+| Equity | 12–20K (`lean`) | API-first + concise writeup |
+| Compliance | 4–8K (`lean`) | Section index + single-pass scoring |
+| Perspectives | 6–10K (`lean`) | Three agents, summary-only input |
+| Synthesis | 3–6K (`lean`) | Lightweight reconciliation |
 
 Token sink controls:
 1. Avoid full playbook re-read in compliance with `{name}/sections.json`.
@@ -141,6 +152,16 @@ Token sink controls:
 3. Use targeted search templates before exploratory search.
 4. Load `rules.json` once per compliance run.
 5. Prefer single-pass scoring and extraction.
+
+## API Integration Contract
+
+Routing map: `.agents/templates/api-routing-index.yaml`
+
+Rules:
+1. Choose provider by `asset_class` + required metric type.
+2. Prefer structured endpoints over web scraping/search for price, macro, and filing data.
+3. If API data conflicts with web data, prioritize primary structured source and document discrepancy.
+4. Log fallback usage when providers are unavailable or rate-limited.
 
 ## Delegation Matrix
 

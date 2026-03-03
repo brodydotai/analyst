@@ -1,11 +1,12 @@
 ---
 name: research
-description: "Full-pipeline investment research. Give it a ticker and get a structured report, compliance scorecard, bull/bear/macro perspectives, and synthesized recommendation. Triggers on: 'research {ticker}', 'analyze {ticker}', 'run playbook on {ticker}', or any request to produce an investment report."
+description: "Lean investment research pipeline. Default mode is token-efficient and API-first, with optional deeper runs. Triggers on: 'research {ticker}', 'analyze {ticker}', 'run playbook on {ticker}', or requests for an investment report."
 ---
 
 # Investment Research Orchestrator
 
-You are the orchestrator for a multi-agent investment research pipeline. When invoked, you chain five specialized agents in sequence to produce a complete, auditable research package.
+You are the orchestrator for a multi-agent research pipeline.
+Default behavior is lean, compressed, and API-first to minimize token usage while preserving auditability.
 
 ## Input Contract
 
@@ -15,6 +16,10 @@ You are the orchestrator for a multi-agent investment research pipeline. When in
 - `period`: month tag (e.g., mar) — defaults to current month
 - `playbook`: explicit playbook filename — auto-detected if omitted
 - `steps`: run specific steps only (e.g., "equity only", "perspectives only")
+- `depth`: `lean` (default) | `standard` | `deep`
+  - `lean`: fastest, lowest token consumption
+  - `standard`: balanced detail
+  - `deep`: only when user explicitly requests deep-dive output
 
 ## Output Contract
 
@@ -30,30 +35,32 @@ artifacts/{asset_class}/
 
 ## Execution Pipeline
 
-### Phase 0: Setup
+### Phase 0: Setup (Always Lean)
 
 1. **Validate ticker.** Confirm the ticker symbol resolves to a real traded security via web search (e.g., `{ticker} stock price`). If it doesn't resolve, abort and inform the user. For ETFs, confirm the fund exists and identify its focus area.
 
 2. **Resolve ticker metadata.** Read `.agents/playbooks/index.yaml` to match the ticker to a playbook and asset class. If no match found, use web search to identify the company's sector, then match to the closest playbook. If still no match, use `_default/playbook.prompt.md`.
 
-2. **Set naming variables:**
+3. **Set naming variables:**
    - `ticker_lower` = ticker in lowercase (e.g., `nvda`)
    - `period` = current month abbreviated lowercase (e.g., `mar`)
    - `asset_class` = resolved asset class (e.g., `equities`)
+   - `depth` = `lean` unless user requests otherwise
 
-3. **Bootstrap directories.** Create `artifacts/{asset_class}/reports/`, `artifacts/{asset_class}/scorecards/`, `artifacts/{asset_class}/perspectives/`, and `artifacts/{asset_class}/synthesis/` if they don't exist.
+4. **Bootstrap directories.** Create `artifacts/{asset_class}/reports/`, `artifacts/{asset_class}/scorecards/`, `artifacts/{asset_class}/perspectives/`, and `artifacts/{asset_class}/synthesis/` if they don't exist.
 
-### Phase 1: Equity Research Agent
+### Phase 1: Equity Research Agent (API-First)
 
 **Read (in order):**
 1. `.agents/research/equity/INSTRUCTIONS.md`
 2. The resolved playbook from `.agents/playbooks/{playbook_dir}/playbook.prompt.md`
-3. `.agents/templates/search-queries.md` (for web research query patterns)
+3. `.agents/templates/api-routing-index.yaml` (provider selection + env var mapping)
+4. `.agents/templates/search-queries.md` (API-first + targeted query patterns)
 4. `.agents/templates/report-structure.md` (output skeleton)
 5. `.agents/templates/opinion-block.yaml` (opinion schema)
 6. `.agents/templates/perspective-summary.md` (summary template)
 
-**Execute:** Follow the equity agent instructions exactly. Conduct web research using the search query templates. Write a complete report following the playbook's section requirements.
+**Execute:** Follow the equity instructions exactly. Use API-first evidence, then targeted web queries only for missing requirements. Write a concise report following playbook requirements.
 
 **Critical output requirements:**
 - The report MUST end with `## Opinion` (YAML block) and `## Summary for Perspectives` (400-700 words)
@@ -61,7 +68,7 @@ artifacts/{asset_class}/
 
 **Save to:** `artifacts/{asset_class}/reports/{ticker_lower}.{period}.md`
 
-### Phase 2: Compliance Agent
+### Phase 2: Compliance Agent (Lean Scoring)
 
 **Read (in order):**
 1. `.agents/research/compliance/INSTRUCTIONS.md`
@@ -69,11 +76,11 @@ artifacts/{asset_class}/
 3. `.agents/playbooks/{playbook_dir}/sections.json` (preferred) OR fall back to full playbook
 4. The report produced in Phase 1
 
-**Execute:** Score the report against the playbook's requirements using the weighted scoring system (30% section + 30% element + 15% citation quality + 10% data recency + 15% structural).
+**Execute:** Score against playbook requirements using section index first. In `lean` mode, skip narrative-heavy commentary and output only decisive misses + grade rationale.
 
 **Save to:** `artifacts/{asset_class}/scorecards/{ticker_lower}.{period}.scorecard.md`
 
-### Phase 3: Perspective Agents (Parallel)
+### Phase 3: Perspective Agents (Parallel, Compressed)
 
 Run all three perspective agents. Each reads ONLY the `## Summary for Perspectives` and `## Opinion` sections from the Phase 1 report — NOT the full report.
 
@@ -86,7 +93,7 @@ Run all three perspective agents. Each reads ONLY the `## Summary for Perspectiv
 
 **Save to:** `artifacts/{asset_class}/perspectives/{ticker_lower}.{period}.perspectives.json`
 
-### Phase 4: Synthesis Agent
+### Phase 4: Synthesis Agent (Decision Output)
 
 **Read:**
 1. `.agents/research/synthesis/INSTRUCTIONS.md`
@@ -107,6 +114,18 @@ Present the user with:
 4. **Compliance grade** from the scorecard
 5. **Perspective spread** — where bull, bear, and macro ratings landed
 
+## Depth Modes
+
+- **lean (default):**
+  - concise report sections
+  - concise compliance commentary
+  - compressed perspective summary (250-450 words)
+  - lowest token spend
+- **standard:**
+  - moderate detail, still compressed handoffs
+- **deep:**
+  - expanded evidence and investigation depth, only on explicit request
+
 ## Running Individual Steps
 
 Users can run any step in isolation:
@@ -120,18 +139,22 @@ Users can run any step in isolation:
 ## Error Handling
 
 - **Playbook not found:** Fall back to `_default/playbook.prompt.md`, warn user
+- **API provider unavailable:** fall back to targeted web search and log fallback path in report metadata
 - **Web search fails:** Continue with available data, flag low confidence in opinion block
 - **Report missing tail blocks:** Compliance and perspective agents should warn but attempt partial execution
 - **Scorecard grade F:** Flag to user, suggest re-running equity agent with more research depth
 
 ## Token Budget
 
-Target: < 80K tokens end-to-end for full pipeline.
+Target budgets:
+- `lean`: < 35K tokens end-to-end
+- `standard`: < 55K tokens end-to-end
+- `deep`: < 80K tokens end-to-end
 
 | Phase | Budget | Notes |
 |-------|--------|-------|
 | Setup | < 2K | Index lookup + dir creation |
-| Equity | 28-40K | Largest phase — web research + full report |
-| Compliance | 8-15K | Section index path saves ~5K vs full playbook |
-| Perspectives | 12-20K | Three agents, compressed input |
-| Synthesis | 5-10K | Lightweight reconciliation |
+| Equity | 12-20K (`lean`) | API-first + concise sections |
+| Compliance | 4-8K (`lean`) | Section index + single-pass scoring |
+| Perspectives | 6-10K (`lean`) | Three agents, summary-only |
+| Synthesis | 3-6K (`lean`) | Compressed reconciliation |

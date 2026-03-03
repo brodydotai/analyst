@@ -4,10 +4,26 @@ Purpose: reduce exploratory search noise and token waste. Use these templates be
 
 ## Usage Rules
 
-- Start with 3-5 targeted queries from the relevant playbook block below.
+- Start with API-first retrieval (see `api-routing-index.yaml`) for structured metrics.
+- Then run 3-5 targeted queries from the relevant playbook block below.
 - Prefer primary sources (filings, investor relations, regulator docs, company releases).
 - Only run additional exploratory queries when targeted queries fail to answer a required element.
 - Keep copied evidence concise and cite URLs.
+
+## API-First Retrieval Patterns
+
+Use these before web search when keys/providers are configured:
+
+1. **FRED (macro series):**
+   - policy rates, inflation, unemployment, GDP, yields, spreads, dollar/liquidity proxies
+2. **Findatasets (SEC filings):**
+   - 10-K/10-Q fundamentals, segment disclosures, risk factors, footnotes, filing dates
+3. **yfinance (pricing + market context):**
+   - current price, market cap, volume, 52w range, beta, performance windows
+
+Fallback sequence:
+- API unavailable/rate-limited -> targeted web search
+- Record fallback in report metadata (do not log secrets)
 
 ## Query Template Format
 
