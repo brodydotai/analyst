@@ -1,11 +1,68 @@
 # API Routing Index (file-first, model-agnostic)
-# Purpose: let agents map research intent -> provider -> env var.
+# Purpose: let agents map research intent -> provider -> integration type.
+# Architecture: MCP-first for Findatasets, REST for FRED, WebSearch fallback.
 # Secrets are stored in .env only. This index stores references only.
 
-version: 1
-last_updated: "2026-03-03"
+version: 2
+last_updated: "2026-03-04"
 
 categories:
+  equity_market_research:
+    description: "Traditional equity fundamentals, filings, estimates, and market data."
+    providers:
+      - provider_id: "findatasets"
+        label: "Financial Datasets (MCP + REST)"
+        integration_type: "mcp"
+        mcp_server:
+          programmatic: "https://mcp.financialdatasets.ai/api"
+          streamable_http: "https://mcp.financialdatasets.ai/mcp"
+          sse: "https://mcp.financialdatasets.ai/sse"
+        mcp_tools:
+          - "getIncomeStatement"
+          - "getBalanceSheet"
+          - "getCashFlowStatement"
+          - "getFinancialMetrics"
+          - "getFilings"
+          - "getFilingItems"
+          - "getCompanyFacts"
+          - "getNews"
+        rest_fallback:
+          base_url: "https://api.financialdatasets.ai"
+          note: "REST mirrors MCP tools. Used by test harness and production app server."
+        use_cases:
+          - "income statement, balance sheet, cash flow"
+          - "40+ financial metrics (valuation, profitability, growth, liquidity)"
+          - "10-K / 10-Q filing retrieval and item extraction"
+          - "analyst estimates (EPS, revenue)"
+          - "earnings snapshots with beat/miss signals"
+          - "company facts (employees, CIK, sector)"
+          - "insider trades (Form 4)"
+          - "news articles"
+        credentials:
+          env_var: "FINDATASETS_API_KEY"
+          header: "X-API-KEY"
+          required: true
+        status: "active"
+        priority: 1
+        notes: "Primary source for all company-specific data. SEC-sourced, audited."
+
+      - provider_id: "yfinance"
+        label: "Yahoo Finance (price-only fallback)"
+        integration_type: "library"
+        packages:
+          node: "yahoo-finance2"
+          python: "yfinance"
+        use_cases:
+          - "real-time price and intraday data"
+          - "analyst price targets (not in Findatasets)"
+          - "52w range with intraday precision"
+          - "ETF holdings and sector weights"
+        credentials:
+          required: false
+        status: "active"
+        priority: 3
+        notes: "Demoted to price-only. Fundamentals now from Findatasets."
+
   crypto_market_research:
     description: "Crypto protocol, market microstructure, on-chain telemetry, and token intelligence."
     providers:
@@ -25,66 +82,49 @@ categories:
         priority: 1
         rate_limit: "10 requests per 15 minutes per endpoint"
 
-  equity_market_research:
-    description: "Traditional equity fundamentals, filings, estimates, and market data."
-    providers:
-      - provider_id: "findatasets-sec"
-        label: "Findatasets SEC Filings"
-        integration_type: "api"
-        use_cases:
-          - "10-K / 10-Q retrieval"
-          - "financial statement extraction"
-          - "segment and risk factor evidence"
-          - "filing recency checks"
+      - provider_id: "findatasets-crypto"
+        label: "Financial Datasets (Crypto)"
+        integration_type: "mcp"
+        mcp_tools:
+          - "getCryptoPriceSnapshot"
+          - "getCryptoPrices"
+          - "getAvailableCryptoTickers"
         credentials:
           env_var: "FINDATASETS_API_KEY"
           required: true
         status: "active"
-        priority: 1
-        notes: "Primary source for filing-backed fundamentals."
-
-      - provider_id: "yfinance"
-        label: "Yahoo Finance via yfinance"
-        integration_type: "python-package"
-        install: "pip install yfinance"
-        use_cases:
-          - "current price and market cap"
-          - "historical pricing windows"
-          - "volume and volatility context"
-          - "basic company stats"
-        credentials:
-          env_var: null
-          required: false
-        status: "active"
         priority: 2
-        notes: "Fast market context; validate key figures against filings for critical claims."
-
-  commodities_market_research:
-    description: "Commodity pricing, supply-demand balances, inventories, and macro linkages."
-    providers:
-      - provider_id: "fred"
-        label: "FRED Economic Data"
-        integration_type: "api"
-        use_cases:
-          - "inflation and rates backdrop"
-          - "industrial cycle and recession indicators"
-          - "yield curve and dollar regime checks"
-        credentials:
-          env_var: "FRED_API_KEY"
-          required: true
-        status: "active"
-        priority: 1
 
   macro_market_research:
     description: "Rates, liquidity, FX, and cross-asset macro regime indicators."
     providers:
       - provider_id: "fred"
         label: "FRED Economic Data"
-        integration_type: "api"
+        integration_type: "rest_api"
+        base_url: "https://api.stlouisfed.org/fred"
         use_cases:
           - "policy rates and inflation series"
           - "labor and growth regime checks"
-          - "credit and spread context"
+          - "yield curve and dollar regime"
+          - "commodity price indexes"
+        credentials:
+          env_var: "FRED_API_KEY"
+          required: true
+        status: "active"
+        priority: 1
+        notes: "No MCP server available. REST only."
+
+  commodities_market_research:
+    description: "Commodity pricing, supply-demand balances, inventories, and macro linkages."
+    providers:
+      - provider_id: "fred"
+        label: "FRED Economic Data"
+        integration_type: "rest_api"
+        use_cases:
+          - "inflation and rates backdrop"
+          - "industrial cycle and recession indicators"
+          - "yield curve and dollar regime checks"
+          - "WTI crude and gold prices"
         credentials:
           env_var: "FRED_API_KEY"
           required: true
@@ -103,15 +143,18 @@ routing_rules:
   - when_asset_class: "commodities"
     preferred_categories:
       - "commodities_market_research"
+      - "equity_market_research"
       - "macro_market_research"
 
 provider_selection_policy:
   default_order:
-    - "structured_api"
-    - "targeted_web_search"
+    - "mcp_tool"             # Findatasets MCP (preferred)
+    - "structured_api"        # FRED REST
+    - "targeted_web_search"   # WebSearch
     - "broad_exploratory_search"
   hard_rules:
     - "Never store API keys in reports, prompts, or committed files."
     - "Use env vars only for credentials."
     - "If provider fails, log fallback path in metadata."
-
+    - "Prefer Findatasets over Yahoo for any overlapping data."
+    - "Use Yahoo only for real-time price, price targets, and ETF data."

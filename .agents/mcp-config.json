@@ -1,0 +1,31 @@
+{
+  "mcpServers": {
+    "financial-datasets": {
+      "command": "npx",
+      "args": ["-y", "mcp-remote", "https://mcp.financialdatasets.ai/api"],
+      "headers": {
+        "X-API-KEY": "${FINDATASETS_API_KEY}"
+      },
+      "tools": [
+        "getCompanyFacts",
+        "getIncomeStatement",
+        "getBalanceSheet",
+        "getCashFlowStatement",
+        "getFinancialMetrics",
+        "getFilings",
+        "getFilingItems",
+        "getAvailableFilingItems",
+        "getNews",
+        "getCryptoPriceSnapshot",
+        "getCryptoPrices",
+        "getAvailableCryptoTickers"
+      ],
+      "notes": {
+        "auth": "API key via X-API-KEY header",
+        "docs": "https://docs.financialdatasets.ai",
+        "env_var": "FINDATASETS_API_KEY",
+        "setup": "Export FINDATASETS_API_KEY or add to .env before starting Claude"
+      }
+    }
+  }
+}

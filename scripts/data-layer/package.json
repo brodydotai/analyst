@@ -1,0 +1,13 @@
+{
+  "name": "analyst-data-layer",
+  "version": "0.1.0",
+  "description": "Standalone data gathering test harness — run locally to test API integrations",
+  "type": "module",
+  "scripts": {
+    "test": "node test-harness.js",
+    "gather": "node gather.js"
+  },
+  "dependencies": {
+    "yahoo-finance2": "^2.13.2"
+  }
+}

@@ -10,12 +10,39 @@
 4. `.agents/templates/search-queries.md` (web search patterns)
 5. `.agents/templates/opinion-block.yaml` (Opinion schema reference)
 
+## Data Sources
+
+### Primary: Findatasets MCP Tools
+Call these BEFORE writing the report. Use the structured data throughout.
+
+| Tool | What You Get | When to Call |
+|------|-------------|--------------|
+| `getCompanyFacts` | Name, CIK, employees, sector, market cap, website | Every ticker |
+| `getIncomeStatement` | Revenue, net income, EPS, margins, R&D | Every ticker (annual, limit 2) |
+| `getBalanceSheet` | Assets, liabilities, equity, debt, cash | Every ticker (annual, limit 2) |
+| `getCashFlowStatement` | FCF, operating CF, capex, buybacks | Every ticker (annual, limit 2) |
+| `getFinancialMetrics` | P/E, EV/EBITDA, ROE, ROIC, margins, growth, per-share | Every ticker (annual + TTM) |
+| `getFilings` | SEC filing list (10-K, 10-Q, 8-K dates/URLs) | Every ticker |
+| `getFilingItems` | Extract risk factors, business description from 10-K | When playbook demands depth |
+| `getNews` | Recent news articles | When catalyst timing matters |
+
+### Secondary: FRED (macro data)
+Fed funds rate, Treasury yields, CPI, unemployment, DXY, WTI, gold. Use for Macro Context section.
+
+### Tertiary: Web Search
+Run 6-10 targeted searches using sector query templates. Web search provides qualitative context that structured data can't — analyst commentary, competitive dynamics, catalyst timing, management guidance.
+
+### Data Priority Rule
+**Always cite Findatasets figures over web-scraped numbers for the same metric.** Findatasets data is SEC-sourced and audited. Web search is for context, not for financial claims.
+
 ## Process
 
-1. Run 6-10 targeted web searches for this ticker using sector query templates.
-2. Write the report following `report-template.md` exactly — every section, in order.
-3. Follow the assigned playbook for the Research section numbering and content.
-4. End with Opinion YAML using the EXACT schema. No variations.
+1. **Gather structured data** — call Findatasets MCP tools and note FRED macro context.
+2. **Run 6-10 web searches** using sector query templates for qualitative context.
+3. **Write the report** following `report-template.md` exactly — every section, in order.
+4. **Cite structured data** for all financial claims. Date all metrics. Cross-reference Findatasets figures with web search findings.
+5. Follow the assigned playbook for the Research section numbering and content.
+6. End with Opinion YAML using the EXACT schema. No variations.
 
 ## Report Template Sections (in order)
 
@@ -36,7 +63,7 @@ The dashboard parses these exact keys. If you rename them, the UI breaks.
 - `rating`: number (e.g., 7, 8.5). NOT a word.
 - `action`: max 5 words (e.g., "Accumulate", "Buy", "Hold")
 - `confidence`: decimal 0.0-1.0
-- `data_confidence`: decimal 0.0-1.0
+- `data_confidence`: decimal 0.0-1.0 — reflects actual data coverage from gathering step
 - `timeframe`: "3M", "6M", "12M", or "18M"
 - `thesis`: one sentence, max 30 words
 - `catalysts`: array of short strings
@@ -47,7 +74,13 @@ The dashboard parses these exact keys. If you rename them, the UI breaks.
 
 - Never fabricate data. If unknown, say unknown.
 - Cite sources. Date all metrics.
-- Set `data_confidence` lower when evidence is thin.
+- When Findatasets provides a figure, use it and note the filing period.
+- When only web search data is available, note the source and date.
+- Set `data_confidence` based on actual structured data coverage:
+  - 0.80+ = strong (full financials + metrics + filings from Findatasets)
+  - 0.60-0.79 = moderate (partial API data + web research)
+  - 0.40-0.59 = thin (mostly web research)
+  - <0.40 = very thin (flag to user)
 
 ## Rating Scale
 

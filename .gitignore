@@ -31,5 +31,8 @@ yarn.lock
 *.tmp
 *.bak
 
+# Internal strategy docs (not public)
+docs/
+
 # Prevent recursive accidental check-ins
 .agents/.agents/

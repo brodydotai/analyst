@@ -1,145 +1,84 @@
 # Analyst
 
-A multi-agent investment research framework for Claude Cowork. Drop it into your session, give it a ticker, and get a complete research package — structured report, compliance scorecard, bull/bear/macro perspectives, and synthesized recommendation.
+Structured investment research powered by LLM analysis and sector-specific playbooks. Enter a ticker, get a complete research report with macro context, bull/bear cases, trade setup, and a scored opinion.
 
-## How to Use
-
-### Setup
-
-1. Add this folder to your Claude Cowork session (select it as your working directory)
-2. Say `research NVDA` (or any ticker)
-3. The orchestrator handles the rest
-
-### Commands
-
-| Command | What It Does |
-|---------|-------------|
-| `research {TICKER}` | Full pipeline — report, scorecard, perspectives, synthesis |
-| `analyze {TICKER}` | Same as above |
-| `run equity research on {TICKER}` | Report only |
-| `run compliance on {TICKER}` | Scorecard only (needs existing report) |
-| `run perspectives on {TICKER}` | Bull/bear/macro only (needs existing report) |
-| `run bull case on {TICKER}` | Single perspective agent |
-| `synthesize {TICKER}` | Final recommendation (needs report + perspectives) |
-| `research watchlist {URL}` | Batch research from a TradingView watchlist link (up to 10 tickers) |
-| `analyze {T1}, {T2}, {T3}, ...` | Batch research from a comma-separated ticker list |
-
-### What You Get
-
-**Single ticker** (full pipeline) produces four artifacts in `artifacts/{asset_class}/`:
+## Quick Start
 
 ```
-artifacts/equities/
-├── reports/nvda.mar.md              # Full research report
-├── scorecards/nvda.mar.scorecard.md # Compliance scorecard
-├── perspectives/nvda.mar.perspectives.json  # Bull/bear/macro views
-└── synthesis/nvda.mar.synthesis.md  # Final recommendation
+research NVDA
+analyze CLF, COPX, UUUU
+run playbook on OKLO
 ```
 
-**Watchlist batch** produces streamlined reports per ticker plus a summary:
+Reports follow a strict template: executive summary, macro context, bull/bear cases, primary trade, deep research sections, and a machine-readable opinion block.
 
-```
-artifacts/equities/reports/nvda.mar.md     # Streamlined report (bull/bear + trade ideas + research + enrichment)
-artifacts/equities/reports/clf.mar.md
-artifacts/equities/reports/mara.mar.md
-artifacts/watchlist-summary.mar.md         # Coverage table, top picks, sector exposure
-```
-
-Each watchlist report includes: thesis at a glance (3 bull + 3 bear bullets), trade ideas anchored to current macro/market/sector conditions, full playbook research, opinion block, and data enrichment suggestions.
-
-## Architecture
+## What's Inside
 
 ### Pipeline
 
-The framework chains five specialized agents in sequence:
-
 ```
-Phase 0: Setup         → Auto-detect playbook from ticker
-Phase 1: Equity Agent  → Web research + structured report
-Phase 2: Compliance    → Score report against playbook requirements
-Phase 3: Perspectives  → Bull, Bear, Macro agents (run in parallel)
-Phase 4: Synthesis     → Reconcile all views into recommendation
-Phase 5: Deliver       → Present results with links
+Ticker Input → Playbook Resolution → Web Research → Report Generation → Delivery
 ```
 
-### Directory Structure
+Each report is generated sequentially to ensure consistency across tickers. The pipeline resolves the correct sector playbook automatically via `index.yaml`, runs targeted web research, and writes a 1,500–2,500 word report following the report template exactly.
+
+### Playbooks
+
+30+ sector-specific research playbooks covering semiconductors, data centers, SaaS, cybersecurity, defense, space, drones, quantum, robotics, pharma, oil & gas, utilities, uranium, precious metal miners, base metals, rare earths, specialty materials, Chinese AI/tech, fintech, banking, bitcoin mining, consumer/e-commerce, healthcare/medtech, shipping, agriculture, REITs, EVs, gaming, and more. A generic fallback handles anything not covered by a specific sector.
+
+Playbook auto-detection checks the ticker against `index.yaml` first, then falls back to keyword matching via web search.
+
+### Dashboard
+
+A React + Vite dashboard for browsing and reading generated reports. Dark theme, responsive layout, markdown rendering, opinion block parsing, and a metrics header with confidence visualization.
+
+```
+cd dashboard && npm install && npm run dev
+```
+
+### Opinion Schema
+
+Every report ends with a YAML opinion block that the dashboard parses for display and comparison:
+
+```yaml
+ticker: NVDA
+rating: 8
+action: "Buy"
+confidence: 0.82
+data_confidence: 0.75
+timeframe: "6M"
+thesis: "One sentence, max 30 words"
+catalysts:
+  - "Catalyst with timing"
+risks:
+  - "Risk description"
+invalidation: "Measurable condition"
+```
+
+## Directory Structure
 
 ```
 .agents/
-├── playbooks/              # 20+ sector-specific research templates
-│   ├── index.yaml          # Ticker → playbook auto-mapping
-│   ├── {name}/             # One folder per sector playbook
-│   │   ├── playbook.prompt.md    # Playbook instructions
-│   │   └── sections.json         # Section index for compliance
-│   ├── sections.schema.json
-│   └── _default/           # Generic fallback playbook
-├── research/
-│   ├── equity/             # Report generation agent
-│   ├── compliance/         # Scorecard verification agent
-│   ├── bull/               # Bull perspective agent
-│   ├── bear/               # Bear perspective agent
-│   ├── macro/              # Macro overlay agent
-│   └── synthesis/          # Final recommendation agent
-├── compliance/
-│   └── rules.json          # Scoring weights + thresholds
-├── templates/              # Report skeleton, opinion schema, search queries
-├── registry.md             # Agent index
-└── protocol.md             # Communication + handoff rules
+├── playbooks/           # 30+ sector playbooks + index.yaml
+├── research/equity/     # Report generation agent
+├── compliance/          # Scoring weights
+├── templates/           # Report template, opinion schema, search queries
+├── data-sources.yaml    # API configuration (FRED, Findatasets, yfinance)
+└── protocol.md          # Agent communication rules
 
-skills/
-└── research/
-    └── SKILL.md            # Orchestrator skill (pipeline definition)
+skills/research/         # Pipeline orchestrator
+reports/                 # Generated reports (served by dashboard)
+dashboard/               # React + Vite report viewer
 
-artifacts/                  # Generated output (gitignored)
-├── equities/
-├── commodities/
-└── crypto/
-
-CLAUDE.md                   # Orchestrator boot context
+CLAUDE.md                # Entry point and operating rules
 ```
 
-### Available Playbooks
-
-The framework includes sector-specific playbooks for: Semiconductors, Precious Metal Miners, Base Metal Miners, Uranium Miners, Industrial Metals, Precious & Rare Earth Metals, Steel Producers, Oil & Gas E&P, Oil & Gas Midstream, Renewable Energy, Defense & Aerospace, Bitcoin Mining, Critical Minerals, Nuclear Energy, Shipping & Maritime, Agriculture, Water & Utilities, REITs, and Crypto/DeFi — plus a generic fallback for any company not covered by a specific sector.
-
-### How Playbook Auto-Detection Works
-
-When you say `research NVDA`, the orchestrator:
-1. Checks `.agents/playbooks/index.yaml` for a direct ticker match
-2. If no match, searches the web to identify the company's sector
-3. Matches the sector to the closest playbook via keywords
-4. Falls back to `_default.prompt.md` if nothing matches
-
-### Token Efficiency
-
-The framework now defaults to a lean mode designed for <35K tokens per full run via:
-- compressed handoffs (`Summary for Perspectives` + `Opinion`)
-- section index scoring (instead of full playbook reads)
-- API-first evidence retrieval before web search
-
-## API Configuration
-
-Configure provider keys in local environment variables (copy `.env.example` to `.env`):
-
-- `FRED_API_KEY` (macro series)
-- `FINDATASETS_API_KEY` (SEC filings)
-- optional: `DROYD_API_KEY` (crypto overlay)
-
-For market pricing context, install yfinance:
-
-`pip install yfinance`
-
-Routing and provider policy live in `.agents/templates/api-routing-index.yaml`.
-
-## Adding a New Playbook
+## Adding a Playbook
 
 1. Create `.agents/playbooks/{name}/playbook.prompt.md` with section requirements
 2. Create `.agents/playbooks/{name}/sections.json` (follow `sections.schema.json`)
-3. Add ticker mappings to `.agents/playbooks/index.yaml`
+3. Add ticker mappings and keywords to `.agents/playbooks/index.yaml`
 
-## Adding a New Agent
+## Data Sources
 
-1. Create `.agents/research/{name}/INSTRUCTIONS.md`
-2. Define: Identity, Read Order, Scope, Output Format
-3. Register in `.agents/registry.md`
-4. Keep instructions under 100 lines
+Configured in `.agents/data-sources.yaml`. Currently uses web search as primary; FRED, Findatasets, and yfinance available when running locally with API keys configured.

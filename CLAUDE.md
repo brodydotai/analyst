@@ -2,7 +2,7 @@
 
 ## What This Is
 
-Analyst is a sequential investment research pipeline for Claude Cowork. Give it a ticker, get a structured report.
+Analyst is a sequential investment research pipeline for Claude Cowork. Give it a ticker, get a structured report backed by SEC-sourced financial data.
 
 ## Quick Start
 
@@ -10,15 +10,47 @@ Analyst is a sequential investment research pipeline for Claude Cowork. Give it 
 - `analyze CLF, COPX, UUUU`
 - `run playbook on OKLO`
 
-## Pipeline (2 Phases)
+## Pipeline (3 Phases)
 
 ```
-Phase 0: Setup    → Validate ticker, resolve playbook
-Phase 1: Research → Web research + write report (single pass)
-Deliver           → Present report to user
+Phase 0:   Setup         → Validate ticker, resolve playbook
+Phase 0.5: Data Gather   → Findatasets MCP + FRED + web search
+Phase 1:   Research       → Write report using structured data
+Deliver                   → Present report to user
 ```
 
 Reports are written SEQUENTIALLY — one at a time, not in parallel. This ensures consistency across every report.
+
+## Data Architecture
+
+### Provider Hierarchy (prefer in order)
+
+1. **Findatasets MCP** — SEC-sourced financials, metrics, filings, estimates, earnings, insider trades, news
+2. **FRED REST API** — macro data (rates, CPI, yields, DXY, commodities)
+3. **Yahoo Finance** — real-time price only (demoted; fundamentals now from Findatasets)
+4. **WebSearch** — qualitative context, analyst commentary, catalyst timing
+
+### Findatasets MCP Tools (primary data source)
+
+| Tool | Data |
+|------|------|
+| `getCompanyFacts` | Name, CIK, employees, sector, market cap |
+| `getIncomeStatement` | Revenue, net income, EPS, margins, R&D |
+| `getBalanceSheet` | Assets, liabilities, equity, debt, cash |
+| `getCashFlowStatement` | FCF, operating CF, capex, buybacks |
+| `getFinancialMetrics` | 40+ ratios (valuation, profitability, growth, liquidity) |
+| `getFilings` | SEC filing list (10-K, 10-Q, 8-K) |
+| `getFilingItems` | Extract specific 10-K sections (risk factors, business desc) |
+| `getNews` | Recent news articles |
+
+MCP server: `https://mcp.financialdatasets.ai/api` (API key auth via X-API-KEY header)
+Config reference: `.agents/mcp-config.json`
+
+### Data used in both Dev and Production
+
+- **Dev (Cowork):** Claude calls MCP tools directly during report generation
+- **Production (app server):** Server calls Findatasets MCP/REST, feeds structured data to LLM
+- **Testing:** `scripts/data-layer/` REST test harness validates coverage per ticker
 
 ## Source of Truth
 
@@ -32,6 +64,9 @@ Reports are written SEQUENTIALLY — one at a time, not in parallel. This ensure
 | Search queries | `.agents/templates/search-queries.md` |
 | Opinion schema | `.agents/templates/opinion-block.yaml` |
 | Data source config | `.agents/data-sources.yaml` |
+| API routing | `.agents/templates/api-routing-index.yaml` |
+| MCP server config | `.agents/mcp-config.json` |
+| Data layer test harness | `scripts/data-layer/` |
 | Reports (dashboard) | `reports/` |
 | Reports (archive) | `artifacts/{asset_class}/reports/` |
 
@@ -72,10 +107,12 @@ invalidation: "Measurable condition"
 ## Operating Rules
 
 - Never fabricate financial data
-- Cite sources for all financial claims
+- Cite Findatasets (SEC-sourced) figures over web-scraped numbers for the same metric
+- Cite sources for all financial claims — date all metrics
 - Process tickers sequentially, never in parallel
 - Follow report-template.md exactly — no creative formatting
 - Opinion YAML keys are machine-parsed — no renames, no additions
+- Set `data_confidence` based on actual structured data coverage from Phase 0.5
 
 ## Optional Deep Runs
 
@@ -88,11 +125,14 @@ Available on request but NOT part of default pipeline:
 
 Target: < 25K tokens per report.
 
-## Data Sources
+## Test Harness
 
-Configured in `.agents/data-sources.yaml`:
-- **FRED** — macro data (rates, CPI, GDP, DXY)
-- **Findatasets** — SEC filings (10-K, 13F, Form 4)
-- **yfinance** — pricing, fundamentals, analyst estimates
+Standalone Node.js scripts for validating data coverage before running full pipeline:
 
-Currently blocked in Cowork VM; functional when running locally. Pipeline falls back to WebSearch.
+```bash
+cd scripts/data-layer
+cp .env.example .env   # add FRED_API_KEY + FINDATASETS_API_KEY
+npm install
+node gather.js NVDA           # single ticker data check
+node test-harness.js --quick  # 3 tickers, validates all providers
+```
