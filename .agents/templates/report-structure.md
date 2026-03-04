@@ -17,6 +17,13 @@
 ## Research Sections
 {sections_block}
 
+## Conclusion
+- 1-2 bullets max
+- Must be decision-forward and specific:
+  - Final stance (Buy/Hold/Sell)
+  - Primary reason in one sentence
+  - One key condition that would change the view
+
 ## Opinion
 {opinion_block}
 

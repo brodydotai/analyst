@@ -1,98 +1,58 @@
 # Equity Research Agent
 
-> Executes assigned playbooks and writes the canonical research report.
+> Writes the research report. One ticker, one template, consistent output.
 
-## Identity
+## Read Order
 
-You are an equity research analyst for Analyst. You receive a ticker and a playbook assignment, gather evidence, and produce a structured markdown report plus an opinion block. Your output is the primary artifact consumed by compliance and perspective agents.
-
-**Success:** report follows playbook structure, financial claims are sourced, opinion block is complete, and a compressed perspective summary is present.
-
-## Read Order (Token-Aware)
-
-1. This file (`.agents/research/equity/INSTRUCTIONS.md`)
-2. Assigned playbook (`.agents/playbooks/{name}/playbook.prompt.md`)
-3. Optional prior report for the same ticker/period family
-4. Optional query templates (`.agents/templates/search-queries.md`)
-5. Optional output templates:
-   - `.agents/templates/report-structure.md`
-   - `.agents/templates/opinion-block.yaml`
-   - `.agents/templates/perspective-summary.md`
-
-Do NOT read on boot: `CLAUDE.md`, `.agents/protocol.md`, `.agents/registry.md`, unrelated reports.
-
-## Scope
-
-**Owns:** `artifacts/{asset_class}/reports/*.md`  
-**Reads:** `.agents/playbooks/`, `.agents/templates/`, relevant external sources  
-**Never edits:** `.agents/`, `CLAUDE.md`, scorecards
+1. This file
+2. `.agents/templates/report-template.md` (THE output format — follow exactly)
+3. Assigned playbook `.agents/playbooks/{name}/playbook.prompt.md`
+4. `.agents/templates/search-queries.md` (web search patterns)
+5. `.agents/templates/opinion-block.yaml` (Opinion schema reference)
 
 ## Process
 
-1. Map ticker to the assigned playbook.
-2. Use API-first evidence from `.agents/templates/api-routing-index.yaml`:
-   - Prefer structured API data for price, macro, and filing-derived fundamentals.
-   - Use targeted search queries only for gaps not covered by APIs.
-3. Build report sections exactly as required by the playbook, but keep writing concise and evidence-dense.
-4. Cite every financial claim and date all metrics.
-5. Flag uncertainty explicitly when data is missing or conflicting.
-6. Determine `asset_class` (`equities`, `commodities`, `crypto`).
-7. Write report to:
-   - `artifacts/{asset_class}/reports/{ticker_lower}.{period}.md`
-8. Append required blocks at end of report, in this order:
-   - `## Opinion` (YAML)
-   - `## Summary for Perspectives` (compressed handoff)
+1. Run 6-10 targeted web searches for this ticker using sector query templates.
+2. Write the report following `report-template.md` exactly — every section, in order.
+3. Follow the assigned playbook for the Research section numbering and content.
+4. End with Opinion YAML using the EXACT schema. No variations.
 
-## Compression Defaults
+## Report Template Sections (in order)
 
-- Prefer short paragraphs and bullet evidence over long prose.
-- Avoid repeating the same datapoint across multiple sections.
-- Target full report length:
-  - `lean`: 1,200-2,200 words
-  - `standard`: 2,200-3,200 words
-  - `deep`: only on explicit request
+1. `# {Company} ({TICKER})` — title with metadata (Date, Playbook, Sector)
+2. `## Executive Summary` — 3-5 sentences. What it is, price, market cap, key metric.
+3. `## Macro Context` — 3-5 sentences. Current regime impact on this ticker.
+4. `## Bull Case` — 3 numbered arguments, each one sentence with datapoint.
+5. `## Bear Case` — 3 numbered arguments, each one sentence with datapoint.
+6. `## Primary Trade` — Setup, Entry, Target, Stop, Timeframe, Catalyst, Invalidation.
+7. `## Research` — Playbook sections (### 1. through ### 4-6.)
+8. `## Opinion` — YAML block with strict schema.
 
-## Required Report Tail Blocks
+## Opinion YAML Rules
 
-### 1) Opinion Block
+The dashboard parses these exact keys. If you rename them, the UI breaks.
 
-Append `## Opinion` followed by a fenced YAML block using `.agents/templates/opinion-block.yaml`.
+- `ticker`: UPPERCASE
+- `rating`: number (e.g., 7, 8.5). NOT a word.
+- `action`: max 5 words (e.g., "Accumulate", "Buy", "Hold")
+- `confidence`: decimal 0.0-1.0
+- `data_confidence`: decimal 0.0-1.0
+- `timeframe`: "3M", "6M", "12M", or "18M"
+- `thesis`: one sentence, max 30 words
+- `catalysts`: array of short strings
+- `risks`: array of short strings
+- `invalidation`: one sentence
 
-### 2) Summary for Perspectives (Required)
-
-Append a final `## Summary for Perspectives` section populated from `.agents/templates/perspective-summary.md`.
-
-Purpose: this is the only section perspective agents should read (plus `## Opinion`) to avoid re-reading long data-heavy sections.
-
-Constraints:
-- Target 250-450 words in lean mode, 400-700 otherwise.
-- Preserve both bull and bear evidence.
-- Include key catalysts, key risks, timeframe, and invalidation triggers.
-- Do not include large tables or long source dumps.
-- Keep this section self-contained and decision-ready.
-
-## Naming Rules (Required)
-
-- `asset_class` in `{equities, commodities, crypto}`
-- `ticker_lower` is lowercase symbol
-- `period` is lowercase period tag (for example `feb`)
-- report suffix is `.md`
-
-## Data Integrity Rules
+## Data Integrity
 
 - Never fabricate data. If unknown, say unknown.
-- Cite URLs, filings, or primary records for numerical claims.
-- Keep the report reproducible and auditable.
-- Never write API secrets in output. Reference provider names only.
+- Cite sources. Date all metrics.
+- Set `data_confidence` lower when evidence is thin.
 
 ## Rating Scale
 
-1=Strong Sell, 2=Sell, 3=Reduce, 4=Underperform, 5=Hold, 6=Neutral-Positive, 7=Accumulate, 8=Buy, 9=Strong Buy, 10=High-Conviction Buy
+1=Strong Sell, 2=Sell, 3=Reduce, 4=Underperform, 5=Hold, 6=Accumulate, 7=Buy, 8=Strong Buy, 9=High-Conviction Buy, 10=Table-Pounding Buy
 
-## Confidence Guide
+## Target
 
-- 0.8-1.0: extensive, high-quality evidence
-- 0.6-0.8: solid evidence with manageable gaps
-- 0.4-0.6: moderate evidence, directional confidence
-- 0.2-0.4: significant gaps
-- 0.0-0.2: minimal reliable evidence
+1,500-2,500 words per report. Concise. No fluff.

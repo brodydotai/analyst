@@ -43,6 +43,52 @@ function getRatingTone(level) {
   }
 }
 
+function extractFirstPrice(value) {
+  if (!value) return null;
+  const match = String(value).match(/([$~]?\s*\d+(?:,\d{3})*(?:\.\d+)?)/);
+  if (!match) return null;
+  const parsed = parseFloat(match[1].replace(/[$~, ]/g, ""));
+  return Number.isNaN(parsed) ? null : parsed;
+}
+
+function formatUsd(value) {
+  if (value == null || Number.isNaN(value)) return "—";
+  return `$${value.toFixed(2)}`;
+}
+
+function deriveSimpleTargetPrice(rawTarget, currentPrice) {
+  const targetText = String(rawTarget || "").trim();
+  if (!targetText || targetText === "—") return "—";
+
+  const normalized = targetText.replace(/,/g, "");
+
+  // Handle ranges like "$9-12" or "$9 to $12" by using midpoint.
+  const rangeMatch = normalized.match(/\$?\s*(\d+(?:\.\d+)?)\s*(?:-|to)\s*\$?\s*(\d+(?:\.\d+)?)/i);
+  if (rangeMatch) {
+    const low = parseFloat(rangeMatch[1]);
+    const high = parseFloat(rangeMatch[2]);
+    if (!Number.isNaN(low) && !Number.isNaN(high)) {
+      return formatUsd((low + high) / 2);
+    }
+  }
+
+  // Handle upside/downside percentages if current price is available.
+  const pctMatch = normalized.match(/(-?\d+(?:\.\d+)?)\s*%/);
+  if (pctMatch) {
+    const pct = parseFloat(pctMatch[1]);
+    const base = extractFirstPrice(currentPrice);
+    if (!Number.isNaN(pct) && base != null) {
+      return formatUsd(base * (1 + pct / 100));
+    }
+  }
+
+  // Fall back to first explicit target price in the text.
+  const firstPrice = extractFirstPrice(normalized);
+  if (firstPrice != null) return formatUsd(firstPrice);
+
+  return "—";
+}
+
 function cleanReportContent(content) {
   if (!content) return "";
   const lines = content.split("\n");
@@ -67,7 +113,11 @@ function cleanReportContent(content) {
   if (sawMetadata && lines[i]?.trim() === "---") i += 1;
 
   const cleaned = [lines[titleIndex], "", ...lines.slice(i)].join("\n");
-  return cleaned.replace(/---\s*\n## Opinion\s*\n```yaml[\s\S]*?```\s*\n---/m, "---");
+
+  // Always strip Opinion section from UI body rendering, regardless of wrapper style.
+  return cleaned
+    .replace(/---\s*\n##\s+Opinion\s*\n```yaml[\s\S]*?```\s*\n---/gi, "---")
+    .replace(/\n##\s+Opinion\s*\n[\s\S]*?(?=\n##\s+|\n#\s+|$)/gi, "\n");
 }
 
 function extractHeadings(content) {
@@ -157,6 +207,23 @@ function lookupMeta(metadata, ...keys) {
   return "";
 }
 
+function extractSectionText(content, heading) {
+  if (!content) return "";
+  const escapedHeading = heading.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  const re = new RegExp(`^##\\s+${escapedHeading}\\s*\\n([\\s\\S]*?)(?=\\n##\\s+|\\n#\\s+|$)`, "im");
+  const block = content.match(re)?.[1];
+  if (!block) return "";
+
+  const lines = block
+    .split("\n")
+    .map((line) => line.trim())
+    .filter(Boolean)
+    .map((line) => line.replace(/^[-*]\s+/, "").replace(/^\d+\.\s+/, ""));
+
+  if (!lines.length) return "";
+  return lines[0];
+}
+
 function parseReportMeta(content, filename) {
   const titleMatch = content.match(/^#\s+(.+)/m);
   const metadata = parseMetadataBlock(content);
@@ -183,7 +250,33 @@ function parseReportMeta(content, filename) {
   const timeframe = opinion.timeframe || opinion["target timeframe"] || opinion.target_timeframe || lookupMeta(metadata, "timeframe");
   const thesis = opinion.thesis || lookupMeta(metadata, "thesis");
   const entryMatch = content.match(/\*\*Entry:\*\*\s*(.+)/);
+  const currentPriceMatch = content.match(/\*\*Current Price:\*\*\s*(.+)/i);
+  const targetMatch = content.match(/\*\*Target(?: Price)?:\*\*\s*(.+)/i);
   const riskRewardMatch = content.match(/\*\*Risk\/Reward:\*\*\s*(.+)/);
+  const entryText = entryMatch?.[1]?.trim() || "";
+  const currentPriceFromEntry = entryText.match(/current\s+price[^0-9$~]*([$~]?\s*\d+(?:\.\d+)?)/i)?.[1]?.replace(/\s+/g, "");
+  const currentPrice =
+    opinion["current price"] ||
+    opinion.current_price ||
+    opinion.price ||
+    lookupMeta(metadata, "current price", "price") ||
+    currentPriceMatch?.[1]?.trim() ||
+    currentPriceFromEntry ||
+    "—";
+  const targetPrice =
+    opinion["target price"] ||
+    opinion.target_price ||
+    opinion.target ||
+    lookupMeta(metadata, "target price", "target") ||
+    targetMatch?.[1]?.trim() ||
+    "—";
+  const simpleTargetPrice = deriveSimpleTargetPrice(targetPrice, currentPrice);
+  const conciseConclusion =
+    extractSectionText(content, "Conclusion") ||
+    extractSectionText(content, "Final Conclusion") ||
+    opinion.thesis ||
+    thesis ||
+    "—";
 
   const keyFactPairs = metadata
     .filter((item) => !["date", "playbook", "sector", "ticker", "rating", "action", "confidence", "timeframe", "thesis"].includes(item.normalizedKey))
@@ -216,6 +309,9 @@ function parseReportMeta(content, filename) {
     keyCatalyst: opinion["key catalyst"] || opinion.catalyst || lookupMeta(metadata, "key catalyst") || "—",
     invalidation: opinion.invalidation || lookupMeta(metadata, "invalidation") || "—",
     entry: entryMatch?.[1]?.trim() || "—",
+    currentPrice,
+    targetPrice: simpleTargetPrice,
+    conclusion: conciseConclusion,
     riskReward: riskRewardMatch?.[1]?.trim() || "—",
     keyFactPairs,
     metadata,
@@ -348,13 +444,11 @@ function ReportCard({ report, isActive, onClick }) {
 
 function ReportHeader({ meta }) {
   const tone = getRatingTone(meta.ratingLevel);
-  const primaryCards = [
-    { label: "Action", value: meta.action },
-    { label: "Confidence", value: meta.confidence, isConfidence: true },
+  const keyMetrics = [
+    { label: "Rating", value: meta.ratingLevel, tone },
+    { label: "Price", value: meta.currentPrice },
+    { label: "Target", value: meta.targetPrice },
     { label: "Timeframe", value: meta.targetTimeframe },
-    { label: "Entry", value: meta.entry },
-    { label: "Risk / Reward", value: meta.riskReward },
-    { label: "Key Catalyst", value: meta.keyCatalyst },
   ].filter((item) => item.value && item.value !== "—");
 
   const metaStack = [
@@ -365,26 +459,19 @@ function ReportHeader({ meta }) {
 
   return (
     <section className="header-card">
-      <div className="header-top">
-        <div>
-          <div className="meta-label">Rating</div>
-          <div className={`rating-chip tone-${tone}`}>{meta.ratingLevel}</div>
+      {meta.thesis !== "—" && (
+        <div className="thesis-row thesis-emphasis thesis-top">
+          <div className="meta-label">Thesis</div>
+          <p>{meta.thesis}</p>
         </div>
-        <div className="meta-stack">
-          {metaStack.map((item) => (
-            <span key={item.label}>
-              <strong>{item.label}:</strong> <span className={item.label === "Playbook" ? "mono" : ""}>{item.value}</span>
-            </span>
-          ))}
-        </div>
-      </div>
+      )}
 
-      {primaryCards.length > 0 && (
+      {keyMetrics.length > 0 && (
         <div className="header-grid">
-          {primaryCards.map((item) => (
-            <div key={item.label}>
+          {keyMetrics.map((item) => (
+            <div key={item.label} className="metric-card">
               <div className="meta-label">{item.label}</div>
-              {item.isConfidence ? <ConfidenceBar value={item.value} /> : <div className="meta-value">{item.value}</div>}
+              <div className={`meta-value ${item.label === "Rating" ? `rating-chip tone-${item.tone}` : ""}`}>{item.value}</div>
             </div>
           ))}
         </div>
@@ -403,12 +490,29 @@ function ReportHeader({ meta }) {
         </div>
       )}
 
-      {meta.thesis !== "—" && (
-        <div className="thesis-row">
-          <div className="meta-label">Thesis</div>
-          <p>{meta.thesis}</p>
+      <div className="header-top header-top-bottom">
+        <div className="meta-stack">
+          {metaStack.map((item) => (
+            <span key={item.label}>
+              <strong>{item.label}:</strong> <span className={item.label === "Playbook" ? "mono" : ""}>{item.value}</span>
+            </span>
+          ))}
         </div>
-      )}
+        <div className="confidence-panel">
+          <div className="meta-label with-help">
+            Confidence
+            <span className="info-wrap">
+              <button type="button" className="info-icon" aria-label="Confidence score details">
+                i
+              </button>
+              <span className="info-popover" role="tooltip">
+                Confidence estimates conviction on a 0-100% scale: under 50% low, 50-69% moderate, 70%+ high.
+              </span>
+            </span>
+          </div>
+          <ConfidenceBar value={meta.confidence} />
+        </div>
+      </div>
     </section>
   );
 }
@@ -763,6 +867,12 @@ export default function Dashboard() {
               <article className="report-main fade-in" key={selectedReport.filename}>
                 <ReportHeader meta={selectedReport.meta} />
                 <div className="md-content" dangerouslySetInnerHTML={{ __html: renderedHTML }} />
+                {selectedReport.meta.conclusion !== "—" && (
+                  <section className="report-conclusion">
+                    <div className="meta-label">Conclusion</div>
+                    <p>{selectedReport.meta.conclusion}</p>
+                  </section>
+                )}
                 <Footer />
               </article>
               <TocPanel headings={headings} activeHeading={activeHeading} onJump={jumpToHeading} />
